@@ -1,0 +1,77 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/pages/ADCommand.tsx"
+        ],
+        "createdAt": "2026-08-26T17:52:01.314Z",
+        "reason": "incumbent pattern: identical 4px status-color border-left predates this edit and matches MySet.tsx:123, LightingConsole.tsx:35, LiveTake.tsx:140 — removing only here would break cross-page consistency"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-08-26T17:52:01.398Z",
+        "reason": "incumbent site-wide typeface set in index.html/index.css before this session; unrelated to the focus-visible rule this edit added"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/pages/LightingConsole.tsx"
+        ],
+        "createdAt": "2026-08-26T19:03:19.067Z",
+        "reason": "incumbent status-color border-left, matches PRODUCT.md's 'color-coded by status' visual direction; identical pattern already accepted on ADCommand.tsx, MySet.tsx, LiveTake.tsx"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/pages/MySet.tsx"
+        ],
+        "createdAt": "2026-08-26T19:03:19.152Z",
+        "reason": "incumbent status-color border-left, matches PRODUCT.md's 'color-coded by status' visual direction; identical pattern already accepted on ADCommand.tsx, LightingConsole.tsx, LiveTake.tsx"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/pages/LiveTake.tsx"
+        ],
+        "createdAt": "2026-08-26T19:03:19.237Z",
+        "reason": "incumbent status-color border-left, matches PRODUCT.md's 'color-coded by status' visual direction; identical pattern already accepted on ADCommand.tsx, LightingConsole.tsx, MySet.tsx"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#4a6741",
+        "files": [
+          "src/pages/WardrobeTalent.tsx"
+        ],
+        "createdAt": "2026-08-26T19:21:56.165Z",
+        "reason": "diegetic character-wardrobe gradient (Detective Vale's coat colors), intentionally outside the chrome design system, not a reusable UI token"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#8b7355",
+        "files": [
+          "src/pages/WardrobeTalent.tsx"
+        ],
+        "createdAt": "2026-08-26T19:21:56.219Z",
+        "reason": "diegetic character-wardrobe gradient (Detective Vale's coat colors), intentionally outside the chrome design system, not a reusable UI token"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#2d3748",
+        "files": [
+          "src/pages/WardrobeTalent.tsx"
+        ],
+        "createdAt": "2026-08-26T19:21:56.261Z",
+        "reason": "diegetic character-wardrobe gradient (Detective Vale's coat colors), intentionally outside the chrome design system, not a reusable UI token"
+      }
+    ]
+  }
+}

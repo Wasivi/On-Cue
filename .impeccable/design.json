@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-26T19:00:00Z",
+  "title": "Design System: On Cue",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "neutral", "displayName": "Sumi Ink", "canonical": "#17181a", "tonalRamp": ["#242529", "#3f4248", "#5b5f66", "#767b85", "#9599a1", "#b4b7bc", "#d3d4d8", "#f1f2f3"] },
+      "signal-red": { "role": "primary", "displayName": "Signal Red", "canonical": "#c81e2c", "tonalRamp": ["#430a0f", "#75121a", "#a81925", "#db2130", "#e5515d", "#ec838c", "#f4b6bb", "#fce9ea"] },
+      "shingou-green": { "role": "secondary", "displayName": "Shingou Green", "canonical": "#146356", "tonalRamp": ["#0d4037", "#177061", "#20a18c", "#2ad1b6", "#58ddc7", "#89e7d8", "#b9f1e8", "#eafbf8"] },
+      "brass-amber": { "role": "secondary", "displayName": "Brass Amber", "canonical": "#b4690e", "tonalRamp": ["#472906", "#7d490a", "#b3680e", "#e98812", "#f1a345", "#f5be7b", "#f9d9b1", "#fdf3e7"] },
+      "plum": { "role": "secondary", "displayName": "Plum", "canonical": "#5b3a6e", "tonalRamp": ["#291a32", "#492f58", "#69437e", "#8857a5", "#a37cba", "#bea2ce", "#d9c8e2", "#f3eef6"] },
+      "paper": { "role": "neutral", "displayName": "Washi Paper", "canonical": "#f4f1ea", "tonalRamp": ["#322b1a", "#584c2e", "#7f6d42", "#a58d56", "#baa77c", "#cec1a2", "#e2dac8", "#f6f4ee"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The single big status word on AD Command (HOLD / READY TO ROLL / ROLLING) — the only place the system permits real scale." },
+      "headline": { "displayName": "Headline", "purpose": "Page titles." },
+      "label": { "displayName": "Label", "purpose": "Uppercase section eyebrows and stat labels — signage caption, not a heading." },
+      "data": { "displayName": "Data", "purpose": "Every operationally-live number: timestamps, elapsed hold, take counts, readiness percentage. Tabular numerals." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "fade-in", "value": "opacity 0->1, translateY 4px->0, 0.3s ease-out", "purpose": "New content appearing in place (e.g. generated task cards)." },
+      { "name": "slide-in", "value": "opacity 0->1, translateX -8px->0, 0.25s ease-out", "purpose": "New Agent Activity log entries arriving." },
+      { "name": "pulse-lamp", "value": "opacity 1->0.45->1, 1.6s ease-in-out infinite", "purpose": "The unread-hold indicator dot on the My Set nav item." }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one confident action on a screen — Clear Hold, Roll Camera, Lighting Ready.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M20 6 9 17l-5-5\"/></svg>Clear Hold</button>",
+      "css": ".ds-btn-primary { display:inline-flex; align-items:center; gap:8px; background:#17181a; color:#fff; border:1px solid transparent; border-radius:2px; padding:10px 18px; font-family:'Zen Kaku Gothic New',sans-serif; font-size:13px; font-weight:600; letter-spacing:0.01em; cursor:pointer; transition:all .12s; } .ds-btn-primary:hover { background:#000; } .ds-btn-primary:focus-visible { outline:2px solid #c81e2c; outline-offset:2px; } .ds-btn-primary:active { transform:scale(0.98); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A real but non-primary action.",
+      "html": "<button class=\"ds-btn-secondary\">Need 5 Minutes</button>",
+      "css": ".ds-btn-secondary { background:#ffffff; color:#17181a; border:1px solid #c3bca8; border-radius:2px; padding:10px 18px; font-family:'Zen Kaku Gothic New',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all .12s; } .ds-btn-secondary:hover { background:#eeece4; } .ds-btn-secondary:focus-visible { outline:2px solid #c81e2c; outline-offset:2px; }"
+    },
+    {
+      "name": "Status Lamp Pill",
+      "kind": "chip",
+      "refersTo": "pill-ready",
+      "description": "The signature status indicator: a solid andon lamp dot leading an uppercase label, never a plain rounded chip.",
+      "html": "<span class=\"ds-pill\"><span class=\"ds-lamp\"></span>Ready</span>",
+      "css": ".ds-pill { display:inline-flex; align-items:center; gap:7px; padding:3px 9px 3px 7px; border-radius:2px; font-family:'Zen Kaku Gothic New',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; background:#e2eeec; color:#0f4f45; border:1px solid rgba(20,99,86,0.18); } .ds-lamp { width:6px; height:6px; border-radius:50%; background:#146356; flex-shrink:0; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat container, hairline border, no shadow — the base unit of every page.",
+      "html": "<div class=\"ds-card\">Card content</div>",
+      "css": ".ds-card { background:#ffffff; border:1px solid #ded8c8; border-radius:3px; padding:24px; transition:border-color .15s; } .ds-card:hover { border-color:#c3bca8; }"
+    },
+    {
+      "name": "Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Rail navigation item with a subway-style red rule marking the active page, not a filled rounded background.",
+      "html": "<button class=\"ds-nav-link ds-nav-link--active\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/></svg>AD Command</button>",
+      "css": ".ds-nav-link { display:flex; align-items:center; gap:12px; padding:10px 14px; border-left:2px solid transparent; color:#9a9b9e; font-family:'Zen Kaku Gothic New',sans-serif; font-size:13px; font-weight:500; background:none; border-top:none; border-right:none; border-bottom:none; width:100%; cursor:pointer; transition:all .12s; } .ds-nav-link:hover { background:rgba(255,255,255,0.04); color:#e8e8e6; } .ds-nav-link--active { background:rgba(200,30,44,0.1); color:#fff; border-left-color:#c81e2c; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Andon Line",
+    "overview": "On Cue is a film-set readiness board, not an ops dashboard with a film theme painted on. Its visual world comes from the two Japanese operations-floor systems built for exactly its problem — status legible at a glance, under bad light, by someone with no time to read: the andon board (the manufacturing-floor lamp system where a colored light communicates line status before any word does) and JR rail departure signage (dense, disciplined, high-legibility information design that has never needed a drop shadow to feel authoritative). Both are minimalist by function, not by decoration.\nThe system deliberately refuses the default AI-generated ops-dashboard look it replaced: soft rounded cards floating on drop shadows, a teal-accent SaaS palette, pill badges, a generic dark sidebar. Line and space carry hierarchy here. Color is a signal, spent narrowly and precisely, never a decoration spread across a surface. Status renders as a small solid lamp — the andon light — never a rounded chip.",
+    "keyCharacteristics": [
+      "Flat surfaces, hairline borders, zero box-shadow — depth from line weight and spacing, never blur.",
+      "Sharp, nearly-square corners (2-3px) everywhere except true circles.",
+      "One saturated red carries every stop/blocker signal.",
+      "Status is a small colored dot beside a label, never a colored border strip on a card edge.",
+      "Zen Kaku Gothic New for all text; JetBrains Mono for every number that means something."
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Signal Red is the only color allowed to mean \"stop.\" No other red-family value, no orange escalation tier.", "section": "colors" },
+      { "name": "The Lamp, Not the Chip Rule", "body": "Status never renders as a fully-rounded pill badge alone. A small solid-color circle (the andon lamp) leads every status indicator.", "section": "colors" },
+      { "name": "The Mono-Means-Live Rule", "body": "JetBrains Mono is reserved for numbers a crew member would act on — a target time, an elapsed hold, a take count.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "No box-shadow appears anywhere in the system. A card separates from its neighbor by a hairline border and by the paper showing through the gap, never by a drop shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do lead every status communication with a solid-color lamp (dot) before the word.",
+      "Do keep corners sharp (2-3px) except true circles.",
+      "Do reserve Signal Red for stop/blocker/destructive meaning only.",
+      "Do set every time, count, or take number in JetBrains Mono with tabular numerals.",
+      "Do separate cards with a hairline border and paper showing through the gap."
+    ],
+    "donts": [
+      "Don't add box-shadow to any surface.",
+      "Don't render status as a fully-rounded pill with no lamp.",
+      "Don't use a colored left-border strip as a card's status accent.",
+      "Don't introduce a second display typeface.",
+      "Don't use SaaS teal for \"ready\" — the system's go-signal is the blue-shifted shingou green."
+    ]
+  }
+}

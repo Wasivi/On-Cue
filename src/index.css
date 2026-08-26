@@ -1,0 +1,187 @@
+/*
+  ON CUE — visual identity
+  World: Andon Line — Japanese operations-floor signage (andon/kanban status
+  boards, JR rail departure signage) rebuilt for a film-set command console.
+  Restraint over decoration: line and space carry hierarchy, not shadow and
+  radius. One saturated signal (red) for stop/blocker; a shifted "shingou"
+  green-blue for go, since Japanese go-signals read blue-green, not SaaS teal;
+  a warm brass amber for caution; a muted plum for secondary/in-motion notes.
+  Status renders as a small lamp, never a rounded chip.
+
+  Token names below are unchanged from the prior system (--teal, --workspace-bg,
+  --nav-bg, etc.) so every page keeps working; only the values and the
+  components built from them changed. --teal now carries the "go" signal,
+  a blue-shifted green, not a literal teal.
+*/
+
+:root {
+  --nav-bg: #121214;
+  --nav-border: #232326;
+  --workspace-bg: #f4f1ea;
+  --workspace-surface: #ffffff;
+  --text-primary: #17181a;
+  --text-secondary: #55565a;
+  --text-muted: #6b6c70;
+  --teal: #146356;
+  --teal-light: #e2eeec;
+  --amber: #b4690e;
+  --amber-light: #f7e8d3;
+  --red: #c81e2c;
+  --red-light: #fbe7e8;
+  --violet: #5b3a6e;
+  --violet-light: #efe4ee;
+  --border: #ded8c8;
+  --border-strong: #c3bca8;
+  --rail-muted: #9a9b9e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', system-ui, -apple-system, sans-serif;
+  background: var(--workspace-bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a08c; }
+
+::selection { background: var(--red); color: #fff; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-amber {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }
+.animate-slide-in { animation: slideIn 0.25s ease-out; }
+.animate-pulse-amber { animation: pulse-amber 1.6s ease-in-out infinite; }
+
+/* Status lamps — a small solid indicator, not a rounded chip */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+.pill::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.pill-ready { background: var(--teal-light); color: #0f4f45; border-color: rgba(20,99,86,0.18); }
+.pill-ready::before { background: var(--teal); }
+.pill-hold { background: var(--red-light); color: #8c1520; border-color: rgba(200,30,44,0.18); }
+.pill-hold::before { background: var(--red); }
+.pill-risk { background: var(--amber-light); color: #7a4a0a; border-color: rgba(180,105,14,0.18); }
+.pill-risk::before { background: var(--amber); }
+.pill-wait { background: #eeeeec; color: var(--text-secondary); border-color: var(--border); }
+.pill-wait::before { background: var(--text-muted); }
+
+/* Cards — line and space carry hierarchy, not shadow */
+.card {
+  background: var(--workspace-surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  transition: border-color 0.15s;
+}
+.card:hover { border-color: var(--border-strong); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.12s;
+  letter-spacing: 0.01em;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--text-primary); color: #fff; }
+.btn-primary:hover { background: #000; }
+.btn-secondary { background: var(--workspace-surface); color: var(--text-primary); border-color: var(--border-strong); }
+.btn-secondary:hover { background: #eeece4; }
+.btn-danger { background: var(--red); color: white; }
+.btn-danger:hover { background: #a5111e; }
+.btn-amber { background: var(--amber); color: white; }
+.btn-amber:hover { background: #8f5309; }
+.btn-ghost { background: transparent; color: var(--text-secondary); border-color: transparent; }
+.btn-ghost:hover { background: rgba(0,0,0,0.04); color: var(--text-primary); }
+
+/* Nav — a rail, not a floating sidebar */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 0;
+  border-left: 2px solid transparent;
+  color: var(--rail-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s;
+  text-decoration: none;
+}
+.nav-link:hover { background: rgba(255,255,255,0.04); color: #e8e8e6; }
+.nav-link.active { background: rgba(200,30,44,0.1); color: #fff; border-left-color: var(--red); }
+
+/* Tooltip */
+.tooltip {
+  position: relative;
+}
+.tooltip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  background: var(--nav-bg);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 2px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.tooltip:hover::after { opacity: 1; }
