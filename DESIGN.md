@@ -196,6 +196,10 @@ Corners are sharp: cards and buttons round to 2–3px, close enough to square th
 ### Status Lamp (signature)
 The recurring custom pattern this redesign introduces: a small solid circle (6–8px) in the relevant signal color, placed before a section's uppercase label or inside a `.pill`. It replaces the prior system's colored left-border card accent everywhere — AD Command's big status card, My Set's NOW card, Lighting Console's Current Task card, and Live Take's generated-tasks card all lead with a lamp instead of a stripe.
 
+## Brand Mark (exception)
+
+The `Wordmark` component (`src/components/Wordmark.tsx`) intentionally does **not** use this system's operational palette. It carries its own small brand palette — Navy (#1b3a6b), Gold (#d4a72c), Ivory (#f5f0e1) — a procedural-drama title-card register (badge gravitas, diagonal cue-stripe, gold reserved for the word "Cue") distinct from the flat andon-signal system the rest of the interface runs on. This is a deliberate, user-directed choice: the brand mark is meant to feel like a title card, the operational UI is meant to feel like an instrument panel, and the two are not required to share a palette. Do not extend Navy/Gold/Ivory beyond `Wordmark.tsx` into the operational interface — that would blur exactly the distinction this exception exists to keep.
+
 ## Do's and Don'ts
 
 ### Do:

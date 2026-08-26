@@ -71,6 +71,33 @@
         ],
         "createdAt": "2026-08-26T19:21:56.261Z",
         "reason": "diegetic character-wardrobe gradient (Detective Vale's coat colors), intentionally outside the chrome design system, not a reusable UI token"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#1b3a6b",
+        "files": [
+          "src/components/Wordmark.tsx"
+        ],
+        "createdAt": "2026-08-26T20:03:31.808Z",
+        "reason": "user-directed: the wordmark carries its own brand palette (navy/gold/ivory, inspired by the FBI show's title-card register) deliberately separate from the operational andon-line UI palette"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#d4a72c",
+        "files": [
+          "src/components/Wordmark.tsx"
+        ],
+        "createdAt": "2026-08-26T20:03:31.839Z",
+        "reason": "user-directed: wordmark brand palette, see #1B3A6B reason"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#f5f0e1",
+        "files": [
+          "src/components/Wordmark.tsx"
+        ],
+        "createdAt": "2026-08-26T20:03:31.866Z",
+        "reason": "user-directed: wordmark brand palette, see #1B3A6B reason"
       }
     ]
   }

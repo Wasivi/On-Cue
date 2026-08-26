@@ -2,6 +2,7 @@ import { useApp } from '../App';
 import { Upload, FileSpreadsheet, Sparkles, CheckCircle, ArrowRight } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { callSheetData } from '../data/seed';
+import Wordmark from '../components/Wordmark';
 
 export default function Onboarding() {
   const { setPage } = useApp();
@@ -34,14 +35,8 @@ export default function Onboarding() {
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', padding: '60px 24px' }}>
       <div style={{ textAlign: 'center', marginBottom: 48 }}>
-        <div style={{
-          width: 64, height: 64, borderRadius: 4,
-          background: 'var(--teal)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 20px',
-          color: '#fff'
-        }}>
-          <Sparkles size={28} />
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+          <Wordmark size={32} light={false} />
         </div>
         <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, letterSpacing: '-0.02em' }}>
           Create Today's Set
