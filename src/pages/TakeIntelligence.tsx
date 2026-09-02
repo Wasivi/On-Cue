@@ -1,12 +1,10 @@
 import { production, timeLossData } from '../data/seed';
-import { useApp } from '../App';
 import { Clock, Lightbulb, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export default function TakeIntelligence() {
-  const { takes } = useApp();
   const setup = production.currentSetup;
   const totalLost = timeLossData.reduce((a, b) => a + b.minutes, 0);
-  const usableTakes = takes.filter(t => t.result === 'print').length;
+  const usableTakes = setup.takes.filter(t => t.result === 'print').length;
 
   return (
     <div style={{ padding: '32px 28px', maxWidth: 960 }}>
@@ -22,13 +20,11 @@ export default function TakeIntelligence() {
       {/* Stats row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12, marginBottom: 20 }}>
         <div className="card" style={{ padding: 20, textAlign: 'center' }}>
-          <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>{takes.length}</div>
+          <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>{setup.takes.length}</div>
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.06em' }}>Total Takes</div>
         </div>
         <div className="card" style={{ padding: 20, textAlign: 'center' }}>
-          <div className="mono" style={{ fontSize: 32, fontWeight: 800, color: 'var(--teal)', letterSpacing: '-0.03em' }}>
-            {usableTakes}<span style={{ fontSize: 18, color: 'var(--text-muted)' }}>/{takes.length}</span>
-          </div>
+          <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--teal)', letterSpacing: '-0.03em' }}>{usableTakes}</div>
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.06em' }}>Usable Takes</div>
         </div>
         <div className="card" style={{ padding: 20, textAlign: 'center' }}>
@@ -44,14 +40,14 @@ export default function TakeIntelligence() {
       {/* Insight card */}
       <div style={{ 
         display: 'flex', alignItems: 'flex-start', gap: 16, padding: 20, 
-        background: 'var(--violet-light)', borderRadius: 3, marginBottom: 20, border: '1px solid rgba(91,58,110,0.25)'
+        background: 'var(--violet-light)', borderRadius: 12, marginBottom: 20, border: '1px solid #ddd6fe'
       }}>
         <Lightbulb size={24} style={{ color: 'var(--violet)', flexShrink: 0, marginTop: 2 }} />
         <div>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--violet)', marginBottom: 4 }}>
             Recovery Suggestion
           </div>
-          <div style={{ fontSize: 13, color: '#4a2f5a', lineHeight: 1.6 }}>
+          <div style={{ fontSize: 13, color: '#5b21b6', lineHeight: 1.6 }}>
             Lighting contributed to delays in 3 of the past 5 setups. Consider pre-lighting Scene 43 while talent resets for current setup. This could recover 8–10 minutes on the day.
           </div>
         </div>
@@ -71,11 +67,11 @@ export default function TakeIntelligence() {
                   {item.minutes} min · {item.setupCount} setup{item.setupCount > 1 ? 's' : ''}
                 </span>
               </div>
-              <div style={{ height: 8, borderRadius: 2, background: 'var(--workspace-bg)', overflow: 'hidden' }}>
+              <div style={{ height: 8, borderRadius: 4, background: 'var(--workspace-bg)', overflow: 'hidden' }}>
                 <div style={{
                   height: '100%', width: `${(item.minutes / totalLost) * 100}%`,
                   background: item.cause.includes('Lighting') ? 'var(--amber)' : item.cause.includes('Actor') ? 'var(--red)' : 'var(--text-muted)',
-                  borderRadius: 2
+                  borderRadius: 4
                 }} />
               </div>
             </div>
@@ -99,7 +95,7 @@ export default function TakeIntelligence() {
             <div key={s.setup} style={{ 
               display: 'flex', alignItems: 'center', gap: 12, padding: 12, 
               background: s.status === 'current' ? 'var(--amber-light)' : 'var(--workspace-bg)',
-              borderRadius: 3 
+              borderRadius: 8 
             }}>
               <span className="mono" style={{ fontSize: 13, fontWeight: 700, minWidth: 50 }}>{s.setup}</span>
               <span style={{ fontSize: 12, color: 'var(--text-secondary)', minWidth: 80 }}>{s.takes} takes</span>

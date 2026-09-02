@@ -74,6 +74,8 @@ export interface CharacterLook {
 export interface Production {
   title: string;
   episode: string;
+  episodeTitle?: string;
+  season?: number;
   shootDay: number;
   location: string;
   callTime: string;
@@ -89,15 +91,4 @@ export interface TimeLoss {
   cause: RetakeCause;
   minutes: number;
   setupCount: number;
-}
-
-export type AgentEventKind = 'ready' | 'hold' | 'roll' | 'take' | 'info';
-
-export interface AgentEvent {
-  id: string;
-  time: string;
-  role: Role;
-  action: string;
-  detail: string;
-  kind: AgentEventKind;
 }

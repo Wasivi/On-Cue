@@ -1,72 +1,66 @@
 import type { Production, CharacterLook, TimeLoss, RetakeCause } from '../types';
 
 export const production: Production = {
-  title: 'Harbor Unit',
-  episode: '104',
-  shootDay: 12,
-  location: 'Brooklyn Loft',
-  callTime: '5:30 AM',
-  firstShot: '7:15 AM',
-  wrapTarget: '8:30 PM',
-  currentTime: '10:35 AM',
-  weather: 'Light rain risk after 3:00 PM',
-  overallReadiness: 78,
+  title: 'DSI',
+  episode: '809',
+  episodeTitle: 'Lone Wolf',
+  shootDay: 9,
+  season: 8,
+  location: 'NYC — Multiple Units',
+  callTime: '6:00 AM',
+  firstShot: '7:30 AM',
+  wrapTarget: '9:00 PM',
+  currentTime: '2:15 PM',
+  weather: 'Overcast, 68°F — possible rain after 6 PM',
+  overallReadiness: 72,
   currentSetup: {
-    id: '14B',
-    scene: 42,
-    setupNumber: '14B',
-    description: 'Medium two-shot at kitchen island',
-    location: 'Loft Kitchen',
-    targetRoll: '10:42 AM',
+    id: '23B',
+    scene: 23,
+    setupNumber: '23B',
+    description: 'Tactical entry — warehouse corridor, Ray and Elena advancing on suspect',
+    location: 'Riverside Collision Center — Long Island City',
+    targetRoll: '2:45 PM',
     currentState: 'hold',
     takes: [
       {
         number: 1,
         result: 'noGood',
         causes: ['Actor performance / line'],
-        notes: 'Actor missed cue',
-        duration: 42,
-        timestamp: '10:08 AM'
+        notes: 'Ray hesitated at door breach — timing off with tactical team',
+        duration: 52,
+        timestamp: '1:48 PM'
       },
       {
         number: 2,
         result: 'hold',
         causes: ['Lighting adjustment'],
-        notes: 'Key light too hot on face',
-        duration: 38,
-        timestamp: '10:14 AM'
+        notes: 'Key light too hot on tactical vests — "DSI" patch blown out',
+        duration: 48,
+        timestamp: '1:56 PM'
       },
       {
         number: 3,
         result: 'noGood',
-        causes: ['Camera / focus', 'Actor performance / line'],
-        notes: 'Rack focus missed, line flub',
-        duration: 45,
-        timestamp: '10:21 AM'
+        causes: ['Camera / focus', 'Props / set reset'],
+        notes: 'Steadicam missed rack focus to suspect. Prop gun needed reload reset.',
+        duration: 61,
+        timestamp: '2:05 PM'
       },
       {
         number: 4,
         result: 'incomplete',
         causes: ['Sound', 'Time / interruption'],
-        notes: 'Elevated train noise, then PA walked through frame',
-        duration: 28,
-        timestamp: '10:27 AM'
+        notes: 'Helicopter overhead from LaGuardia flight path. PA walked through background.',
+        duration: 35,
+        timestamp: '2:11 PM'
       },
       {
         number: 5,
         result: 'noGood',
         causes: ['Actor performance / line', 'Lighting adjustment'],
-        notes: 'Actor missed final line. Key light shifted during movement.',
-        duration: 38,
-        timestamp: '10:32 AM'
-      },
-      {
-        number: 6,
-        result: 'hold',
-        causes: ['Director wants another option'],
-        notes: 'Director wants softer emotional read',
-        duration: 52,
-        timestamp: '10:38 AM'
+        notes: 'Elena line flub on "Freeze — DSI!" Key light shifted when Ray hit mark 3.',
+        duration: 47,
+        timestamp: '2:18 PM'
       }
     ],
     departmentStatuses: [
@@ -75,78 +69,79 @@ export const production: Production = {
         status: 'ready',
         owner: 'Sarah Chen, 1st AC',
         blockerCount: 0,
-        currentTask: 'Camera package confirmed, lens checked'
+        currentTask: 'Steadicam balanced, lens checked, focus marks set'
       },
       {
         department: 'Sound',
         status: 'ready',
         owner: 'Marcus Webb, Sound Mixer',
         blockerCount: 0,
-        currentTask: 'Boom positioned, lavs checked'
+        currentTask: 'Boom positioned, lavs on principals, helicopter window logged'
       },
       {
         department: 'Set/Props',
-        status: 'ready',
+        status: 'inProgress',
+        eta: '2 min',
         owner: 'Jenna Park, Set Decorator',
-        blockerCount: 0,
-        currentTask: 'Kitchen dressed, props on marks'
+        blockerCount: 1,
+        currentTask: 'Prop weapons reset — armorer verifying blanks'
       },
       {
         department: 'Lighting',
         status: 'inProgress',
-        eta: '3 min',
+        eta: '4 min',
         owner: 'Rico Torres, Gaffer',
         blockerCount: 1,
-        currentTask: 'Adjust key light for actor mark 2'
+        currentTask: 'Adjust key light for tactical vest exposure at mark 3'
       },
       {
         department: 'Talent',
         status: 'inProgress',
-        eta: '4 min',
+        eta: '3 min',
         owner: 'Dana Lee, 2nd AD',
         blockerCount: 1,
-        currentTask: 'Actor reset — line rehearsal'
+        currentTask: 'Marcus line rehearsal — "Freeze — DSI!" reset'
       },
       {
         department: 'Wardrobe',
         status: 'ready',
         owner: 'Maya Johnson, Key Costumer',
         blockerCount: 0,
-        currentTask: 'Look 3 continuity confirmed'
+        currentTask: 'Tactical vests checked — DSI patches aligned, knee pads set'
       },
       {
         department: 'Location',
         status: 'ready',
         owner: 'Alex Rivera, Location Manager',
         blockerCount: 0,
-        currentTask: 'Permit active, neighbors notified'
+        currentTask: 'Permit active, Riverside Collision Center locked, neighbors notified'
       }
     ]
   }
 };
 
-export const detectiveValeLook: CharacterLook = {
-  character: 'Detective Vale',
-  scene: 42,
-  lookNumber: 3,
-  items: ['Olive trench coat', 'Cream shirt', 'Dark denim jeans', 'Brown leather belt', 'Black boots'],
+export const agentLook: CharacterLook = {
+  character: 'Special Agent Ray Castillo',
+  scene: 23,
+  lookNumber: 2,
+  items: ['DSI tactical vest (yellow lettering)', 'Navy blue tactical shirt', 'Black cargo pants', 'Black tactical boots', 'Glock 19 holster', 'Radio earpiece'],
   continuityNotes: [
-    'Coat damp on left shoulder (from rain tower in previous scene)',
-    'Left cuff rolled once',
-    'Belt buckle slightly askew (character choice)',
-    'Boots scuffed on right toe'
+    'Vest has dust smudge on right shoulder from door breach in Scene 19',
+    'Left knee pad shifted during previous take — needs repositioning',
+    'Radio earpiece wire visible on left side — do not tuck in',
+    'Boots have concrete dust from warehouse floor'
   ],
   fittingStatus: 'fitted',
   resetRequired: true
 };
 
 export const timeLossData: TimeLoss[] = [
-  { cause: 'Actor performance / line', minutes: 11, setupCount: 3 },
-  { cause: 'Lighting adjustment', minutes: 9, setupCount: 3 },
-  { cause: 'Camera / focus', minutes: 3, setupCount: 1 },
-  { cause: 'Sound', minutes: 2, setupCount: 1 },
-  { cause: 'Time / interruption', minutes: 2, setupCount: 1 },
-  { cause: 'Director wants another option', minutes: 5, setupCount: 1 }
+  { cause: 'Actor performance / line', minutes: 14, setupCount: 3 },
+  { cause: 'Lighting adjustment', minutes: 11, setupCount: 3 },
+  { cause: 'Props / set reset', minutes: 6, setupCount: 2 },
+  { cause: 'Camera / focus', minutes: 4, setupCount: 1 },
+  { cause: 'Sound', minutes: 3, setupCount: 1 },
+  { cause: 'Time / interruption', minutes: 3, setupCount: 1 }
 ];
 
 export const retakeCauses: RetakeCause[] = [
@@ -174,10 +169,26 @@ export const roleDescriptions: Record<string, string> = {
 };
 
 export const callSheetData = {
-  crewCount: 46,
-  castCount: 8,
-  locations: 3,
-  scenesScheduled: 18,
-  departmentAssignments: 12,
-  parkingZones: 4
+  crewCount: 87,
+  castCount: 12,
+  locations: 4,
+  scenesScheduled: 22,
+  departmentAssignments: 16,
+  parkingZones: 6,
+  pictureVehicles: 3,
+  backgroundCount: 45
 };
+
+export const productionLocations = [
+  { name: 'Riverside Collision Center', address: '42-18 Northern Blvd, Long Island City, Queens', type: 'Interior — Warehouse', scenes: [23, 24, 25] },
+  { name: 'City Federal Building', address: '400 Liberty Plaza, Manhattan', type: 'Exterior — DSI Building', scenes: [12, 18] },
+  { name: 'Central Park — Bethesda Terrace', address: 'Mid-Park at 72nd St, Manhattan', type: 'Exterior — Park', scenes: [8, 9] },
+  { name: 'Broadway Stages — Stage TV-1', address: '311 West 34th St, Manhattan', type: 'Interior — DSI Bullpen', scenes: [1, 2, 3, 4, 5, 6, 7] }
+];
+
+export const castCallTimes = [
+  { actor: 'Dana Whitfield (Elena Cross)', call: '6:00 AM', ready: '7:00 AM', holding: 'Trailer A' },
+  { actor: 'Marcus Vance (Ray Castillo)', call: '6:00 AM', ready: '7:00 AM', holding: 'Trailer B' },
+  { actor: 'Aaron Blake (Warren Locke)', call: '8:00 AM', ready: '9:00 AM', holding: 'Trailer C' },
+  { actor: 'Tyler Reed (Miles Ferro)', call: '10:00 AM', ready: '11:00 AM', holding: 'Trailer D' }
+];

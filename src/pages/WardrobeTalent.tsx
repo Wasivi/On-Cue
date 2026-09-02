@@ -1,11 +1,11 @@
-import { detectiveValeLook } from '../data/seed';
+import { agentLook, production } from '../data/seed';
 import { useApp } from '../App';
 import { CheckCircle, AlertCircle, Camera, Clock, ArrowRight } from 'lucide-react';
-import AckButton from '../components/AckButton';
 
 export default function WardrobeTalent() {
-  const { actorReady, markActorReady, logAction } = useApp();
-  const look = detectiveValeLook;
+  const { setActorReady, lightingReady, setHoldState } = useApp();
+  const look = agentLook;
+  const setup = production.currentSetup;
 
   return (
     <div style={{ padding: '32px 28px', maxWidth: 840 }}>
@@ -14,7 +14,7 @@ export default function WardrobeTalent() {
           Wardrobe & Talent
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-          Character continuity · Scene 42 · Setup 14B
+          Character continuity · Scene {setup.scene} · Setup {setup.setupNumber}
         </p>
       </div>
 
@@ -22,7 +22,7 @@ export default function WardrobeTalent() {
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 20 }}>
           <div style={{
-            width: 64, height: 64, borderRadius: 3,
+            width: 64, height: 64, borderRadius: 12,
             background: 'linear-gradient(135deg, #4a6741 0%, #8b7355 50%, #2d3748 100%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color: '#fff', fontSize: 24, fontWeight: 700
@@ -36,7 +36,7 @@ export default function WardrobeTalent() {
             </div>
             <div style={{ marginTop: 8, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {look.items.map(item => (
-                <span key={item} style={{ padding: '4px 10px', background: 'var(--workspace-bg)', borderRadius: 2, fontSize: 12, fontWeight: 500 }}>
+                <span key={item} style={{ padding: '4px 10px', background: 'var(--workspace-bg)', borderRadius: 6, fontSize: 12, fontWeight: 500 }}>
                   {item}
                 </span>
               ))}
@@ -45,7 +45,7 @@ export default function WardrobeTalent() {
         </div>
 
         {/* Continuity notes */}
-        <div style={{ background: 'var(--workspace-bg)', borderRadius: 3, padding: 16, marginBottom: 16 }}>
+        <div style={{ background: 'var(--workspace-bg)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 12 }}>
             Continuity State
           </div>
@@ -61,9 +61,9 @@ export default function WardrobeTalent() {
 
         {/* Photo placeholders */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
-          {['Front', 'Back', 'Detail: Cuff'].map(label => (
+          {['Front', 'Back', 'Detail: Cuff'].map((label) => (
             <div key={label} style={{ 
-              aspectRatio: '4/3', background: 'var(--border)', borderRadius: 3, 
+              aspectRatio: '4/3', background: '#e5e2dc', borderRadius: 8, 
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexDirection: 'column', gap: 6
             }}>
@@ -77,7 +77,7 @@ export default function WardrobeTalent() {
         {look.resetRequired && (
           <div style={{ 
             display: 'flex', alignItems: 'center', gap: 10, padding: 12, 
-            background: 'var(--red-light)', borderRadius: 3, marginBottom: 16 
+            background: 'var(--red-light)', borderRadius: 8, marginBottom: 16 
           }}>
             <AlertCircle size={16} style={{ color: 'var(--red)', flexShrink: 0 }} />
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--red)' }}>
@@ -87,25 +87,19 @@ export default function WardrobeTalent() {
         )}
 
         {/* Action buttons */}
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button
-            onClick={markActorReady}
-            disabled={actorReady}
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button 
+            onClick={() => { setActorReady(true); if (lightingReady) setHoldState('ready'); }}
             className="btn btn-primary"
           >
             <CheckCircle size={16} /> Actor Ready
           </button>
-          <AckButton
-            label="Continuity Issue"
-            icon={<AlertCircle size={16} />}
-            onAck={() => logAction('Continuity issue flagged', `${look.character}, Look ${look.lookNumber} continuity flagged for review`)}
-          />
-          <AckButton
-            label="Reset Needed"
-            icon={<Clock size={16} />}
-            variant="danger"
-            onAck={() => logAction('Reset requested', `${look.character} needs a wardrobe reset before next take`)}
-          />
+          <button className="btn btn-secondary">
+            <AlertCircle size={16} /> Continuity Issue
+          </button>
+          <button className="btn btn-danger">
+            <Clock size={16} /> Reset Needed
+          </button>
         </div>
       </div>
 

@@ -1,48 +1,27 @@
 import { useApp } from '../App';
 import { ChevronDown, User } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import type { Role } from '../types';
 
 const roles: Role[] = [
-  '1st AD', 'Director', 'DP', 'Gaffer',
+  '1st AD', 'Director', 'DP', 'Gaffer', 
   'Script Supervisor', 'Wardrobe', 'Talent Assistant', 'Producer'
 ];
 
 export default function RoleSwitcher() {
   const { role, setRole } = useApp();
   const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const handlePointerDown = (e: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('pointerdown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [open]);
 
   return (
-    <div ref={rootRef} style={{ position: 'relative' }}>
+    <div style={{ position: 'relative' }}>
       <button
         onClick={() => setOpen(!open)}
-        aria-haspopup="listbox"
-        aria-expanded={open}
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 10,
           padding: '10px 14px',
-          borderRadius: 3,
+          borderRadius: 8,
           background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.1)',
           color: '#fff',
@@ -52,9 +31,9 @@ export default function RoleSwitcher() {
           width: '100%'
         }}
       >
-        <User size={16} style={{ color: 'var(--rail-muted)' }} />
+        <User size={16} style={{ color: '#9a9aa3' }} />
         <span style={{ flex: 1, textAlign: 'left' }}>{role}</span>
-        <ChevronDown size={14} style={{ color: 'var(--rail-muted)', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+        <ChevronDown size={14} style={{ color: '#9a9aa3', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
       </button>
 
       {open && (
@@ -63,10 +42,11 @@ export default function RoleSwitcher() {
           bottom: 'calc(100% + 6px)',
           left: 0,
           right: 0,
-          background: '#1c1c1f',
-          border: '1px solid var(--rail-muted)',
-          borderRadius: 3,
+          background: '#25252b',
+          border: '1px solid var(--nav-border)',
+          borderRadius: 10,
           padding: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
           zIndex: 100
         }}>
           {roles.map(r => (
@@ -77,10 +57,10 @@ export default function RoleSwitcher() {
                 display: 'block',
                 width: '100%',
                 padding: '8px 12px',
-                borderRadius: 2,
+                borderRadius: 6,
                 border: 'none',
                 background: role === r ? 'rgba(255,255,255,0.1)' : 'transparent',
-                color: role === r ? '#fff' : 'var(--rail-muted)',
+                color: role === r ? '#fff' : '#9a9aa3',
                 fontSize: 13,
                 fontWeight: role === r ? 600 : 500,
                 cursor: 'pointer',

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { production, retakeCauses } from '../data/seed';
-import { useApp } from '../App';
-import { Clapperboard, Camera, AlertCircle, CheckCircle, XCircle, Clock, User, Zap, Mic, Box, Wrench, Film, Timer } from 'lucide-react';
+import { Clapperboard, Camera, AlertCircle, User, Zap, Mic, Box, Wrench, Film, Timer } from 'lucide-react';
 import type { RetakeCause } from '../types';
 
 function ArrowRightIcon({ size, style }: { size: number; style?: React.CSSProperties }) {
@@ -13,17 +12,9 @@ function ArrowRightIcon({ size, style }: { size: number; style?: React.CSSProper
 }
 
 export default function LiveTake() {
-  const { takes, recordTakeOutcome } = useApp();
   const setup = production.currentSetup;
   const [selectedCauses, setSelectedCauses] = useState<RetakeCause[]>([]);
   const [createdTasks, setCreatedTasks] = useState<{role: string; task: string}[]>([]);
-  const [decided, setDecided] = useState(false);
-
-  const decide = (result: 'print' | 'hold' | 'noGood') => {
-    if (decided) return;
-    setDecided(true);
-    recordTakeOutcome(result, selectedCauses, selectedCauses.length ? '' : 'No cause selected');
-  };
 
   const toggleCause = (cause: RetakeCause) => {
     if (selectedCauses.includes(cause)) {
@@ -79,7 +70,7 @@ export default function LiveTake() {
       {/* Take timeline */}
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'var(--red-light)', borderRadius: 3, color: 'var(--red)', fontWeight: 700, fontSize: 13 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'var(--red-light)', borderRadius: 8, color: 'var(--red)', fontWeight: 700, fontSize: 13 }}>
             <Clapperboard size={16} />
             CUT — Take {setup.takes.length} NO GOOD
           </div>
@@ -92,7 +83,7 @@ export default function LiveTake() {
           {['Camera ready', 'Actors to marks', 'Action', 'Cut', 'Reset required'].map((step, i) => (
             <div key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{
-                padding: '6px 12px', borderRadius: 2, fontSize: 12, fontWeight: 600,
+                padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 600,
                 background: i < 4 ? 'var(--teal-light)' : 'var(--red-light)',
                 color: i < 4 ? 'var(--teal)' : 'var(--red)'
               }}>
@@ -120,7 +111,7 @@ export default function LiveTake() {
               onClick={() => toggleCause(cause)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 6,
-                padding: '8px 14px', borderRadius: 3, fontSize: 12, fontWeight: 600,
+                padding: '8px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
                 border: '1px solid',
                 borderColor: selectedCauses.includes(cause) ? 'var(--teal)' : 'var(--border)',
                 background: selectedCauses.includes(cause) ? 'var(--teal-light)' : 'var(--workspace-surface)',
@@ -146,15 +137,14 @@ export default function LiveTake() {
 
       {/* Created tasks */}
       {createdTasks.length > 0 && (
-        <div className="card" style={{ padding: 24, marginBottom: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 16 }}>
-            <span aria-hidden="true" style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--violet)', flexShrink: 0 }} />
+        <div className="card" style={{ padding: 24, marginBottom: 16, borderLeft: '4px solid var(--violet)' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 16 }}>
             Who needs to act
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {createdTasks.map((task, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, background: 'var(--workspace-bg)', borderRadius: 3 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 3, background: 'var(--violet-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--violet)' }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, background: 'var(--workspace-bg)', borderRadius: 8 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--violet-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--violet)' }}>
                   <User size={16} />
                 </div>
                 <div>
@@ -167,53 +157,23 @@ export default function LiveTake() {
         </div>
       )}
 
-      {/* Record outcome */}
-      <div className="card" style={{ padding: 24, marginBottom: 16 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 12 }}>
-          Record Take Outcome
-        </div>
-        {decided ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: 'var(--text-secondary)' }}>
-            <CheckCircle size={16} style={{ color: 'var(--teal)' }} />
-            Recorded as Take {takes.length}. It now appears in the history below and on Take Intelligence.
-          </div>
-        ) : (
-          <>
-            <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 16 }}>
-              Once camera rolls again on this setup (Take {takes.length + 1}), log what happened — carrying the causes tagged above, if any.
-            </p>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <button onClick={() => decide('print')} className="btn btn-primary">
-                <CheckCircle size={16} /> Print
-              </button>
-              <button onClick={() => decide('hold')} className="btn btn-secondary">
-                <Clock size={16} /> Hold
-              </button>
-              <button onClick={() => decide('noGood')} className="btn btn-danger">
-                <XCircle size={16} /> No Good
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-
       {/* Take history */}
       <div className="card" style={{ padding: 24 }}>
         <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 16 }}>
           Take history — Setup {setup.setupNumber}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {takes.map(take => (
+          {setup.takes.map(take => (
             <div key={take.number} style={{ 
               display: 'flex', alignItems: 'center', gap: 12, padding: 12, 
               background: take.result === 'print' ? 'var(--teal-light)' : 'var(--workspace-bg)',
-              borderRadius: 3 
+              borderRadius: 8 
             }}>
               <span className="mono" style={{ fontSize: 13, fontWeight: 700, minWidth: 60 }}>
                 Take {take.number}
               </span>
               <span style={{ 
-                fontSize: 11, fontWeight: 700, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 2,
+                fontSize: 11, fontWeight: 700, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 4,
                 background: take.result === 'print' ? 'var(--teal)' : take.result === 'hold' ? 'var(--amber)' : 'var(--red)',
                 color: '#fff'
               }}>
