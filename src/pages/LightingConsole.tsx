@@ -31,9 +31,10 @@ export default function LightingConsole() {
         </div>
       </div>
 
-      {/* Task card */}
-      <div className="card" style={{ padding: 24, marginBottom: 16, borderLeft: '4px solid var(--amber)' }}>
-        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 12 }}>
+      {/* Task card — a lamp leads the label, not a border stripe */}
+      <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 12 }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--amber)', flexShrink: 0 }} />
           Current Task
         </div>
         <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>

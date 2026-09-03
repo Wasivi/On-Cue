@@ -63,28 +63,19 @@ export const production: Production = {
         timestamp: '2:18 PM'
       }
     ],
+    // Newest first isn't hand-ordered here — ADCommand sorts this list by
+    // `timestamp` itself, so the array order below doesn't matter; these
+    // times are what actually drive the feed.
     departmentStatuses: [
-      {
-        department: 'Camera',
-        status: 'ready',
-        owner: 'Sarah Chen, 1st AC',
-        blockerCount: 0,
-        currentTask: 'Steadicam balanced, lens checked, focus marks set'
-      },
-      {
-        department: 'Sound',
-        status: 'ready',
-        owner: 'Marcus Webb, Sound Mixer',
-        blockerCount: 0,
-        currentTask: 'Boom positioned, lavs on principals, helicopter window logged'
-      },
       {
         department: 'Set/Props',
         status: 'inProgress',
         eta: '2 min',
         owner: 'Jenna Park, Set Decorator',
         blockerCount: 1,
-        currentTask: 'Prop weapons reset — armorer verifying blanks'
+        currentTask: 'Prop weapons reset — armorer verifying blanks',
+        timestamp: '2:14 PM',
+        history: [{ note: 'Reported ready, then flagged for armorer recheck after mag swap', timestamp: '2:08 PM' }]
       },
       {
         department: 'Lighting',
@@ -92,7 +83,9 @@ export const production: Production = {
         eta: '4 min',
         owner: 'Rico Torres, Gaffer',
         blockerCount: 1,
-        currentTask: 'Adjust key light for tactical vest exposure at mark 3'
+        currentTask: 'Adjust key light for tactical vest exposure at mark 3',
+        timestamp: '2:12 PM',
+        history: [{ note: 'Key light flagged too hot on tactical patch during Take 2', timestamp: '1:56 PM' }]
       },
       {
         department: 'Talent',
@@ -100,40 +93,103 @@ export const production: Production = {
         eta: '3 min',
         owner: 'Dana Lee, 2nd AD',
         blockerCount: 1,
-        currentTask: 'Marcus line rehearsal — "Freeze — DSI!" reset'
+        currentTask: 'Marcus line rehearsal — "Freeze — DSI!" reset',
+        timestamp: '2:10 PM',
+        history: [{ note: 'Line flub on Take 5, requested one more pass', timestamp: '2:03 PM' }]
       },
       {
         department: 'Wardrobe',
         status: 'ready',
         owner: 'Maya Johnson, Key Costumer',
         blockerCount: 0,
-        currentTask: 'Tactical vests checked — DSI patches aligned, knee pads set'
+        currentTask: 'Tactical vests checked — DSI patches aligned, knee pads set',
+        timestamp: '2:05 PM',
+        history: [{ note: 'Vests pulled for inspection ahead of setup 23B', timestamp: '1:47 PM' }]
+      },
+      {
+        department: 'Sound',
+        status: 'ready',
+        owner: 'Marcus Webb, Sound Mixer',
+        blockerCount: 0,
+        currentTask: 'Boom positioned, lavs on principals, helicopter window logged',
+        timestamp: '2:01 PM'
+      },
+      {
+        department: 'Camera',
+        status: 'ready',
+        owner: 'Sarah Chen, 1st AC',
+        blockerCount: 0,
+        currentTask: 'Steadicam balanced, lens checked, focus marks set',
+        timestamp: '1:58 PM'
       },
       {
         department: 'Location',
         status: 'ready',
         owner: 'Alex Rivera, Location Manager',
         blockerCount: 0,
-        currentTask: 'Permit active, Riverside Collision Center locked, neighbors notified'
+        currentTask: 'Permit active, Riverside Collision Center locked, neighbors notified',
+        timestamp: '1:52 PM'
       }
     ]
   }
 };
 
-export const agentLook: CharacterLook = {
-  character: 'Special Agent Ray Castillo',
-  scene: 23,
-  lookNumber: 2,
-  items: ['DSI tactical vest (yellow lettering)', 'Navy blue tactical shirt', 'Black cargo pants', 'Black tactical boots', 'Glock 19 holster', 'Radio earpiece'],
-  continuityNotes: [
-    'Vest has dust smudge on right shoulder from door breach in Scene 19',
-    'Left knee pad shifted during previous take — needs repositioning',
-    'Radio earpiece wire visible on left side — do not tuck in',
-    'Boots have concrete dust from warehouse floor'
-  ],
-  fittingStatus: 'fitted',
-  resetRequired: true
-};
+// The full cast, not one fixed character — Wardrobe needs to be able to
+// pick whoever's actually in the next scene, and that changes shoot to
+// shoot.
+export const castLooks: CharacterLook[] = [
+  {
+    character: 'Special Agent Ray Castillo',
+    scene: 23,
+    lookNumber: 2,
+    items: ['DSI tactical vest (yellow lettering)', 'Navy blue tactical shirt', 'Black cargo pants', 'Black tactical boots', 'Glock 19 holster', 'Radio earpiece'],
+    continuityNotes: [
+      'Vest has dust smudge on right shoulder from door breach in Scene 19',
+      'Left knee pad shifted during previous take — needs repositioning',
+      'Radio earpiece wire visible on left side — do not tuck in',
+      'Boots have concrete dust from warehouse floor'
+    ],
+    fittingStatus: 'fitted',
+    resetRequired: true
+  },
+  {
+    character: 'Special Agent Elena Cross',
+    scene: 23,
+    lookNumber: 2,
+    items: ['DSI tactical vest (yellow lettering)', 'Charcoal tactical shirt', 'Black cargo pants', 'Black tactical boots', 'Sidearm holster', 'Radio earpiece'],
+    continuityNotes: [
+      'Hair tie visible in Scene 22 — must match going into 23',
+      'Vest strap tightened one notch after wardrobe check'
+    ],
+    fittingStatus: 'fitted',
+    resetRequired: false
+  },
+  {
+    character: 'Warren Locke',
+    scene: 23,
+    lookNumber: 1,
+    items: ['Grey work jacket', 'Stained white t-shirt', 'Dark denim', 'Work boots'],
+    continuityNotes: [
+      'Jacket tear on left sleeve from Scene 19 stunt — practical, do not repair',
+      'Boots need fresh mud application before each take'
+    ],
+    fittingStatus: 'issue',
+    resetRequired: true
+  },
+  {
+    character: 'Miles Ferro',
+    scene: 23,
+    lookNumber: 1,
+    items: ['DSI windbreaker', 'Plain navy tee', 'Khaki pants', 'Duty boots'],
+    continuityNotes: [
+      'Windbreaker zipper stuck at 3/4 in most recent take'
+    ],
+    fittingStatus: 'pending',
+    resetRequired: false
+  }
+];
+
+export const agentLook: CharacterLook = castLooks[0];
 
 export const timeLossData: TimeLoss[] = [
   { cause: 'Actor performance / line', minutes: 14, setupCount: 3 },

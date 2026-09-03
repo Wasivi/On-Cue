@@ -38,6 +38,14 @@ export interface DepartmentStatus {
   owner: string;
   blockerCount: number;
   currentTask: string;
+  /** When this status was last reported — every entry is timestamped so
+   *  the feed can always sort newest-first instead of showing one fixed
+   *  snapshot order. */
+  timestamp: string;
+  /** Earlier reports for this department, most recent first — what "···
+   *  More" reveals. Most people only care what's true right now; this is
+   *  for the rare moment someone actually wants the history. */
+  history?: { note: string; timestamp: string }[];
 }
 
 export interface Take {

@@ -11,9 +11,10 @@
   --dsi-dark: #0a0e17;
   --dsi-navy: #0f1b2e;
 
-  /* Nav — deep DSI navy */
-  --nav-bg: #0a0e17;
-  --nav-border: #1a2332;
+  /* Nav — pulled from the landing page's own gradient, not a generic
+     near-black, so the app and the landing page read as one identity */
+  --nav-bg: #0a2a3a;
+  --nav-border: #1c4256;
 
   /* Workspace — cool gray, not warm */
   --workspace-bg: #e8eaed;
@@ -164,10 +165,6 @@ html, body, #root {
   transform: translateY(-1px);
 }
 
-.card-status-ready { border-left: 3px solid var(--teal); }
-.card-status-hold { border-left: 3px solid var(--red); }
-.card-status-risk { border-left: 3px solid var(--amber); }
-.card-status-gold { border-left: 3px solid var(--gold); }
 
 /* ===== BUTTONS ===== */
 .btn {

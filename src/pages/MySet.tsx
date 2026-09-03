@@ -1,6 +1,6 @@
 import { useApp } from '../App';
 import { production, roleDescriptions } from '../data/seed';
-import { Clock, MapPin, AlertCircle, CheckCircle, XCircle, ChevronRight, Shield } from 'lucide-react';
+import { Clock, MapPin, AlertCircle, CheckCircle, XCircle, ChevronRight } from 'lucide-react';
 
 export default function MySet() {
   const { role, holdState, lightingReady, actorReady, setLightingReady, setActorReady, setHoldState } = useApp();
@@ -111,20 +111,20 @@ export default function MySet() {
             {roleDescriptions[role]}
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <Shield size={20} style={{ color: '#1a5f7a' }} />
-          <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em' }}>
-            My Set
-          </h1>
-        </div>
+        <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
+          My Set
+        </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
           {production.title} · S{production.season}E{production.episode} "{production.episodeTitle}" · Shoot Day {production.shootDay}
         </p>
       </div>
 
-      {/* NOW card */}
-      <div className="card" style={{ padding: 24, marginBottom: 16, borderLeft: `3px solid ${holdState === 'hold' ? '#c53030' : holdState === 'ready' ? '#1a5f7a' : '#7c3aed'}` }}>
-        <div className="section-label">NOW</div>
+      {/* NOW card — a lamp leads the label, not a border stripe */}
+      <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+        <div className="section-label" style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: holdState === 'hold' ? '#c53030' : holdState === 'ready' ? '#1a5f7a' : '#7c3aed', flexShrink: 0 }} />
+          NOW
+        </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
           <span style={{ fontSize: 20, fontWeight: 700 }}>Setup {setup.setupNumber}</span>
           <span style={{ color: 'var(--text-secondary)', fontSize: 14 }}>·</span>

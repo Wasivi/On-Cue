@@ -1,7 +1,7 @@
 import { useApp } from '../App';
-import { Upload, FileSpreadsheet, Sparkles, CheckCircle, ArrowRight, Shield } from 'lucide-react';
+import { Upload, FileSpreadsheet, Sparkles, CheckCircle, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
-import { callSheetData } from '../data/seed';
+import { callSheetData, production } from '../data/seed';
 
 export default function Onboarding() {
   const { setPage } = useApp();
@@ -25,31 +25,35 @@ export default function Onboarding() {
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', padding: '60px 24px' }}>
       <div style={{ textAlign: 'center', marginBottom: 48 }}>
-        <div style={{
-          width: 64, height: 64, borderRadius: 12,
-          background: '#e6b800',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 20px',
-          color: '#0a0e17'
-        }}>
-          <Shield size={28} />
-        </div>
-        <div style={{ color: '#e6b800', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>
+        {/* No separate mark here — Layout already puts one next to "On
+            Cue" at the top of every page, this one was a redundant second
+            copy. One mark, made to carry the weight, instead of two. */}
+        {/* Bigger — already Playfair by inheritance, just needed more
+            presence. */}
+        <div style={{ color: '#e6b800', fontSize: 21, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
           DSI PRODUCTION
         </div>
-        <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, letterSpacing: '-0.02em' }}>
+        {/* White, like the "On Cue" wordmark — this sits directly on the
+            page's dark-to-light gradient now, not a white background. */}
+        <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, letterSpacing: '-0.02em', color: '#ffffff' }}>
           Create Today's Set
         </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>
-          S8E9 "Lone Wolf" · Shoot Day 9 · NYC
+        {/* Show name leads, then season/episode/day — the show itself was
+            missing before, only the episode info showed. */}
+        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 15, fontWeight: 700 }}>
+          {production.title} · S{production.season}E{production.episode} "{production.episodeTitle}" · Shoot Day {production.shootDay} · NYC
         </p>
       </div>
 
       {step === 'choose' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* Zigzag: this one sits flush left, the next starts further
+              right (roughly under where "Call" falls in this label), the
+              third moves back — a staggered column, not a flush stack. */}
           <button onClick={startImport} className="card" style={{
-            padding: 24, textAlign: 'left', cursor: 'pointer', border: '1px solid var(--border)',
-            display: 'flex', alignItems: 'flex-start', gap: 16, background: 'var(--workspace-surface)'
+            padding: '8px 20px', textAlign: 'left', cursor: 'pointer', border: '1px solid var(--border)',
+            display: 'flex', alignItems: 'flex-start', gap: 16, background: 'var(--workspace-surface)',
+            borderRadius: 28, width: '88%', marginLeft: 0
           }}>
             <div style={{ padding: 10, borderRadius: 8, background: '#e0f2f7', color: '#1a5f7a' }}>
               <Upload size={22} />
@@ -62,8 +66,9 @@ export default function Onboarding() {
           </button>
 
           <button onClick={startImport} className="card" style={{
-            padding: 24, textAlign: 'left', cursor: 'pointer', border: '1px solid var(--border)',
-            display: 'flex', alignItems: 'flex-start', gap: 16, background: 'var(--workspace-surface)'
+            padding: '8px 20px', textAlign: 'left', cursor: 'pointer', border: '1px solid var(--border)',
+            display: 'flex', alignItems: 'flex-start', gap: 16, background: 'var(--workspace-surface)',
+            borderRadius: 28, width: 'calc(68% + 55px)', marginLeft: '30%'
           }}>
             <div style={{ padding: 10, borderRadius: 8, background: '#ede9fe', color: '#553c9a' }}>
               <FileSpreadsheet size={22} />
@@ -76,8 +81,9 @@ export default function Onboarding() {
           </button>
 
           <button onClick={startImport} className="card" style={{
-            padding: 24, textAlign: 'left', cursor: 'pointer', border: '1px solid var(--border)',
-            display: 'flex', alignItems: 'flex-start', gap: 16, background: 'var(--workspace-surface)'
+            padding: '8px 20px', textAlign: 'left', cursor: 'pointer', border: '1px solid var(--border)',
+            display: 'flex', alignItems: 'flex-start', gap: 16, background: 'var(--workspace-surface)',
+            borderRadius: 28, width: '76%', alignSelf: 'center'
           }}>
             <div style={{ padding: 10, borderRadius: 8, background: '#fef6e6', color: '#c9870a' }}>
               <Sparkles size={22} />

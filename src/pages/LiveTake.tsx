@@ -135,10 +135,11 @@ export default function LiveTake() {
         </button>
       </div>
 
-      {/* Created tasks */}
+      {/* Created tasks — a lamp leads the label, not a border stripe */}
       {createdTasks.length > 0 && (
-        <div className="card" style={{ padding: 24, marginBottom: 16, borderLeft: '4px solid var(--violet)' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 16 }}>
+        <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 16 }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--violet)', flexShrink: 0 }} />
             Who needs to act
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

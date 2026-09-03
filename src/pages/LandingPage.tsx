@@ -67,7 +67,7 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
           left — no second/third stretched copy competing with it or
           flattening the read of it as an actual rotating sphere. */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
-        <Constellation onEnter={onEnter} originXFrac={0.16} originYFrac={0.52} radiusFrac={1.05} interactive />
+        <Constellation onEnter={onEnter} originXFrac={0.12} originYFrac={0.32} radiusFrac={1.3} interactive />
       </div>
 
       {/* Subtle vignette overlay */}
@@ -191,11 +191,13 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
         </div>
       </div>
 
-      {/* Main content area — right side, clear of the skeleton anchored left */}
+      {/* Main content area — right-aligned, but narrower now so the
+          wordmark sits closer to the constellation's mass instead of
+          floating far off at the far right edge. */}
       <div style={{
         flex: 1,
         width: '100%',
-        maxWidth: 1200,
+        maxWidth: 920,
         padding: '24px 32px',
         display: 'flex',
         flexDirection: 'column',

@@ -651,11 +651,12 @@ export default function Constellation({
         // should visibly thicken, not just brighten. But only a couple of
         // bones are actually bold; the rest of the gold reads as normal
         // structure, not a wall of thick lines.
-        const widthMul = kind === 'bone' ? (boneIsBold ? 2.2 : 1.15) : kind === 'extra' ? 1.3 : 0.9;
+        const widthMul = kind === 'bone' ? (boneIsBold ? 1.25 : 1.15) : kind === 'extra' ? 1.3 : 0.9;
         // Bold means bold — even rotated to the back of the sphere, where
         // avgScale is small, a bold bone still reads as a bone, not a
         // thread. Non-bold lines keep the full proximity-driven range.
-        const widthFloor = kind === 'bone' && boneIsBold ? 1.1 : 0.4;
+        // Kept modest — bold is a light emphasis here, not a heavy stripe.
+        const widthFloor = kind === 'bone' && boneIsBold ? 0.75 : 0.4;
 
         ctx.beginPath();
         ctx.moveTo(pFrom.x, pFrom.y);
@@ -722,7 +723,7 @@ export default function Constellation({
         const isConnectedToHover = hoveredNode && (hoveredNode === edge.from || hoveredNode === edge.to);
         const base = cfg.bold ? 0.32 : 0.14;
         const opacity = (hoveredNode ? (isConnectedToHover ? 0.6 : 0.05) : base) * Math.min(avgScale, 1.3);
-        const widthMul = cfg.bold ? 2.0 : 1.1;
+        const widthMul = cfg.bold ? 1.7 : 1.1;
         // Same rule as the gold: a bold silver bar stays bold when it
         // rotates to the back of the sphere, not just when it's up front.
         const widthFloor = cfg.bold ? 1.0 : 0.4;
