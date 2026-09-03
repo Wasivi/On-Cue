@@ -98,6 +98,171 @@
         ],
         "createdAt": "2026-08-26T20:03:31.866Z",
         "reason": "user-directed: wordmark brand palette, see #1B3A6B reason"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#e6b800",
+        "createdAt": "2026-09-02T20:54:29.332Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(230,184,0,0.5)",
+        "createdAt": "2026-09-02T20:54:29.365Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#c9a227",
+        "createdAt": "2026-09-02T20:54:29.397Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(201,162,39,0.4)",
+        "createdAt": "2026-09-02T20:54:29.428Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#8ab4c7",
+        "createdAt": "2026-09-02T20:54:29.459Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(138,180,199,0.4)",
+        "createdAt": "2026-09-02T20:54:29.488Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#6b9ab0",
+        "createdAt": "2026-09-02T20:54:29.516Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(107,154,176,0.3)",
+        "createdAt": "2026-09-02T20:54:29.545Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#5a8a9e",
+        "createdAt": "2026-09-02T20:54:29.574Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(90,138,158,0.3)",
+        "createdAt": "2026-09-02T20:54:29.603Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#4a7a8e",
+        "createdAt": "2026-09-02T20:54:29.630Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#0f1f2e",
+        "createdAt": "2026-09-02T20:54:29.658Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(138,180,199,0.25)",
+        "createdAt": "2026-09-02T20:54:29.688Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#e8f0f5",
+        "createdAt": "2026-09-02T20:54:29.717Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#0d3a4d",
+        "createdAt": "2026-09-02T20:54:29.748Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#0a2a3a",
+        "createdAt": "2026-09-02T20:54:29.777Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#071820",
+        "createdAt": "2026-09-02T20:54:29.806Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#051015",
+        "createdAt": "2026-09-02T20:54:29.833Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(5,16,21,0.55)",
+        "createdAt": "2026-09-02T20:54:29.862Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(5,16,21,0.35)",
+        "createdAt": "2026-09-02T20:54:29.890Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(230,184,0,0.14)",
+        "createdAt": "2026-09-02T20:54:29.917Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#0a1620",
+        "createdAt": "2026-09-02T20:54:29.947Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(230,184,0,0.25)",
+        "createdAt": "2026-09-02T20:54:29.975Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#0a0e17",
+        "createdAt": "2026-09-02T20:54:30.004Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(138,180,199,0.15)",
+        "createdAt": "2026-09-02T20:54:30.031Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#4a6b7d",
+        "createdAt": "2026-09-02T20:54:30.061Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#5a7d8e",
+        "createdAt": "2026-09-02T20:54:30.089Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(7,24,32,0.6)",
+        "createdAt": "2026-09-02T20:54:30.118Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#e2d6ac",
+        "createdAt": "2026-09-02T21:51:03.936Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#6f9db3",
+        "createdAt": "2026-09-02T21:51:03.972Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#ece7d8",
+        "createdAt": "2026-09-02T22:13:40.468Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#e1ded2",
+        "createdAt": "2026-09-02T22:55:28.265Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(5,16,21,0.4)",
+        "createdAt": "2026-09-02T22:55:28.299Z"
       }
     ]
   }

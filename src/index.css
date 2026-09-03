@@ -59,7 +59,7 @@
 
 html, body, #root {
   height: 100%;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
   background: var(--workspace-bg);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;

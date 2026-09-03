@@ -1,8 +1,9 @@
 import { useApp } from '../App';
 import RoleSwitcher from './RoleSwitcher';
-import { 
-  Clapperboard, LayoutDashboard, Radio, Zap, 
-  Shirt, Brain, RotateCcw 
+import MiniConstellation from './MiniConstellation';
+import {
+  Clapperboard, LayoutDashboard, Radio, Zap,
+  Shirt, Brain, RotateCcw
 } from 'lucide-react';
 import type { Page } from '../App';
 
@@ -31,23 +32,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         flexShrink: 0
       }}>
         <div style={{ marginBottom: 28 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            {/* Flat logo mark */}
-            <div style={{
-              width: 36, height: 36, borderRadius: 6,
-              background: '#e6b800',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="0" y="0" width="32" height="32" rx="6" fill="#0a0e17"/>
-                <text x="16" y="21" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="14" fontWeight="900" fill="#e6b800" letterSpacing="-0.02em">OC</text>
-              </svg>
-            </div>
+          <button
+            onClick={() => setPage('landing')}
+            title="Back to the home page"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4,
+              background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left'
+            }}
+          >
+            <MiniConstellation size={36} />
             <div>
-              <span style={{ color: '#fff', fontWeight: 800, fontSize: 16, letterSpacing: '-0.02em' }}>On Cue</span>
+              <span style={{ fontFamily: "'Big Caslon', 'Big Caslon Medium', Didot, Georgia, serif", fontStyle: 'normal', color: '#e1ded2', fontWeight: 500, fontSize: 17, letterSpacing: '-0.01em' }}>On Cue</span>
               <div style={{ color: '#e6b800', fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', marginTop: 1 }}>DSI PRODUCTION</div>
             </div>
-          </div>
+          </button>
           <div style={{ color: '#4a5568', fontSize: 11, marginLeft: 46, marginTop: 4 }}>
             S8E9 "Lone Wolf" · Day 9
           </div>
