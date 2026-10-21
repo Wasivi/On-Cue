@@ -9,8 +9,10 @@ import LightingConsole from './pages/LightingConsole';
 import WardrobeTalent from './pages/WardrobeTalent';
 import TakeIntelligence from './pages/TakeIntelligence';
 import Onboarding from './pages/Onboarding';
+import DepartmentContinuity from './pages/DepartmentContinuity';
+import BudgetImpact from './pages/BudgetImpact';
 
-export type Page = 'landing' | 'onboarding' | 'myset' | 'adcommand' | 'livetake' | 'lighting' | 'wardrobe' | 'intelligence';
+export type Page = 'landing' | 'onboarding' | 'myset' | 'adcommand' | 'livetake' | 'lighting' | 'wardrobe' | 'intelligence' | 'continuity' | 'budget';
 
 interface AppContextType {
   role: Role;
@@ -72,6 +74,8 @@ function App() {
           {page === 'lighting' && <LightingConsole />}
           {page === 'wardrobe' && <WardrobeTalent />}
           {page === 'intelligence' && <TakeIntelligence />}
+          {page === 'continuity' && <DepartmentContinuity />}
+          {page === 'budget' && <BudgetImpact />}
         </Layout>
       )}
     </AppContext.Provider>

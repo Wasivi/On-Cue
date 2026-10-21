@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import { useApp } from '../App';
+import type { Page } from '../App';
 import { production } from '../data/seed';
 import { Clock, AlertCircle, Radio, ArrowRight } from 'lucide-react';
+
+// Only departments with a real page to land on are clickable — Props and
+// Art Department are status-only by design (BUILD_SPEC.md), so Camera,
+// Sound, Talent, and Location stay plain text until that changes.
+const DEPARTMENT_LINK: Record<string, Page> = {
+  'Wardrobe': 'wardrobe',
+  'Set/Props': 'continuity',
+};
 
 // "2:14 PM" → minutes since midnight, so the feed can sort on the actual
 // time rather than the order departments happen to be authored in.
@@ -46,7 +55,7 @@ const BRICK_COLS: [number, number][] = [
 ];
 
 export default function ADCommand() {
-  const { role, holdState, setHoldState, lightingReady, actorReady } = useApp();
+  const { role, holdState, setHoldState, lightingReady, actorReady, setPage } = useApp();
   const setup = production.currentSetup;
   const [openDetails, setOpenDetails] = useState<Set<string>>(new Set());
 
@@ -154,7 +163,21 @@ export default function ADCommand() {
                   width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
                   background: dept.status === 'ready' ? 'var(--teal)' : dept.status === 'inProgress' ? 'var(--bronze)' : 'var(--stop-red)'
                 }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', whiteSpace: 'nowrap' }}>{dept.department}</span>
+                {DEPARTMENT_LINK[dept.department] ? (
+                  <button
+                    onClick={() => setPage(DEPARTMENT_LINK[dept.department])}
+                    title={`Open ${dept.department}`}
+                    style={{
+                      fontSize: 13, fontWeight: 700, color: 'var(--teal-text)', whiteSpace: 'nowrap',
+                      border: 'none', background: 'none', padding: 0, cursor: 'pointer', textDecoration: 'underline',
+                      textDecorationColor: 'rgba(138,180,199,0.4)'
+                    }}
+                  >
+                    {dept.department}
+                  </button>
+                ) : (
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', whiteSpace: 'nowrap' }}>{dept.department}</span>
+                )}
                 {/* The pill carries both status and recency together —
                     the single most important fact about this chip, in
                     one place, not split across two labels. */}

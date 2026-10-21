@@ -1,12 +1,15 @@
-export type Role = 
-  | '1st AD' 
-  | 'Director' 
-  | 'DP' 
-  | 'Gaffer' 
-  | 'Script Supervisor' 
-  | 'Wardrobe' 
-  | 'Talent Assistant' 
-  | 'Producer';
+export type Role =
+  | '1st AD'
+  | 'Director'
+  | 'DP'
+  | 'Gaffer'
+  | 'Script Supervisor'
+  | 'Wardrobe'
+  | 'Talent Assistant'
+  | 'Producer'
+  | 'Props'
+  | 'Art Department'
+  | 'UPM';
 
 export type Department = 
   | 'Camera' 

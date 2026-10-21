@@ -4,7 +4,7 @@ import MiniConstellation from './MiniConstellation';
 import { useEffect, useRef, useState } from 'react';
 import {
   Clapperboard, LayoutDashboard, Radio, Zap,
-  Shirt, Brain, RotateCcw
+  Shirt, Brain, RotateCcw, Box, DollarSign
 } from 'lucide-react';
 import type { Page } from '../App';
 
@@ -14,7 +14,9 @@ const navItems: { page: Page; label: string; icon: React.ReactNode }[] = [
   { page: 'livetake', label: 'Live Take', icon: <Radio size={20} /> },
   { page: 'lighting', label: 'Lighting', icon: <Zap size={20} /> },
   { page: 'wardrobe', label: 'Wardrobe', icon: <Shirt size={20} /> },
+  { page: 'continuity', label: 'Continuity', icon: <Box size={20} /> },
   { page: 'intelligence', label: 'Intelligence', icon: <Brain size={20} /> },
+  { page: 'budget', label: 'Budget', icon: <DollarSign size={20} /> },
 ];
 
 const BOTTOM_H = 68;

@@ -5,7 +5,8 @@ import type { Role } from '../types';
 
 const roles: Role[] = [
   '1st AD', 'Director', 'DP', 'Gaffer',
-  'Script Supervisor', 'Wardrobe', 'Talent Assistant', 'Producer'
+  'Script Supervisor', 'Wardrobe', 'Talent Assistant', 'Producer',
+  'Props', 'Art Department', 'UPM'
 ];
 
 // Lives in the bottom bar's trailing cluster, so it's a small pill and the

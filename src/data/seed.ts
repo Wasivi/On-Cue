@@ -221,8 +221,31 @@ export const roleDescriptions: Record<string, string> = {
   'Script Supervisor': 'Slate, take number, continuity, notes, take quality',
   'Wardrobe': 'Actors needed next, look, continuity photos, reset notes',
   'Talent Assistant': 'Call, scene, wardrobe/makeup readiness, private note',
-  'Producer': 'High-level schedule risk, delay cause, cost/time impact'
+  'Producer': 'High-level schedule risk, delay cause, cost/time impact',
+  'Props': 'Set/prop continuity, clearance tracking, reset notes',
+  'Art Department': 'Set dressing continuity, reset notes',
+  'UPM': 'Budget exposure, cost impact by cause, department spend'
 };
+
+// Fictional blended cost of a minute lost on this shoot day (crew + gear +
+// overtime risk) — a rough "hot cost" multiplier, not a real production's
+// actual rate. Turns Take Intelligence's existing time-lost-by-cause data
+// into dollars for the Budget Impact page, without inventing a second,
+// disconnected dataset.
+export const COST_PER_MINUTE_LOST = 850;
+
+// UPM/Producer-only — never shown to the 1st AD. Fictional allocations for
+// this shoot day, department names matching the Department type used on
+// AD Command's feed.
+export const departmentBudgets: { department: string; allocated: number; spent: number }[] = [
+  { department: 'Camera', allocated: 42000, spent: 36800 },
+  { department: 'Lighting', allocated: 31000, spent: 29400 },
+  { department: 'Set/Props', allocated: 26000, spent: 24750 },
+  { department: 'Talent', allocated: 58000, spent: 52100 },
+  { department: 'Wardrobe', allocated: 18000, spent: 14300 },
+  { department: 'Sound', allocated: 14000, spent: 11200 },
+  { department: 'Location', allocated: 22000, spent: 21400 }
+];
 
 export const callSheetData = {
   crewCount: 87,
