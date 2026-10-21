@@ -63,6 +63,10 @@ export default function LightingConsole() {
   };
 
   const confirmReady = () => {
+    // Reachable straight from the live-video screen via the "skip photo"
+    // button, not just after captureShot() (which already stops the
+    // stream) — without this, skipping the photo leaked the camera.
+    stopStream();
     if (capturedShot) setReferencePhoto(capturedShot);
     setShowCamera(false);
     setCapturedShot(null);
