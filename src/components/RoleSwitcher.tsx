@@ -25,8 +25,8 @@ export default function RoleSwitcher() {
           gap: 6,
           padding: '6px 10px',
           borderRadius: 16,
-          background: 'rgba(255,255,255,0.06)',
-          border: '1px solid rgba(255,255,255,0.1)',
+          background: 'rgba(230,184,0,0.08)',
+          border: '1px solid rgba(138,180,199,0.25)',
           color: '#e1ded2',
           fontSize: 12,
           fontWeight: 600,
@@ -45,11 +45,11 @@ export default function RoleSwitcher() {
           bottom: 'calc(100% + 6px)',
           right: 0,
           width: 200,
-          background: '#0d2836',
-          border: '1px solid var(--nav-border)',
+          background: 'var(--surface-elevated)',
+          border: '1px solid var(--border)',
           borderRadius: 10,
           padding: 6,
-          boxShadow: '0 12px 28px rgba(0,0,0,0.4)',
+          boxShadow: 'var(--shadow-lg)',
           zIndex: 100
         }}>
           {roles.map(r => (
@@ -62,15 +62,15 @@ export default function RoleSwitcher() {
                 padding: '8px 12px',
                 borderRadius: 6,
                 border: 'none',
-                background: role === r ? 'rgba(255,255,255,0.1)' : 'transparent',
-                color: role === r ? '#e8f0f5' : '#9db4c2',
+                background: role === r ? 'rgba(230,184,0,0.12)' : 'transparent',
+                color: role === r ? 'var(--ink)' : 'var(--muted)',
                 fontSize: 13,
                 fontWeight: role === r ? 600 : 500,
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.15s'
               }}
-              onMouseEnter={e => { if (role !== r) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+              onMouseEnter={e => { if (role !== r) e.currentTarget.style.background = 'rgba(230,184,0,0.06)'; }}
               onMouseLeave={e => { if (role !== r) e.currentTarget.style.background = 'transparent'; }}
             >
               {r}

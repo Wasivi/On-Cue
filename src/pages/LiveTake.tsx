@@ -59,10 +59,10 @@ export default function LiveTake() {
   return (
     <div style={{ padding: '32px 28px', maxWidth: 960 }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
+        <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 22, fontWeight: 700, color: 'var(--ink-warm)', marginBottom: 4 }}>
           Live Take
         </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+        <p style={{ color: 'var(--muted)', fontSize: 14 }}>
           Scene {setup.scene} · Setup {setup.setupNumber} · Take {setup.takes.length}
         </p>
       </div>
@@ -70,11 +70,11 @@ export default function LiveTake() {
       {/* Take timeline */}
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'var(--red-light)', borderRadius: 8, color: 'var(--red)', fontWeight: 700, fontSize: 13 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'rgba(226,73,60,0.14)', borderRadius: 8, color: 'var(--stop-red-text)', fontWeight: 700, fontSize: 13 }}>
             <Clapperboard size={16} />
             CUT — Take {setup.takes.length} NO GOOD
           </div>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)' }} className="mono">
+          <div style={{ fontSize: 13, color: 'var(--muted-dim)' }} className="mono">
             00:38 elapsed
           </div>
         </div>
@@ -84,24 +84,24 @@ export default function LiveTake() {
             <div key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{
                 padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 600,
-                background: i < 4 ? 'var(--teal-light)' : 'var(--red-light)',
-                color: i < 4 ? 'var(--teal)' : 'var(--red)'
+                background: i < 4 ? 'rgba(138,180,199,0.14)' : 'rgba(226,73,60,0.14)',
+                color: i < 4 ? 'var(--teal-text)' : 'var(--stop-red-text)'
               }}>
                 {step}
               </div>
-              {i < 4 && <ArrowRightIcon size={14} style={{ color: 'var(--text-muted)' }} />}
+              {i < 4 && <ArrowRightIcon size={14} style={{ color: 'var(--muted-dim)' }} />}
             </div>
           ))}
         </div>
 
-        <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+        <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6 }}>
           Take {setup.takes.length} stopped. Primary: Actor missed final line. Secondary: Key light shifted during movement to new mark.
         </div>
       </div>
 
       {/* Retake causes */}
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 16 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-dim)', marginBottom: 16 }}>
           Why did this take stop?
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
@@ -113,9 +113,9 @@ export default function LiveTake() {
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '8px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
                 border: '1px solid',
-                borderColor: selectedCauses.includes(cause) ? 'var(--teal)' : 'var(--border)',
-                background: selectedCauses.includes(cause) ? 'var(--teal-light)' : 'var(--workspace-surface)',
-                color: selectedCauses.includes(cause) ? 'var(--teal)' : 'var(--text-secondary)',
+                borderColor: selectedCauses.includes(cause) ? 'var(--teal-text)' : 'var(--border)',
+                background: selectedCauses.includes(cause) ? 'rgba(138,180,199,0.14)' : 'var(--surface)',
+                color: selectedCauses.includes(cause) ? 'var(--teal-text)' : 'var(--muted)',
                 cursor: 'pointer',
                 transition: 'all 0.15s'
               }}
@@ -138,19 +138,19 @@ export default function LiveTake() {
       {/* Created tasks — a lamp leads the label, not a border stripe */}
       {createdTasks.length > 0 && (
         <div className="card" style={{ padding: 24, marginBottom: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 16 }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--violet)', flexShrink: 0 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-dim)', marginBottom: 16 }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--gold)', flexShrink: 0 }} />
             Who needs to act
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {createdTasks.map((task, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, background: 'var(--workspace-bg)', borderRadius: 8 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--violet-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--violet)' }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, background: 'var(--paper)', borderRadius: 8 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(230,184,0,0.16)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bronze-text)' }}>
                   <User size={16} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600 }}>{task.role}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{task.task}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{task.role}</div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)' }}>{task.task}</div>
                 </div>
               </div>
             ))}
@@ -160,30 +160,30 @@ export default function LiveTake() {
 
       {/* Take history */}
       <div className="card" style={{ padding: 24 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 16 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-dim)', marginBottom: 16 }}>
           Take history — Setup {setup.setupNumber}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {setup.takes.map(take => (
-            <div key={take.number} style={{ 
-              display: 'flex', alignItems: 'center', gap: 12, padding: 12, 
-              background: take.result === 'print' ? 'var(--teal-light)' : 'var(--workspace-bg)',
-              borderRadius: 8 
+            <div key={take.number} style={{
+              display: 'flex', alignItems: 'center', gap: 12, padding: 12,
+              background: take.result === 'print' ? 'rgba(138,180,199,0.14)' : 'var(--paper)',
+              borderRadius: 8
             }}>
-              <span className="mono" style={{ fontSize: 13, fontWeight: 700, minWidth: 60 }}>
+              <span className="mono" style={{ fontSize: 13, fontWeight: 700, minWidth: 60, color: 'var(--ink)' }}>
                 Take {take.number}
               </span>
-              <span style={{ 
+              <span style={{
                 fontSize: 11, fontWeight: 700, textTransform: 'uppercase', padding: '3px 8px', borderRadius: 4,
-                background: take.result === 'print' ? 'var(--teal)' : take.result === 'hold' ? 'var(--amber)' : 'var(--red)',
+                background: take.result === 'print' ? 'var(--teal)' : take.result === 'hold' ? 'var(--bronze)' : 'var(--stop-red)',
                 color: '#fff'
               }}>
                 {take.result === 'print' ? 'Print' : take.result === 'hold' ? 'Hold' : take.result === 'noGood' ? 'No Good' : 'Incomplete'}
               </span>
-              <span style={{ fontSize: 12, color: 'var(--text-secondary)', flex: 1 }}>
+              <span style={{ fontSize: 12, color: 'var(--muted)', flex: 1 }}>
                 {take.notes}
               </span>
-              <span style={{ fontSize: 12, color: 'var(--text-muted)' }} className="mono">
+              <span style={{ fontSize: 12, color: 'var(--muted-dim)' }} className="mono">
                 {take.duration}s · {take.timestamp}
               </span>
             </div>

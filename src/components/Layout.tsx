@@ -20,11 +20,13 @@ const navItems: { page: Page; label: string; icon: React.ReactNode }[] = [
 const BOTTOM_H = 68;
 const AUTO_HIDE_MS = 3000;
 
-// No top bar — there isn't one, on purpose. The page canvas runs its own
-// dark-to-light ombré, and the bottom tab bar (auto-hiding, thumb-
-// reachable) is the only persistent chrome. Role and reset — used
-// occasionally, not the primary nav — live as a compact trailing cluster
-// on that same bar instead of a whole second bar for two controls.
+// No top bar — there isn't one, on purpose. The page canvas is a calm,
+// flat navy (not the landing page's dramatic gradient — that reads as a
+// one-time title card, this is a surface people stare at for a full
+// shoot day), and the bottom tab bar (auto-hiding, thumb-reachable) is
+// the only persistent chrome. Role and reset — used occasionally, not
+// the primary nav — live as a compact trailing cluster on that same bar
+// instead of a whole second bar for two controls.
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { page, setPage, holdState, resetDemo } = useApp();
   const [barsVisible, setBarsVisible] = useState(true);
@@ -56,43 +58,57 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         style={{
           position: 'absolute', inset: 0, overflow: 'auto',
           paddingBottom: BOTTOM_H,
-          // Dark blue easing to light blue — a vignette across the whole
-          // canvas, not a flat fill. Cards stay their own opaque white,
-          // unaffected; page-level text sits directly on this and needs
-          // its own light color where it does (see AD Command). Darkened
-          // ~50% across every stop from the first pass.
-          background: 'linear-gradient(135deg, #091e29 0%, #183643 35%, #55656b 70%, #75797b 100%)'
+          // Ivory paper — the same Navy/Gold/Ivory world as the landing
+          // page, read as a working surface: ivory background, navy ink,
+          // gold accent. The landing page's dark gradient is the one-time
+          // title-card moment; this is what you stare at all day.
+          background: 'var(--paper)'
         }}
       >
-        {/* The wordmark — content sitting directly on the gradient, not a
-            bar with its own background behind it. */}
-        <button
-          onClick={() => goTo('landing')}
-          title="Back to the home page"
-          style={{
-            display: 'flex', alignItems: 'center', gap: 0,
-            background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
-            padding: '16px 20px 4px'
-          }}
-        >
-          <MiniConstellation size={138} reach={78} />
-          <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'normal', fontWeight: 700, color: '#ffffff', fontSize: 39, letterSpacing: '-0.01em', marginLeft: -90, transform: 'translateY(-20px)' }}>On Cue</span>
-        </button>
+        {/* The landing page's own atmosphere dissolving into the paper
+            workspace — no hard edge where dark meets light. Same navy hue
+            family and angle as the landing page's gradient, but its last
+            stop reaches true transparency instead of a solid color, so it
+            genuinely dissolves into the paper below rather than stopping
+            at a line. The fade zone extends well past the button's own
+            height so the dissolve reads as gradual, not abrupt. */}
+        <div style={{
+          position: 'relative',
+          paddingBottom: 40,
+          background: 'linear-gradient(160deg, rgba(13,58,77,0.95) 0%, rgba(10,42,58,0.85) 30%, rgba(7,24,32,0.45) 65%, rgba(7,24,32,0) 100%)'
+        }}>
+          <button
+            onClick={() => goTo('landing')}
+            title="Back to the home page"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+              padding: '8px 16px'
+            }}
+          >
+            <MiniConstellation size={22} reach={0} />
+            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'normal', fontWeight: 700, color: '#e1ded2', fontSize: 15, letterSpacing: '-0.01em' }}>On Cue</span>
+          </button>
+        </div>
         {children}
       </main>
 
-      {/* Bottom tab bar — the only persistent chrome. Lightest where it
-          meets the workspace, darkest at the screen's bottom edge. */}
+      {/* Bottom bar — book-index tabs rising off a visible spine, not a
+          band that blends into the page: every tab has its own solid
+          fill, so it reads even when inactive; the active one pops up
+          brighter and a touch taller. */}
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 10,
-        display: 'flex', alignItems: 'stretch',
-        background: 'linear-gradient(to bottom, #123c4f 0%, #06202c 100%)',
-        borderTop: '1px solid var(--nav-border)',
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+        gap: 12,
+        background: 'var(--paper-deep)',
+        borderTop: '1px solid var(--border-strong)',
+        padding: '0 12px',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         transform: barsVisible ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)'
       }}>
-        <div style={{ display: 'flex', flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, flex: 1, overflowX: 'auto' }}>
           {navItems.map(item => {
             const active = page === item.page;
             return (
@@ -100,30 +116,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 key={item.page}
                 onClick={() => goTo(item.page)}
                 style={{
-                  flex: 1,
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  gap: 3, padding: '9px 4px 8px',
-                  border: 'none', background: 'none', cursor: 'pointer',
+                  gap: 2, padding: active ? '9px 12px 8px' : '7px 12px 7px',
+                  borderRadius: '12px 12px 0 0',
+                  border: '1px solid var(--border-strong)',
+                  borderBottom: 'none',
+                  cursor: 'pointer', flexShrink: 0,
                   position: 'relative',
-                  color: active ? 'var(--gold)' : 'rgba(230,184,0,0.55)',
-                  transition: 'color 0.15s ease-out'
+                  background: active ? 'var(--surface)' : 'var(--paper)',
+                  color: active ? 'var(--bronze-text)' : 'var(--muted)',
+                  boxShadow: active ? '0 -2px 8px rgba(20,34,43,0.1)' : 'none',
+                  transition: 'all 0.15s ease-out'
                 }}
               >
-                {/* A left rule reads "you are here" on a vertical rail;
-                    rotated for a horizontal bar, that's a top rule. */}
-                {active && (
-                  <span style={{
-                    position: 'absolute', top: 0, left: '30%', right: '30%', height: 2,
-                    background: 'var(--gold)'
-                  }} />
-                )}
                 <span style={{ position: 'relative' }}>
                   {item.icon}
                   {item.page === 'myset' && holdState === 'hold' && (
                     <span style={{
                       position: 'absolute', top: -2, right: -4,
                       width: 8, height: 8, borderRadius: '50%',
-                      background: '#c53030',
+                      background: 'var(--stop-red)',
                       animation: 'pulse-glow 2s infinite'
                     }} />
                   )}
@@ -136,7 +148,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         <div style={{
           display: 'flex', alignItems: 'center', gap: 6,
-          padding: '0 10px', borderLeft: '1px solid var(--nav-border)', flexShrink: 0
+          padding: '0 0 8px 10px', borderLeft: '1px solid var(--border-strong)', flexShrink: 0
         }}>
           <RoleSwitcher />
           <button
@@ -145,11 +157,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               width: 30, height: 30, borderRadius: 15,
-              border: 'none', background: 'none', color: 'rgba(230,184,0,0.55)', cursor: 'pointer',
+              border: 'none', background: 'none', color: 'var(--muted-dim)', cursor: 'pointer',
               transition: 'background 0.15s ease-out, color 0.15s ease-out'
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#e8f0f5'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'rgba(230,184,0,0.55)'; }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(230,184,0,0.1)'; e.currentTarget.style.color = 'var(--bronze-text)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'var(--muted-dim)'; }}
           >
             <RotateCcw size={15} />
           </button>

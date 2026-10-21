@@ -1,64 +1,64 @@
 ---
 name: On Cue
-description: A film-set command console built on Japanese operations-floor signage — andon boards and rail departure displays — not a SaaS ops dashboard.
+description: A procedural-drama title-card world — navy, gold, and ivory — carried from the landing page into the whole app, not a separate operational palette.
 colors:
-  ink: "#17181a"
-  ink-secondary: "#55565a"
-  ink-muted: "#6b6c70"
-  paper: "#f4f1ea"
-  surface: "#ffffff"
-  rail: "#121214"
-  rail-border: "#232326"
-  rail-muted: "#9a9b9e"
-  signal-red: "#c81e2c"
-  signal-red-light: "#fbe7e8"
-  shingou-green: "#146356"
-  shingou-green-light: "#e2eeec"
-  brass-amber: "#b4690e"
-  brass-amber-light: "#f7e8d3"
-  plum: "#5b3a6e"
-  plum-light: "#efe4ee"
-  line: "#ded8c8"
-  line-strong: "#c3bca8"
-  signal-red-text: "#8c1520"
-  signal-red-hover: "#a5111e"
-  signal-red-confirm-text: "#f0a3a8"
-  shingou-green-text: "#0f4f45"
-  brass-amber-text: "#7a4a0a"
-  brass-amber-hover: "#8f5309"
-  plum-text: "#4a2f5a"
-  ink-hover: "#000000"
-  line-strong-hover: "#a8a08c"
+  navy-deepest: "#051015"
+  navy-deep: "#071820"
+  navy: "#0a2a3a"
+  navy-mid: "#0d3a4d"
+  surface: "#0f1f2e"
+  surface-elevated: "#0a1620"
+  border: "#1c4256"
+  border-strong: "#2a4a5c"
+  ivory: "#e8f0f5"
+  ivory-warm: "#e1ded2"
+  muted: "#6b9ab0"
+  muted-dim: "#4a6b7d"
+  gold: "#e6b800"
+  gold-bright: "#f0c800"
+  bronze: "#c9a227"
+  teal: "#8ab4c7"
+  slate: "#6b9ab0"
+  slate-deep: "#5a8a9e"
+  slate-deeper: "#4a7a8e"
+  stop-red: "#e2493c"
+  stop-red-hover: "#c93c30"
+  stop-red-dim: "#8c2a22"
 typography:
   display:
-    fontFamily: "Zen Kaku Gothic New, Hiragino Kaku Gothic ProN, system-ui, sans-serif"
-    fontSize: "42px"
-    fontWeight: 800
-    lineHeight: 1.1
-    letterSpacing: "-0.03em"
+    fontFamily: "'Big Caslon', 'Big Caslon Medium', Didot, Georgia, serif"
+    fontSize: "72px"
+    fontWeight: 500
+    lineHeight: 1.05
+    letterSpacing: "-0.01em"
   headline:
-    fontFamily: "Zen Kaku Gothic New, Hiragino Kaku Gothic ProN, system-ui, sans-serif"
-    fontSize: "24px"
+    fontFamily: "'Playfair Display', Georgia, serif"
+    fontSize: "22px"
     fontWeight: 700
+    fontStyle: "italic"
     lineHeight: 1.2
-    letterSpacing: "-0.02em"
   body:
-    fontFamily: "Zen Kaku Gothic New, Hiragino Kaku Gothic ProN, system-ui, sans-serif"
-    fontSize: "13px"
+    fontFamily: "'Playfair Display', Georgia, serif"
+    fontSize: "14px"
     fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: "Zen Kaku Gothic New, Hiragino Kaku Gothic ProN, system-ui, sans-serif"
+    fontFamily: "'Playfair Display', Georgia, serif"
     fontSize: "11px"
-    fontWeight: 700
+    fontWeight: 600
     letterSpacing: "0.08em"
+  caption:
+    fontFamily: "'Playfair Display', Georgia, serif"
+    fontSize: "12px"
+    fontWeight: 600
   data:
     fontFamily: "JetBrains Mono, ui-monospace, monospace"
-    fontSize: "18px"
+    fontSize: "16px"
     fontWeight: 700
 rounded:
-  none: "2px"
-  sm: "3px"
+  sm: "4px"
+  md: "8px"
+  lg: "12px"
   full: "50%"
 spacing:
   sm: "8px"
@@ -67,25 +67,25 @@ spacing:
   xl: "32px"
 components:
   button-primary:
-    backgroundColor: "{colors.ink}"
-    textColor: "#ffffff"
-    rounded: "{rounded.none}"
-    padding: "10px 18px"
-  button-primary-hover:
-    backgroundColor: "#000000"
+    backgroundColor: "{colors.gold}"
+    textColor: "#0a0e17"
+    rounded: "{rounded.sm}"
+    padding: "9px 18px"
   button-secondary:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
-    padding: "10px 18px"
+    backgroundColor: "transparent"
+    textColor: "{colors.ivory}"
+    border: "1px solid rgba(138,180,199,0.25)"
+    rounded: "{rounded.sm}"
+    padding: "9px 18px"
   button-danger:
-    backgroundColor: "{colors.signal-red}"
+    backgroundColor: "{colors.stop-red}"
     textColor: "#ffffff"
-    rounded: "{rounded.none}"
-    padding: "10px 18px"
+    rounded: "{rounded.sm}"
+    padding: "9px 18px"
   card:
     backgroundColor: "{colors.surface}"
-    rounded: "{rounded.sm}"
+    rounded: "{rounded.md}"
+    border: "1px solid {colors.border}"
     padding: "24px"
 ---
 
@@ -93,126 +93,114 @@ components:
 
 ## Overview
 
-**Creative North Star: "Andon Line"**
+**Creative North Star: "Night Call"**
 
-On Cue is a film-set readiness board, not an ops dashboard with a film theme painted on. Its visual world comes from the two Japanese operations-floor systems built for exactly its problem — status legible at a glance, under bad light, by someone with no time to read: the **andon board** (the manufacturing-floor lamp system where a colored light communicates line status before any word does) and **JR rail departure signage** (dense, disciplined, high-legibility information design that has never needed a drop shadow to feel authoritative). Both are minimalist by function, not by decoration — restraint because urgency has no room for ornament, not restraint as a mood.
+On Cue's whole app is one world, not two. The landing page's navy/gold/ivory title-card register — the thing people see first and the thing they said they love — is the system now, not a brand-mark exception carved out from a separate operational palette. "Night Call" is the production term for an overnight shoot: it names the register this system lives in — dark, warm-lit, a little cinematic, built for a crew still on set after dark — and it's deliberately the opposite instinct from a daytime SaaS dashboard's white canvas and gray chrome.
 
-The system deliberately refuses the default AI-generated ops-dashboard look it replaced: soft rounded cards floating on drop shadows, a teal-accent SaaS palette, pill badges, a generic dark sidebar. Line and space carry hierarchy here. Color is a signal, spent narrowly and precisely, never a decoration spread across a surface. Status renders as a small solid lamp — the andon light — never a rounded chip.
+This supersedes an earlier "Andon Line" system (ink/paper, flat signage, zero shadow) that was drafted for this app and never actually matched what shipped. It's gone now, not archived as an alternate mode — there is one design system for On Cue, and this is it.
 
 **Key Characteristics:**
-- Flat surfaces, hairline borders, zero box-shadow — depth comes from line weight and spacing, never blur.
-- Sharp, nearly-square corners (2–3px) everywhere except true circles (avatars, lamps, timeline nodes).
-- One saturated red carries every stop/blocker signal; every other status color is comparably restrained.
-- Status is a small colored dot beside a label, never a colored border strip on a card edge.
-- Zen Kaku Gothic New (a Japanese type foundry's gothic sans) for all display and body text; JetBrains Mono for every number that means something — times, counts, IDs.
+- Dark navy surfaces throughout, the same gradient family as the landing page — not a light "paper" workspace behind a dark brand mark.
+- Gold is the one accent that means "this is active, this is yours, this is the primary action" — spent narrowly, the way the landing page already spends it on the hub node and the sign-in button.
+- A small solid lamp dot still leads every status word — that part of the prior system was good UX independent of palette, so it survives, just recolored.
+- Big Caslon is reserved for the one large display moment per screen (the wordmark on the landing page; the HOLD / READY / ROLLING word on AD Command). Playfair Display carries every other line of text, display down to captions — one voice, like the landing page already runs.
+- Soft shadows and glow are allowed and expected — a dark surface reads depth through light falloff, not through hairlines. This is the opposite call from a flat light system, and it's correct for this palette.
 
 ## Colors
 
-A restrained, committed palette: one signal color (red) does the urgent work; three quieter signal colors cover status states that aren't emergencies; everything else is ink, paper, and line.
-
 ### Primary
-- **Signal Red** (#c81e2c): The one color that means "stop, look here." Hold/blocker banners, the destructive Reset Demo confirm state, error text. Used narrowly — this is the andon board's red lamp, not a brand color to spread around.
+- **Gold** (#e6b800): The one color that means "primary, active, yours." Primary buttons, the active nav item, Ready/Go status, the hub of attention on any screen. This is already the landing page's sign-in button and hub-node color — extend it, don't invent a second accent beside it.
 
-### Secondary
-- **Shingou Green** (#146356): The "go" signal — deliberately not SaaS teal. Named for Japan's 青信号 (aoshingou), the traffic "go" light that reads blue-green rather than pure green. Ready states, print/usable takes, confirmed actions.
-- **Brass Amber** (#b4690e): Caution / in-progress / at-risk. A warm brass tone rather than a generic warning orange, echoing gaffer-tape and hazard-tag brass rather than a dashboard's amber-500.
-- **Plum** (#5b3a6e): Secondary emphasis — recovery suggestions, generated task lists, the "rolling" motion state. Used for insight, never for a primary call to action.
+### Signal (status)
+- **Stop Red** (#e2493c, hover #c93c30): Hold, blocker, destructive confirm. The only color that means "stop, look here" — new to this system because the landing page never needed a stop signal, but it has to exist somewhere for a production-readiness tool. Spent as narrowly as gold. The hover shade follows the same two-weight pattern as Gold → Gold Bright.
+- **Bronze** (#c9a227): Caution / at-risk / in-progress. Pulled directly from the constellation's own "creative" category color, not a new hue.
+- **Teal / Slate** (#8ab4c7, #6b9ab0, #5a8a9e, #4a7a8e): Secondary and tertiary status, informational tags, department-category color when more than the three signal states above are needed — the constellation's own technical/support/talent colors, reused rather than duplicated.
 
 ### Neutral
-- **Ink** (#17181a): Primary text, primary buttons. Near-black, not pure black — sumi-ink black.
-- **Ink Secondary** (#55565a) / **Ink Muted** (#6b6c70): Secondary and tertiary text. Both hit WCAG AA (4.5:1+) against paper and surface — the prior system's muted gray failed this; this one doesn't.
-- **Paper** (#f4f1ea): The workspace background. Unbleached, warm, closer to washi paper than to sterile SaaS gray.
-- **Surface** (#ffffff): Card backgrounds — pure white, a clean sheet against the warmer paper field.
-- **Rail** (#121214) / **Rail Border** (#232326) / **Rail Muted** (#9a9b9e): The navigation rail — near-black ink, not charcoal-gray "dashboard dark mode."
-- **Line** (#ded8c8) / **Line Strong** (#c3bca8): Every border in the system. There is no other way cards separate from each other.
+- **Navy Deepest → Mid** (#051015, #071820, #0a2a3a, #0d3a4d): The background gradient family, exactly as used on the landing page. A page's base canvas picks from this range; it doesn't need the full four-stop gradient every time, but it never drops to a light background.
+- **Surface** (#0f1f2e): Card and input backgrounds — the landing page's own input-field color. Elevated surfaces (popovers, dropdowns) step up to #0a1620.
+- **Ivory** (#e8f0f5): Primary text on navy. **Ivory Warm** (#e1ded2): the wordmark's cooler, warmer-toward-gray ivory, for the one big display line on a screen.
+- **Muted** (#6b9ab0) / **Muted Dim** (#4a6b7d): Secondary and tertiary text — the landing page's own subtitle and footnote colors.
+- **Border** (#1c4256) / **Border Strong** (#2a4a5c): Hairline borders and dividers, stepping up on hover/focus.
 
 ### Named Rules
-**The One Signal Rule.** Signal Red is the only color allowed to mean "stop." No other red-family value, no orange escalation tier — one red, spent narrowly, keeps it legible as an alarm instead of decoration.
+**The One Signal Rule.** Stop Red is the only color that means "stop." Gold is the only color that means "primary/active." Nothing else competes with either — this is the rule the prior system got right; it just had the wrong palette under it.
 
-**The Lamp, Not the Chip Rule.** Status never renders as a fully-rounded pill badge alone. A small solid-color circle (the andon lamp) leads every status indicator, whether inside a `.pill` or beside a section label; the lamp is readable half a second before the word next to it is.
+**The Lamp, Not the Chip Rule.** Status still renders as a small solid dot leading a label, not a pill badge standing alone. Carried over unchanged from the prior system — it's a palette-agnostic legibility win, recolored: gold/stop-red/bronze/teal in place of shingou-green/signal-red/brass-amber/plum.
 
-**The Two-Weight Signal Rule.** Every signal color ships two weights: a saturated one for lamps, solid fills, and buttons (Signal Red #c81e2c, Shingou Green #146356, Brass Amber #b4690e, Plum #5b3a6e), and a darkened text-safe variant for the same color used as body text on a light background (Signal Red Text #8c1520, Shingou Green Text #0f4f45, Brass Amber Text #7a4a0a, Plum Text #4a2f5a) — the saturated weight rarely clears 4.5:1 as text at 12-13px, so it never carries a sentence. Hover states darken the saturated weight further (Ink Hover #000000, Signal Red Hover #a5111e, Brass Amber Hover #8f5309, Line Strong Hover #a8a08c); Signal Red Confirm Text (#f0a3a8) is the one lightened exception, used only for label text sitting on a translucent red wash (the armed Reset Demo state) where a dark text color would fail contrast against that dark rail background instead.
+**The One Display Rule.** Big Caslon appears once per screen, for the single thing that screen is actually about — the wordmark on the landing page, the HOLD/READY/ROLLING word on AD Command, a hero number on Take Intelligence. Everywhere else is Playfair Display. Two display faces on one screen is a tell that nothing was actually decided as "the point."
 
 ## Typography
 
-**Display Font:** Zen Kaku Gothic New (with Hiragino Kaku Gothic ProN, system-ui fallback)
-**Body Font:** Zen Kaku Gothic New (same family — one voice throughout, no separate serif/sans pairing)
-**Label/Mono Font:** JetBrains Mono
-
-**Character:** A Japanese type foundry's gothic sans — geometric, even-toned, built for signage legibility rather than editorial warmth. Paired with JetBrains Mono for anything tabular or time-based, so a glance can tell a label from a reading.
+**Display Font:** Big Caslon (Big Caslon Medium, Didot, Georgia fallback) — reserved per the One Display Rule above.
+**Body/UI Font:** Playfair Display (Georgia fallback) — every headline, label, button, and paragraph that isn't the one display moment.
+**Data Font:** JetBrains Mono — every number a crew member would act on.
 
 ### Hierarchy
-- **Display** (800, 42px, 1.1 line-height, -0.03em): The single big status word (HOLD / READY TO ROLL / ROLLING) on AD Command — the one place the system allows real scale, because that word is the whole point of the screen.
-- **Headline** (700, 24px, 1.2, -0.02em): Page titles (`h1`).
-- **Title** (700, 16–18px): Card headings, the current-task line, role names.
-- **Body** (400, 13px, 1.6 line-height): Descriptions, detail text, secondary copy.
-- **Label** (700, 11px, 0.08em letter-spacing, uppercase): Every section eyebrow (NOW, YOUR ACTION, Current Task) and stat label. Small, tracked-out, quiet — signage caption, not a heading.
-- **Data** (JetBrains Mono, 700, 13–18px, tabular numerals): Every timestamp, countdown, take number, and readiness percentage. If a number means something operationally, it's mono.
+- **Display** (500, Big Caslon): 72px on the landing page's wordmark; an in-app hero word like HOLD/READY/ROLLING runs 48px on desktop down to a 36px floor on narrow viewports. One range, one typeface, used once per screen.
+- **Headline** (700, italic, 22px, Playfair): page/section titles.
+- **Title** (600, 15–17px, Playfair): card headings, role names, the current-task line. A large call-to-action button's label steps up to 15px within this same weight — emphasis through size, not a second typeface.
+- **Body** (400, 14px, 1.6 line-height, Playfair): descriptions, detail text, default button and nav-link text.
+- **Caption** (600, 12px, Playfair): take chips, compact pill labels, and other small UI chrome that's smaller than body but not tracked-out like Label.
+- **Label** (600, 11px, 0.08em tracking, Playfair, often italic): section eyebrows and stat labels — quiet, tracked-out, never shouting.
+- **Data** (JetBrains Mono, 700, 14–18px, tabular numerals): every timestamp, countdown, take number, readiness percentage.
 
 ### Named Rules
-**The Mono-Means-Live Rule.** JetBrains Mono is reserved for numbers a crew member would act on — a target time, an elapsed hold, a take count. Decorative or narrative numbers stay in the body face.
+**The Mono-Means-Live Rule.** Unchanged from the prior system: JetBrains Mono is reserved for numbers a crew member would act on. Decorative or narrative numbers stay in Playfair.
 
 ## Layout
 
-Page content sits in a `32px 28px` padding block, `max-width` capped per page (720–960px) so dense data never stretches into unreadable line lengths. Cards stack with `16–24px` vertical rhythm; more space separates distinct sections than sits inside one. Stat rows and department grids use CSS grid with `auto-fill, minmax()` so the board reflows by content, not by breakpoint math — true to an andon board's job of fitting whatever is currently active. The navigation rail is a fixed 240px column, unscrolling; only the workspace scrolls.
+Page content sits in generous padding (`32px 28px`+), capped at a comfortable reading width per page so dense data doesn't stretch thin on a wide monitor. The navigation rail runs the same navy-gradient family as the landing page (this is already half-true in `index.css`'s `--nav-bg`; make it fully true) rather than a flat near-black or a light sidebar. Cards float on the navy canvas with real but soft separation — border plus a gentle shadow, not a hairline alone.
 
 ## Elevation & Depth
 
-**No shadows.** This is the system's clearest departure from the SaaS-dashboard default it replaced: cards carry a single 1px hairline border (`--border` / `--border-strong` on hover) and nothing else. Depth is conveyed by line weight, color contrast, and spacing alone — the andon board and the departure sign both communicate hierarchy this way, and adding blur back in would be the fastest way to slide back into the generic look this redesign exists to leave.
-
-### Named Rules
-**The Flat-By-Default Rule.** No `box-shadow` appears anywhere in the system. A card separates from its neighbor by a hairline border and by the paper showing through the gap, never by a drop shadow.
+**Soft shadows and glow are the system's depth language**, the reverse of a flat/hairline-only system. The landing page's own popover (`0 12px 32px rgba(0,0,0,0.5)`) and the wordmark's gold text-shadow glow (`0 0 80px rgba(230,184,0,0.12)`) are the reference: diffuse, dark-tinted shadows for elevation; a soft colored glow for emphasis on the one gold/active element in view. Hard-edged, light-colored "SaaS card" shadows are still wrong here — the shadow should read as light falling away into the navy, not plastic lifted off a white page.
 
 ## Shapes
 
-Corners are sharp: cards and buttons round to 2–3px, close enough to square that the eye reads "drafted," not "soft." The one exception is the true circle — avatars, the andon-lamp status dots, timeline nodes — which stays a full circle rather than a rounded square, because a circle is a real signal-lamp shape and a squircle is a costume of one. No other clipping, no card notches, no organic blob shapes.
+Corners round gently — 4px for inputs and cards, a touch more for larger surfaces — matching the landing page's own input and button radius. True circles stay circles: the sign-in button, status lamps, avatar marks. This is rounder than the old flat-signage system on purpose; it's a title-card world, not a factory floor.
 
 ## Components
 
 ### Buttons
-- **Shape:** Sharp corners (2px).
-- **Primary:** Ink background, white text, `10px 18px` padding — the darkest, most confident surface in the system, reserved for the one real action on a screen.
-- **Secondary:** White surface, ink text, `1px solid` line-strong border.
-- **Danger:** Signal red background, white text — reserved for genuinely destructive or escalating actions.
-- **Hover / Focus:** Buttons darken on hover (`background` shift, no shadow added); `:focus-visible` gets a 2px signal-red outline system-wide, since the incumbent build shipped with none at all.
-- **Acknowledge state (signature):** Buttons wired through the shared `AckButton` component (log-only actions with no dedicated app state) swap their icon for a checkmark and their label for a confirmation string on click, then disable — the system's answer to "did my click register."
+- **Primary:** Gold fill, near-black text (`#0a0e17`) — exactly the landing page's sign-in submit button. Reserved for the one real action on a screen.
+- **Secondary:** Transparent, ivory text, hairline border at `rgba(138,180,199,0.25)` — exactly the landing page's "Continue with Google/Apple" buttons.
+- **Danger:** Stop Red fill, white text — destructive or escalating actions only.
+- **Hover / Focus:** Buttons warm slightly on hover (a touch more fill/border opacity, optionally a faint gold glow on primary); `:focus-visible` gets a 2px gold outline system-wide.
+- **Acknowledge state:** Log-only actions (no dedicated app state) swap their icon for a checkmark and label for a confirmation string on click, then disable — carried over from the prior system, palette-agnostic.
 
 ### Chips / Pills
-- **Style:** Small rectangular tag (`2px` radius, not a pill despite the class name `.pill`), a solid-color andon lamp dot leading the label, uppercase, `11px`, tracked.
-- **State:** `pill-ready` (shingou green), `pill-hold` (signal red), `pill-risk` (brass amber), `pill-wait` (neutral gray) — one lamp color per state, no gradients.
+- **Style:** Small rounded tag (4px radius), a solid lamp dot leading the label, uppercase or small-caps, tracked.
+- **State:** ready/go → gold, hold/blocker → stop red, at-risk/caution → bronze, informational → teal or slate. One lamp color per state, no gradients.
 
 ### Cards / Containers
-- **Corner Style:** 3px.
-- **Background:** Surface white on the paper workspace.
-- **Shadow Strategy:** None — see Elevation & Depth.
-- **Border:** 1px solid `--border`, darkening to `--border-strong` on hover.
-- **Internal Padding:** 20–32px depending on card density.
+- **Background:** Surface navy (#0f1f2e) on the deeper navy canvas.
+- **Border:** 1px solid `--border` (#1c4256), stepping to `--border-strong` on hover.
+- **Shadow:** A soft, dark diffuse shadow for lift — see Elevation & Depth.
+- **Corner radius:** 8px.
+- **Internal padding:** 20–32px depending on density.
 
 ### Navigation
-- **Style:** A 240px ink-black rail, not a floating sidebar. Inactive items sit in rail-muted gray; the active item gets a 2px signal-red left rule and white text — the same left-rule language a subway line map uses for "you are here," not a filled rounded pill.
-- **Typography:** 13px, 500 weight, no uppercase.
-- **States:** Hover lifts to a faint white wash; active adds the red rule. No rounded background chip on either state.
+- **Style:** A fixed rail in the landing page's own navy gradient, not flat near-black or a light sidebar. The active item gets a gold accent (left rule or soft glow) and ivory text; inactive items sit in muted blue-gray.
+- **Typography:** Playfair Display, 13–14px, no uppercase.
+- **States:** Hover lifts to a faint gold-tinted wash; active adds the gold accent. No rounded filled-pill background.
 
-### Status Lamp (signature)
-The recurring custom pattern this redesign introduces: a small solid circle (6–8px) in the relevant signal color, placed before a section's uppercase label or inside a `.pill`. It replaces the prior system's colored left-border card accent everywhere — AD Command's big status card, My Set's NOW card, Lighting Console's Current Task card, and Live Take's generated-tasks card all lead with a lamp instead of a stripe.
-
-## Brand Mark (exception)
-
-The `Wordmark` component (`src/components/Wordmark.tsx`) intentionally does **not** use this system's operational palette. It carries its own small brand palette — Navy (#1b3a6b), Gold (#d4a72c), Ivory (#f5f0e1) — a procedural-drama title-card register (badge gravitas, diagonal cue-stripe, gold reserved for the word "Cue") distinct from the flat andon-signal system the rest of the interface runs on. This is a deliberate, user-directed choice: the brand mark is meant to feel like a title card, the operational UI is meant to feel like an instrument panel, and the two are not required to share a palette. Do not extend Navy/Gold/Ivory beyond `Wordmark.tsx` into the operational interface — that would blur exactly the distinction this exception exists to keep.
+### Status Lamp
+A small solid circle (6–8px) in the relevant signal color, placed before a label or inside a chip. Gold/stop-red/bronze/teal in place of the prior shingou-green/signal-red/brass-amber/plum — same pattern, recolored into this system.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** lead every status communication with a solid-color lamp (dot) before the word.
-- **Do** keep corners sharp (2–3px) except true circles.
-- **Do** reserve Signal Red for stop/blocker/destructive meaning only.
+- **Do** lead every status communication with a solid-color lamp dot before the word.
+- **Do** keep the whole app on the navy/surface background family — no light "workspace gray" canvas anywhere.
+- **Do** reserve Gold for the single primary/active meaning, and Stop Red for stop/blocker/destructive only.
 - **Do** set every time, count, or take number in JetBrains Mono with tabular numerals.
-- **Do** separate cards with a hairline border and paper showing through the gap.
+- **Do** let one Big Caslon moment anchor each screen; everything else is Playfair Display.
+- **Do** use soft, dark-tinted shadows and gold glow for elevation and emphasis.
 
 ### Don't:
-- **Don't** add `box-shadow` to any surface — this system is flat by contract, not by omission.
-- **Don't** render status as a fully-rounded pill with no lamp; the lamp is the signal, the shape around it is secondary.
-- **Don't** use a colored left-border strip as a card's status accent — that's the prior system's pattern, and the exact tell this redesign moved away from.
-- **Don't** introduce a second display typeface; Zen Kaku Gothic New carries both display and body weight.
-- **Don't** use SaaS teal for "ready" — the system's go-signal is the blue-shifted shingou green, not a generic mint/teal.
-- **Don't** add progress rings, sparklines, or gauges. Every metric in this system reads as a mono number (with a `/total` caption where relevant) — a ring was tried during this build and removed for duplicating data already shown as text while adding back the exact decorative-dashboard silhouette the redesign exists to leave.
+- **Don't** reintroduce a light background, white cards, or gray "SaaS workspace" surface anywhere in the app.
+- **Don't** let teal/cyan/violet drift in as ad-hoc one-off hex values outside this palette — if a new status color is genuinely needed, it comes from the constellation's own category colors, not a fresh invention.
+- **Don't** add a second display typeface; Big Caslon is for the one moment per screen, Playfair Display for everything else.
+- **Don't** render status as a filled pill with no lamp; the lamp is the signal.
+- **Don't** add progress rings, sparklines, or gauges where a mono number already says the same thing.

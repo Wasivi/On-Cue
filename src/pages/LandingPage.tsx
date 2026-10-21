@@ -63,11 +63,11 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
       fontFamily: "'Playfair Display', Georgia, serif",
       color: '#e8f0f5'
     }}>
-      {/* One constellation, full-bleed, genuinely large and anchored hard
-          left — no second/third stretched copy competing with it or
-          flattening the read of it as an actual rotating sphere. */}
+      {/* One constellation, full-bleed, large enough to reach past every
+          edge of the viewport and centered on the wordmark below so the
+          mass genuinely wraps around the word instead of sitting beside it. */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
-        <Constellation onEnter={onEnter} originXFrac={0.12} originYFrac={0.32} radiusFrac={1.3} interactive />
+        <Constellation onEnter={onEnter} originXFrac={0.5} originYFrac={0.46} radiusFrac={2.1} interactive />
       </div>
 
       {/* Subtle vignette overlay */}
@@ -191,24 +191,23 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
         </div>
       </div>
 
-      {/* Main content area — right-aligned, but narrower now so the
-          wordmark sits closer to the constellation's mass instead of
-          floating far off at the far right edge. */}
+      {/* Main content area — centered on the constellation's own origin so
+          the sphere's mass wraps around the word instead of sitting beside
+          it as a separate column. */}
       <div style={{
         flex: 1,
         width: '100%',
-        maxWidth: 920,
         padding: '24px 32px',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
+        alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
         zIndex: 2,
         pointerEvents: 'none'
       }}>
         {/* Title section — the wordmark: Big Caslon, upright, not Playfair */}
-        <div style={{ textAlign: 'right', marginBottom: 8, transform: 'translateY(-35px)' }}>
+        <div style={{ textAlign: 'center', marginBottom: 8 }}>
           <div style={{
             fontFamily: "'Big Caslon', 'Big Caslon Medium', Didot, Georgia, serif",
             fontSize: 117,
@@ -230,7 +229,7 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
           fontStyle: 'italic',
           letterSpacing: '0.02em',
           color: '#6b9ab0',
-          textAlign: 'right'
+          textAlign: 'center'
         }}>
           21 departments · 87 crew · 12 cast · 4 locations
         </div>

@@ -358,6 +358,113 @@
         "rule": "design-system-color",
         "value": "rgba(10,20,30,0.18)",
         "createdAt": "2026-09-03T04:01:07.851Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(6,15,20,0.92)",
+        "createdAt": "2026-09-03T04:17:28.467Z"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "big caslon",
+        "createdAt": "2026-10-01T11:49:54.243Z",
+        "reason": "false positive: Big Caslon is declared as DESIGN.md's display typeface in this same rewrite; detector's sidecar (.impeccable/design.json) predates this DESIGN.md version and hasn't been regenerated yet"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "48px",
+        "createdAt": "2026-10-01T11:49:54.273Z",
+        "reason": "documented: Big Caslon display range now specified in DESIGN.md (72px landing wordmark, 48px in-app hero word)"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "36px",
+        "createdAt": "2026-10-01T11:49:54.302Z",
+        "reason": "documented: mobile-breakpoint floor of the Big Caslon display range specified in DESIGN.md"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "15px",
+        "createdAt": "2026-10-01T11:49:54.335Z",
+        "reason": "documented: Title steps to 15px for a large button's label per DESIGN.md typography hierarchy"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "12px",
+        "createdAt": "2026-10-01T11:49:54.365Z",
+        "reason": "documented: new Caption type step (12px) added to DESIGN.md for small UI chrome"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(79, 113, 132, 0.1)",
+        "createdAt": "2026-10-01T12:08:39.284Z",
+        "reason": "tinted-wash derivative of documented --muted color (#4f7184), used for pill-wait background"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(79, 113, 132, 0.2)",
+        "createdAt": "2026-10-01T12:08:39.316Z",
+        "reason": "tinted-wash derivative of documented --muted color, pill-wait border"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(79, 113, 132, 0.08)",
+        "createdAt": "2026-10-01T12:08:39.348Z",
+        "reason": "tinted-wash derivative of documented --muted color, btn-ghost hover background"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#fff",
+        "createdAt": "2026-10-01T12:11:02.760Z",
+        "reason": "white text on a solid saturated status-badge fill (print/hold/no-good) — same legitimate pattern as .btn-danger's white-on-red"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#000",
+        "createdAt": "2026-10-01T12:15:18.969Z",
+        "reason": "intentional dark camera-viewfinder modal background, self-contained full-screen overlay, conventionally dark regardless of page theme"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255,255,255,0.12)",
+        "createdAt": "2026-10-01T12:15:19.011Z",
+        "reason": "white control on the dark camera-viewfinder modal overlay, not the page surface"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255,255,255,0.4)",
+        "createdAt": "2026-10-01T12:15:19.047Z",
+        "reason": "white shutter-button border on the dark camera-viewfinder modal overlay, not the page surface"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255,255,255,0.75)",
+        "createdAt": "2026-10-21T03:11:14.025Z",
+        "reason": "white timestamp text on the dark camera-overlay thumbnail gradient, not the page surface"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255,255,255,0.25)",
+        "createdAt": "2026-10-21T03:11:14.054Z",
+        "reason": "white control border on the dark camera-viewfinder modal overlay, same pattern as earlier approved camera-modal exceptions"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255,255,255,0.08)",
+        "createdAt": "2026-10-21T03:11:14.083Z",
+        "reason": "white textarea background on the dark camera-viewfinder modal overlay"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255,255,255,0.3)",
+        "createdAt": "2026-10-21T03:12:28.288Z",
+        "reason": "white control border on dark camera-viewfinder modal overlay, same pattern as earlier approved camera-modal exceptions"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(255,255,255,0.5)",
+        "createdAt": "2026-10-21T03:12:28.318Z",
+        "reason": "white helper text on dark camera-viewfinder modal overlay"
       }
     ]
   }

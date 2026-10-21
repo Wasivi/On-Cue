@@ -51,8 +51,12 @@ export default function ADCommand() {
   const [openDetails, setOpenDetails] = useState<Set<string>>(new Set());
 
   const allReady = lightingReady && actorReady;
-  // Latest report always leads — a feed of what changed, not a fixed grid.
-  const feed = [...setup.departmentStatuses].sort((a, b) => parseClock(b.timestamp) - parseClock(a.timestamp));
+  // Blocked departments lead regardless of age — that's the thing the AD
+  // actually needs to spot first; recency only breaks ties within a status.
+  const statusRank = { notReady: 0, inProgress: 1, ready: 2 } as const;
+  const feed = [...setup.departmentStatuses].sort((a, b) =>
+    statusRank[a.status] - statusRank[b.status] || parseClock(b.timestamp) - parseClock(a.timestamp)
+  );
 
   const toggleDetails = (key: string) => {
     const next = new Set(openDetails);
@@ -63,45 +67,44 @@ export default function ADCommand() {
   return (
     <div style={{ padding: '32px 28px', maxWidth: 960 }}>
       <div style={{ marginBottom: 20 }}>
-        {/* White — this sits directly on the page's dark-to-light gradient,
-            not inside a white card, so it needs its own light color. */}
-        <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4, color: '#ffffff' }}>
+        <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 22, fontWeight: 700, letterSpacing: '-0.01em', marginBottom: 4, color: 'var(--ink-warm)' }}>
           AD Command
         </h1>
-        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14 }}>
+        <p style={{ color: 'var(--muted)', fontSize: 14 }}>
           Full crew readiness · Setup {setup.setupNumber} · Scene {setup.scene} · {production.episodeTitle}
         </p>
       </div>
 
-      {/* Big status — same white card, same content and layout as before;
-          just a much smaller, rounder container, centered, with its own
-          shadow (a deliberate exception — everything else in this system
-          stays flat/shadowless, but this one card is meant to float). */}
+      {/* Big status — the one Big Caslon display moment on this screen
+          (DESIGN.md's One Display Rule): the HOLD / READY TO ROLL word is
+          the whole point of AD Command, so it's the single place real
+          scale and the display face are spent. Soft shadow for lift, per
+          the system's own Elevation & Depth rule — not an exception. */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-      <div className="card" style={{ display: 'inline-block', padding: '6px 20px 12px', borderRadius: 24, textAlign: 'center', boxShadow: '0 10px 28px rgba(10,20,30,0.22)' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: 3 }}>
-          <span style={{ width: 7, height: 7, borderRadius: '50%', background: holdState === 'hold' ? '#c53030' : '#1a5f7a', flexShrink: 0 }} />
+      <div className="card" style={{ display: 'inline-block', padding: '10px 28px 16px', borderRadius: 24, textAlign: 'center', boxShadow: 'var(--shadow-lg)' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--muted-dim)', marginBottom: 3 }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: holdState === 'hold' ? 'var(--stop-red)' : 'var(--teal)', flexShrink: 0 }} />
           Setup {setup.setupNumber} — {holdState === 'hold' ? 'HOLD' : 'READY'}
         </div>
-        <div className={`big-status ${holdState === 'hold' ? 'hold' : 'ready'}`} style={{ fontSize: 28, marginBottom: 3 }}>
+        <div className={`big-status ${holdState === 'hold' ? 'hold' : 'ready'}`} style={{ fontSize: 42, marginBottom: 3 }}>
           {holdState === 'hold' ? 'HOLD' : 'READY TO ROLL'}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 8, flexWrap: 'wrap' }}>
           <div style={{ textAlign: 'center' }}>
             <div className="section-label" style={{ marginBottom: 1, fontSize: 9 }}>Predicted Roll</div>
-            <div style={{ fontSize: 13, fontWeight: 700 }} className="mono">2:45 PM</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }} className="mono">2:45 PM</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div className="section-label" style={{ marginBottom: 1, fontSize: 9 }}>Current Hold</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#c9870a' }} className="mono">12 min</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bronze-text)' }} className="mono">12 min</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div className="section-label" style={{ marginBottom: 1, fontSize: 9 }}>Next Scene Risk</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#c9870a' }} className="mono">+15 min late</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bronze-text)' }} className="mono">+15 min late</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div className="section-label" style={{ marginBottom: 1, fontSize: 9 }}>Background Hold</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#c9870a' }} className="mono">45 min</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bronze-text)' }} className="mono">45 min</div>
           </div>
         </div>
         {allReady && holdState === 'hold' && (
@@ -124,7 +127,7 @@ export default function ADCommand() {
           to look, not two. */}
       {/* .section-label is already bold and Playfair by inheritance —
           just bigger here, explicit for clarity. */}
-      <div className="section-label" style={{ marginBottom: 10, color: 'rgba(255,255,255,0.8)', fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, fontSize: 16, textTransform: 'none', letterSpacing: '0' }}>Latest first</div>
+      <div className="section-label" style={{ marginBottom: 10, color: 'var(--ink)', fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontWeight: 700, fontSize: 16, textTransform: 'none', letterSpacing: '0' }}>Blockers first</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 8, marginBottom: 20 }}>
         {feed.map((dept, i) => {
           const detailsOpen = openDetails.has(dept.department);
@@ -144,9 +147,9 @@ export default function ADCommand() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
                 <span style={{
                   width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
-                  background: dept.status === 'ready' ? 'var(--teal)' : dept.status === 'inProgress' ? 'var(--amber)' : 'var(--red)'
+                  background: dept.status === 'ready' ? 'var(--teal)' : dept.status === 'inProgress' ? 'var(--bronze)' : 'var(--stop-red)'
                 }} />
-                <span style={{ fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap' }}>{dept.department}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', whiteSpace: 'nowrap' }}>{dept.department}</span>
                 {/* The pill carries both status and recency together —
                     the single most important fact about this chip, in
                     one place, not split across two labels. */}
@@ -161,28 +164,29 @@ export default function ADCommand() {
 
               <button
                 onClick={() => toggleDetails(dept.department)}
-                style={{ alignSelf: 'flex-start', border: 'none', background: 'none', cursor: 'pointer', padding: 0, fontSize: 11, fontWeight: 600, color: 'var(--teal)' }}
+                style={{ alignSelf: 'flex-start', border: 'none', background: 'none', cursor: 'pointer', padding: 0, fontSize: 11, fontWeight: 600, color: 'var(--teal-text)' }}
               >
                 ··· {detailsOpen ? 'Hide' : 'Details'}
               </button>
 
-              {/* Body — Oswald (Engravers' Gothic stand-in); everything
-                  above stays Playfair. Only rendered once asked for —
-                  today's task first, history (if any) underneath it. */}
+              {/* Body — Playfair Display throughout, same as the rest of
+                  the system (one voice, per DESIGN.md's One Display
+                  Rule — no second typeface). Only rendered once asked
+                  for — today's task first, history (if any) underneath. */}
               {detailsOpen && (
                 <div>
-                  <div style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 500, fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3, letterSpacing: '0.01em' }}>
+                  <div style={{ fontWeight: 600, fontSize: 12, color: 'var(--muted)', marginBottom: 3, letterSpacing: '0.01em' }}>
                     {dept.owner}
                   </div>
-                  <div style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 400, fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                  <div style={{ fontWeight: 400, fontSize: 13, color: 'var(--ink)', lineHeight: 1.5 }}>
                     {dept.currentTask}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 5 }}>
                     {dept.eta && (
-                      <span className="mono" style={{ fontSize: 11, color: '#c9870a', fontWeight: 600 }}>ETA {dept.eta}</span>
+                      <span className="mono" style={{ fontSize: 11, color: 'var(--bronze-text)', fontWeight: 600 }}>ETA {dept.eta}</span>
                     )}
                     {dept.blockerCount > 0 && (
-                      <span style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600, fontSize: 11, color: '#c53030' }}>
+                      <span style={{ fontWeight: 600, fontSize: 11, color: 'var(--stop-red-text)' }}>
                         {dept.blockerCount} blocker{dept.blockerCount > 1 ? 's' : ''}
                       </span>
                     )}
@@ -190,9 +194,9 @@ export default function ADCommand() {
                   {dept.history && dept.history.length > 0 && (
                     <div style={{ borderTop: '1px solid var(--border)', marginTop: 8, paddingTop: 6 }}>
                       {dept.history.map((h, hi) => (
-                        <div key={hi} style={{ display: 'flex', gap: 8, fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>
+                        <div key={hi} style={{ display: 'flex', gap: 8, fontSize: 11, color: 'var(--muted-dim)', marginBottom: 2 }}>
                           <span className="mono" style={{ flexShrink: 0 }}>{h.timestamp}</span>
-                          <span style={{ fontFamily: "'Oswald', sans-serif" }}>{h.note}</span>
+                          <span>{h.note}</span>
                         </div>
                       ))}
                     </div>
