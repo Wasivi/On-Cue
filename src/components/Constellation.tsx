@@ -651,6 +651,11 @@ function Scene({ onEnter, originXFrac, originYFrac, radiusFrac, radiusBasis, str
             </mesh>
             {showLabel && (
               <Html center style={{ pointerEvents: 'none' }}>
+                {/* A soft text-shadow alone washes out against the bright,
+                    additively-blended glow these nodes throw off when they
+                    pop up — same light color on a light halo. A solid chip
+                    behind the text holds contrast regardless of what's
+                    rendered underneath it. */}
                 <div style={{
                   fontFamily: "'Playfair Display', Georgia, serif",
                   fontSize: node.id === 'ad' ? 17 : 14,
@@ -658,7 +663,9 @@ function Scene({ onEnter, originXFrac, originYFrac, radiusFrac, radiusBasis, str
                   color: isHovered ? '#e8f0f5' : (node.id === 'ad' ? '#e6b800' : LABEL_COLOR),
                   whiteSpace: 'nowrap',
                   transform: 'translateY(16px)',
-                  textShadow: '0 1px 6px rgba(0,0,0,0.6)',
+                  background: 'rgba(7,24,32,0.72)',
+                  padding: '3px 9px',
+                  borderRadius: 6,
                 }}>
                   {node.label}
                 </div>

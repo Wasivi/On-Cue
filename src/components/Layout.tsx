@@ -140,7 +140,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         transform: barsVisible ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)'
       }}>
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, flex: 1, overflowX: 'auto' }}>
+        {/* justifyContent: center — flex:1 with no justify left these 8
+            tabs clumped at the left edge of the whole bar instead of
+            spread across it. */}
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 5, flex: 1, overflowX: 'auto' }}>
           {navItems.map(item => {
             const active = page === item.page;
             return (
