@@ -10,8 +10,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Internal AI-tool scaffolding — not Cloud9-specific, but not repo content
-# either; stays out of a shared/client repo the same way .claude/ does.
+# Internal AI-tool scaffolding — generic third-party skill/agent tooling,
+# not repo content; stays out of a shared/client repo.
 .claude/
 .agent/
 .agents/
