@@ -9,7 +9,7 @@
 -- ============================================================================
 
 create type app_role as enum (
-  '1st AD', 'Director', 'DP', 'Gaffer', 'Script Supervisor',
+  '1st AD', 'Director', 'DP', 'Gaffer', 'Script Supervisor', 'Sound Mixer',
   'Wardrobe', 'Talent Assistant', 'Producer', 'UPM', 'Art Department', 'Props'
 );
 
