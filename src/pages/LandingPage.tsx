@@ -216,7 +216,10 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
             letterSpacing: '-0.01em',
             color: '#e1ded2', // pulled ~10% toward bluish-gray — cooler than the tan tea-stain, still warm
             lineHeight: 1.05,
-            textShadow: '0 0 80px rgba(230,184,0,0.12)'
+            // The soft gold glow (ambient bloom) plus a real offset drop
+            // shadow underneath it — the glow alone doesn't separate the
+            // word from the moving orbs behind it; the shadow does.
+            textShadow: '0 0 80px rgba(230,184,0,0.12), 0 6px 20px rgba(0,0,0,0.55), 0 2px 4px rgba(0,0,0,0.4)'
           }}>
             On Cue
           </div>
@@ -224,11 +227,12 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
 
         <div style={{
           fontFamily: "'Playfair Display', Georgia, serif",
-          fontSize: 14,
-          fontWeight: 400,
+          fontSize: 18,
+          fontWeight: 600,
           fontStyle: 'italic',
           letterSpacing: '0.02em',
-          color: '#6b9ab0',
+          color: '#3a3530',
+          textShadow: '0 2px 8px rgba(0,0,0,0.4)',
           textAlign: 'center'
         }}>
           21 departments · 87 crew · 12 cast · 4 locations

@@ -30,15 +30,22 @@ const BLOBS: Point[] = Array.from({ length: BLOB_COUNT }, (_, i) => {
 const POINTS: Point[] = [HUB, ...BLOBS];
 
 interface MiniConstellationProps {
-  size?: number;
-  /** Extra canvas width to the right of the cluster's own footprint. */
-  reach?: number;
+  /** Canvas width. Defaults to height (a square icon, the original use). */
+  width?: number;
+  /** Canvas height — also the unit orb size/depth scale against. */
+  height?: number;
 }
 
-export default function MiniConstellation({ size = 36, reach = 0 }: MiniConstellationProps) {
+export default function MiniConstellation({ width, height = 36 }: MiniConstellationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef(0);
-  const width = size + reach;
+  const w = width ?? height;
+  // How much wider than tall the canvas is — stretches the cluster's own
+  // horizontal spread to match, so a wide header banner reads as one mass
+  // reaching edge to edge instead of a small circular cluster floating in
+  // a lot of empty canvas. At 1:1 (the original icon use) this is exactly
+  // 1, so nothing changes there.
+  const xStretch = w / height;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -47,15 +54,15 @@ export default function MiniConstellation({ size = 36, reach = 0 }: MiniConstell
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = width * dpr;
-    canvas.height = size * dpr;
+    canvas.width = w * dpr;
+    canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
 
     let t = 0;
     const tilt = 0.35;
     const cosT = Math.cos(tilt), sinT = Math.sin(tilt);
-    const radius = size * 0.4;
-    const cx = size * 0.5, cy = size / 2;
+    const radius = height * 0.4;
+    const cx = w * 0.5, cy = height / 2;
 
     const drift = POINTS.map((_, i) => ({
       fx: 0.4 + (i * 0.31 % 1) * 0.5,
@@ -66,7 +73,7 @@ export default function MiniConstellation({ size = 36, reach = 0 }: MiniConstell
     const animate = () => {
       t += 0.012;
       const angle = t * 0.6;
-      ctx.clearRect(0, 0, width, size);
+      ctx.clearRect(0, 0, w, height);
 
       const projected = POINTS.map((p, i) => {
         const d = drift[i];
@@ -81,14 +88,14 @@ export default function MiniConstellation({ size = 36, reach = 0 }: MiniConstell
         const rz2 = y * sinT + rz1 * cosT;
         const fov = radius * 2.2;
         const scale = fov / (fov + rz2);
-        return { x: cx + rx * scale, y: cy + ry * scale, scale };
+        return { x: cx + rx * scale * xStretch, y: cy + ry * scale, scale };
       });
 
       // Big, translucent, blended circles — same recipe as the landing
       // hero: overlapping soft-edged blobs read as one mass, not dots.
       ctx.globalCompositeOperation = 'lighter';
       projected.forEach((p, i) => {
-        const r = (i === 0 ? 0.62 : 0.4) * size * p.scale;
+        const r = (i === 0 ? 0.62 : 0.4) * height * p.scale;
         ctx.beginPath();
         ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
         ctx.fillStyle = POINTS[i].color;
@@ -103,12 +110,12 @@ export default function MiniConstellation({ size = 36, reach = 0 }: MiniConstell
     animate();
 
     return () => cancelAnimationFrame(animRef.current);
-  }, [size, width]);
+  }, [w, height, xStretch]);
 
   return (
     <canvas
       ref={canvasRef}
-      style={{ width, height: size, flexShrink: 0 }}
+      style={{ width: w, height, flexShrink: 0, display: 'block' }}
       aria-hidden="true"
     />
   );

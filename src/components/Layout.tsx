@@ -29,11 +29,28 @@ const AUTO_HIDE_MS = 3000;
 // the only persistent chrome. Role and reset — used occasionally, not
 // the primary nav — live as a compact trailing cluster on that same bar
 // instead of a whole second bar for two controls.
+const HEADER_H = 72;
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { page, setPage, holdState, resetDemo } = useApp();
   const [barsVisible, setBarsVisible] = useState(true);
+  const [headerWidth, setHeaderWidth] = useState(0);
   const mainRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // The header's own width, so the constellation spans it edge to edge on
+  // any screen — phone, tablet, desktop — instead of a fixed guess.
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(entries => {
+      const w = entries[0]?.contentRect.width;
+      if (w) setHeaderWidth(w);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const wake = () => {
@@ -67,29 +84,42 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           background: 'var(--paper)'
         }}
       >
-        {/* The landing page's own atmosphere dissolving into the paper
-            workspace — no hard edge where dark meets light. Same navy hue
-            family and angle as the landing page's gradient, but its last
-            stop reaches true transparency instead of a solid color, so it
-            genuinely dissolves into the paper below rather than stopping
-            at a line. The fade zone extends well past the button's own
-            height so the dissolve reads as gradual, not abrupt. */}
-        <div style={{
-          position: 'relative',
-          paddingBottom: 40,
-          background: 'linear-gradient(160deg, rgba(13,58,77,0.95) 0%, rgba(10,42,58,0.85) 30%, rgba(7,24,32,0.45) 65%, rgba(7,24,32,0) 100%)'
-        }}>
+        {/* The landing page's own animation, carried into the chrome: the
+            same orb cluster spans the header edge to edge instead of
+            sitting as a small icon next to the wordmark. A bottom-edge-
+            only fade dissolves it into the paper workspace below — no
+            hard seam where dark meets light — without dimming the colors
+            across the rest of the header, since the colors ARE the point. */}
+        <div
+          ref={headerRef}
+          style={{ position: 'relative', height: HEADER_H, background: '#0a2a3a', overflow: 'hidden' }}
+        >
+          {headerWidth > 0 && (
+            <div style={{ position: 'absolute', inset: 0 }}>
+              <MiniConstellation width={headerWidth} height={HEADER_H} />
+            </div>
+          )}
+          <div style={{
+            position: 'absolute', left: 0, right: 0, bottom: 0, height: 36,
+            background: 'linear-gradient(180deg, transparent 0%, rgba(7,24,32,0.5) 60%, var(--paper) 100%)',
+            pointerEvents: 'none'
+          }} />
           <button
             onClick={() => goTo('landing')}
             title="Back to the home page"
             style={{
-              display: 'flex', alignItems: 'center', gap: 8,
+              position: 'relative', display: 'flex', alignItems: 'center', height: '100%',
               background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
-              padding: '8px 16px'
+              padding: '0 16px'
             }}
           >
-            <MiniConstellation size={22} reach={0} />
-            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'normal', fontWeight: 700, color: '#e1ded2', fontSize: 15, letterSpacing: '-0.01em' }}>On Cue</span>
+            <span style={{
+              fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'normal', fontWeight: 700,
+              color: '#ffffff', fontSize: 17, letterSpacing: '-0.01em',
+              textShadow: '0 2px 6px rgba(0,0,0,0.65), 0 1px 2px rgba(0,0,0,0.5)'
+            }}>
+              On Cue
+            </span>
           </button>
         </div>
         {children}

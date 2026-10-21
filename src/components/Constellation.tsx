@@ -653,7 +653,7 @@ function Scene({ onEnter, originXFrac, originYFrac, radiusFrac, radiusBasis, str
               <Html center style={{ pointerEvents: 'none' }}>
                 <div style={{
                   fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: node.id === 'ad' ? 15 : 12,
+                  fontSize: node.id === 'ad' ? 17 : 14,
                   fontWeight: isHovered ? 700 : 600,
                   color: isHovered ? '#e8f0f5' : (node.id === 'ad' ? '#e6b800' : LABEL_COLOR),
                   whiteSpace: 'nowrap',
