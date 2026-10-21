@@ -115,8 +115,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           >
             <span style={{
               fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'normal', fontWeight: 700,
-              color: '#ffffff', fontSize: 17, letterSpacing: '-0.01em',
-              textShadow: '0 2px 6px rgba(0,0,0,0.65), 0 1px 2px rgba(0,0,0,0.5)'
+              color: '#ffffff', fontSize: 24, letterSpacing: '-0.01em',
+              textShadow: '0 1px 4px rgba(0,0,0,0.35)'
             }}>
               On Cue
             </span>

@@ -216,10 +216,10 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
             letterSpacing: '-0.01em',
             color: '#e1ded2', // pulled ~10% toward bluish-gray — cooler than the tan tea-stain, still warm
             lineHeight: 1.05,
-            // The soft gold glow (ambient bloom) plus a real offset drop
-            // shadow underneath it — the glow alone doesn't separate the
-            // word from the moving orbs behind it; the shadow does.
-            textShadow: '0 0 80px rgba(230,184,0,0.12), 0 6px 20px rgba(0,0,0,0.55), 0 2px 4px rgba(0,0,0,0.4)'
+            // The soft gold glow (ambient bloom) plus a light touch of
+            // separation from the moving orbs behind it — kept subtle,
+            // not a heavy cast shadow.
+            textShadow: '0 0 80px rgba(230,184,0,0.12), 0 2px 6px rgba(0,0,0,0.25)'
           }}>
             On Cue
           </div>
@@ -232,7 +232,7 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
           fontStyle: 'italic',
           letterSpacing: '0.02em',
           color: '#3a3530',
-          textShadow: '0 2px 8px rgba(0,0,0,0.4)',
+          textShadow: '0 1px 3px rgba(0,0,0,0.2)',
           textAlign: 'center'
         }}>
           21 departments · 87 crew · 12 cast · 4 locations

@@ -15,10 +15,15 @@ const PALETTE = ['#e6b800', '#c9a227', '#8ab4c7', '#6b9ab0', '#5a8a9e'];
 // delicate web of small dots and thin lines.
 const HUB: Point = { x: 0, y: 0, z: 0.6, color: '#e6b800' };
 
-const BLOB_COUNT = 9;
+// Dense enough to read as one continuous, overlapping mass once the
+// cluster below is stretched to a wide header's full width — a sparse
+// handful of icon-sized blobs just leaves visible gaps at that width.
+// The circular layout (unchanged from the icon version) is what the
+// render-time xStretch below spreads into a wide band.
+const BLOB_COUNT = 34;
 const BLOBS: Point[] = Array.from({ length: BLOB_COUNT }, (_, i) => {
   const angle = i * 2.399;
-  const r = 0.2 + ((i * 37) % 10) / 10 * 0.7;
+  const r = 0.15 + ((i * 23) % 10) / 10 * 0.85;
   return {
     x: Math.cos(angle) * r,
     y: Math.sin(angle) * r * 0.9,
