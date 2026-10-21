@@ -25,6 +25,8 @@ create type continuity_department as enum ('wardrobe', 'art', 'props');
 
 create type vendor_source as enum ('MANUAL', 'GOOGLE_PLACES');
 
+create type audit_event_type as enum ('ready', 'hold', 'roll', 'take', 'info');
+
 -- ============================================================================
 -- Core production hierarchy
 -- ============================================================================
@@ -113,20 +115,13 @@ create table continuity_items (
   note text,
   photo_url text, -- Supabase Storage path
   vendor_id uuid references vendors(id),
+  -- Props-only fields, per the decided rule: nullable columns here rather
+  -- than a separate prop_items table — the fake-Coke/prop-food case lives
+  -- in these two columns, null on every Wardrobe/Art row.
+  is_food boolean,
+  brand_substitution_note text, -- e.g. "fake brand used — no clearance obtained"
   captured_by uuid references auth.users(id),
   captured_at timestamptz not null default now()
-);
-
--- Props-specific extension — the fake-Coke/prop-food case lives here. A real
--- one-to-one with continuity_items (enforced below), not one-to-many: kept
--- as its own table so Props-only fields never sit as null clutter on every
--- Wardrobe/Art row, rather than adding is_food/brand_substitution_note as
--- always-null columns on the shared table.
-create table prop_items (
-  id uuid primary key default gen_random_uuid(),
-  continuity_item_id uuid not null unique references continuity_items(id) on delete cascade,
-  is_food boolean not null default false,
-  brand_substitution_note text -- e.g. "fake brand used — no clearance obtained"
 );
 
 -- ============================================================================
@@ -194,7 +189,7 @@ create table production_budget (
 
 create table audit_log (
   id uuid primary key default gen_random_uuid(),
-  event_type text not null,
+  event_type audit_event_type not null,
   actor_role app_role,
   actor_user_id uuid references auth.users(id),
   payload jsonb,
@@ -231,7 +226,6 @@ alter table takes enable row level security;
 alter table department_statuses enable row level security;
 alter table vendors enable row level security;
 alter table continuity_items enable row level security;
-alter table prop_items enable row level security;
 alter table eta_track_record enable row level security;
 alter table time_loss_records enable row level security;
 alter table budget_snapshots enable row level security;
@@ -248,35 +242,62 @@ create policy "crew can read vendors" on vendors for select using (auth.role() =
 create policy "crew can read eta track record" on eta_track_record for select using (auth.role() = 'authenticated');
 create policy "crew can read time loss records" on time_loss_records for select using (auth.role() = 'authenticated');
 create policy "crew can read audit log" on audit_log for select using (auth.role() = 'authenticated');
+-- Append-only by design, same pattern as continuity_items — any signed-in
+-- crew member can write an event (every role performs auditable actions),
+-- but actor_user_id must be their own; no update/delete policy exists.
+create policy "crew can insert own audit events" on audit_log for insert
+  with check (actor_user_id = auth.uid());
 
--- Takes: PRD §9.2 — only an authorized Script Supervisor or 1st AD records one.
-create policy "SS or AD can read takes" on takes for select using (auth.role() = 'authenticated');
+-- READY gate: only the 1st AD may move a setup out of 'hold'. This is the
+-- one rule every governance doc repeats, and the single thing the whole app
+-- revolves around — enforced here, not just in the UI.
+create policy "only 1st ad can update setup status" on setups for update
+  using (auth_role() = '1st AD')
+  with check (auth_role() = '1st AD');
+create policy "only 1st ad can insert setups" on setups for insert
+  with check (auth_role() = '1st AD');
+
+-- Takes: PRD §9.2 — anyone can read the slate, but only an authorized
+-- Script Supervisor or 1st AD records one. Policy named for what each half
+-- actually does, not identically for both.
+create policy "crew can read takes" on takes for select using (auth.role() = 'authenticated');
 create policy "SS or AD can insert takes" on takes for insert
   with check (auth_role() in ('Script Supervisor', '1st AD'));
 
 -- Department status writes: only that department's own role, or the 1st AD.
+-- Every department_name value needs a mapping here or that department can
+-- never update its own status at all.
 create policy "owning department or AD can update status" on department_statuses for update
   using (
     auth_role() = '1st AD'
     or (department = 'lighting' and auth_role() = 'Gaffer')
-    or (department in ('wardrobe','talent') and auth_role() in ('Wardrobe','Talent Assistant'))
+    or (department = 'wardrobe' and auth_role() = 'Wardrobe')
+    or (department = 'talent' and auth_role() = 'Talent Assistant')
     or (department = 'camera' and auth_role() = 'DP')
+    or (department = 'sound' and auth_role() = 'Sound Mixer')
+    or (department in ('props') and auth_role() = 'Props')
+    or (department in ('art', 'locations') and auth_role() = 'Art Department')
   );
 create policy "owning department can insert status" on department_statuses for insert
   with check (
     auth_role() = '1st AD'
     or (department = 'lighting' and auth_role() = 'Gaffer')
-    or (department in ('wardrobe','talent') and auth_role() in ('Wardrobe','Talent Assistant'))
+    or (department = 'wardrobe' and auth_role() = 'Wardrobe')
+    or (department = 'talent' and auth_role() = 'Talent Assistant')
     or (department = 'camera' and auth_role() = 'DP')
+    or (department = 'sound' and auth_role() = 'Sound Mixer')
+    or (department in ('props') and auth_role() = 'Props')
+    or (department in ('art', 'locations') and auth_role() = 'Art Department')
   );
 
 -- Continuity items: the actual privacy rule — Gaffer explicitly does not see
--- continuity notes (PRD §10 routing table). Visible to the owning department
--- plus 1st AD and Director; writable only by the owning department. Append-
--- only by design — no update/delete policy exists, so neither is possible.
-create policy "owning dept + AD + Director can read continuity" on continuity_items for select
+-- continuity notes (PRD §10 routing table). Visible to the owning department,
+-- 1st AD, Director, and Script Supervisor (continuity is their department on
+-- a real set too); writable only by the owning department. Append-only by
+-- design — no update/delete policy exists, so neither is possible.
+create policy "owning dept + AD + Director + SS can read continuity" on continuity_items for select
   using (
-    auth_role() in ('1st AD', 'Director')
+    auth_role() in ('1st AD', 'Director', 'Script Supervisor')
     or (department = 'wardrobe' and auth_role() = 'Wardrobe')
     or (department = 'art' and auth_role() = 'Art Department')
     or (department = 'props' and auth_role() = 'Props')
@@ -287,18 +308,6 @@ create policy "owning dept can insert continuity" on continuity_items for insert
     or (department = 'art' and auth_role() = 'Art Department')
     or (department = 'props' and auth_role() = 'Props')
   );
-
-create policy "same access as parent continuity item" on prop_items for select
-  using (exists (
-    select 1 from continuity_items ci
-    where ci.id = prop_items.continuity_item_id
-    and (
-      auth_role() in ('1st AD', 'Director')
-      or auth_role() in ('Props', 'Art Department')
-    )
-  ));
-create policy "props can insert prop items" on prop_items for insert
-  with check (auth_role() = 'Props');
 
 -- Budget: UPM and Producer only — matches the researched reality that AD and
 -- Director don't see raw dollars, only time-risk (which stays in setups/

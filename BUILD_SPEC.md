@@ -43,7 +43,9 @@ Visual identity: **"Night Call"** — the landing page is a dark navy/gold anima
 
 ## Schema status
 
-`supabase/migrations/0001_initial_schema.sql` is written — 15 tables, enums, and a first-pass RLS policy set enforcing the PRD's privacy rules in Postgres itself (not just the UI). Not yet run against the live database; that's a manual step in the Supabase SQL Editor, done once you confirm it.
+`supabase/migrations/0001_initial_schema.sql` is written — 14 tables, enums, and a full RLS policy set (read + write) enforcing the PRD's privacy rules in Postgres itself (not just the UI), reviewed by a security sweep before merge. Not yet run against the live database; that's a manual step in the Supabase SQL Editor, done once you confirm it.
+
+Props fields (`is_food`, `brand_substitution_note`) are nullable columns on `continuity_items`, not a separate `prop_items` table — matches the decided rule that Props-only fields sit as null clutter on other departments' rows rather than forcing a join.
 
 **Both open questions from the last round are now resolved:**
 
@@ -57,7 +59,7 @@ Visual identity: **"Night Call"** — the landing page is a dark navy/gold anima
 ## What has to happen next, in order
 
 1. **You create the Supabase project.** Sign up free at supabase.com, create a project, get the Project URL and anon public key from Project Settings → API. Send those to me (or put them in a `.env` file yourself).
-2. **I write the schema** — before any code, as a reviewed plan, not a blind migration: `productions`, `scenes`, `setups`, `takes`, `department_statuses`, `continuity_items` (generalized Wardrobe/Art/Props photo+note+vendor tracking, replacing the earlier wardrobe-only `continuity_photos`), `prop_items`, `vendors`, `eta_track_record`, `budget_snapshots`, `production_budget`, `audit_log`, `profiles` (roles now include UPM, Art Department, Props). You review it before it's applied — schema changes are expensive to walk back once real data exists.
+2. **I write the schema** — before any code, as a reviewed plan, not a blind migration: `productions`, `scenes`, `setups`, `takes`, `department_statuses`, `continuity_items` (generalized Wardrobe/Art/Props photo+note+vendor tracking, replacing the earlier wardrobe-only `continuity_photos`, with Props-only fields as nullable columns rather than a separate table), `vendors`, `eta_track_record`, `budget_snapshots`, `production_budget`, `audit_log`, `profiles` (roles now include UPM, Art Department, Props). You review it before it's applied — schema changes are expensive to walk back once real data exists.
 3. **I wire up real auth** (sign in by picking your name from the provisioned crew list, not self-serve) replacing the fake role-switcher, plus real-time subscriptions so a status change on one device shows up on another, plus the Phase 1 offline write-queue (local-first write, sync on reconnect) layered on top of that sync.
 4. **Google Places integration** for the Wardrobe "Find a Vendor" screen — needs its own API key and billing setup on your end (separate from Supabase).
 5. **Once the scope decision above is made:** one deliberate PRD rewrite covering whatever's actually in scope (UPM at minimum; Art Department/Props/theater only if you decide to go there) — not another piecemeal update.

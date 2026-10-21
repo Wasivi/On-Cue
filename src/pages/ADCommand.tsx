@@ -46,7 +46,7 @@ const BRICK_COLS: [number, number][] = [
 ];
 
 export default function ADCommand() {
-  const { holdState, setHoldState, lightingReady, actorReady } = useApp();
+  const { role, holdState, setHoldState, lightingReady, actorReady } = useApp();
   const setup = production.currentSetup;
   const [openDetails, setOpenDetails] = useState<Set<string>>(new Set());
 
@@ -104,7 +104,12 @@ export default function ADCommand() {
             <div style={{ fontSize: 13, fontWeight: 700, color: '#c9870a' }} className="mono">45 min</div>
           </div>
         </div>
-        {allReady && holdState === 'hold' && (
+        {/* Mock-state gate, not real auth — matches the one rule every
+            governance doc repeats: only the 1st AD clears a hold. The real
+            enforcement is the "only 1st ad can update setup status" RLS
+            policy in 0001_initial_schema.sql; this is defense-in-depth
+            against the current fake role-switcher until real auth lands. */}
+        {allReady && holdState === 'hold' && role === '1st AD' && (
           <button
             onClick={() => setHoldState('ready')}
             className="btn btn-gold"
