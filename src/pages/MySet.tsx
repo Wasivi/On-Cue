@@ -107,14 +107,14 @@ export default function MySet() {
             {holdState === 'hold' ? <AlertCircle size={12} /> : holdState === 'ready' ? <CheckCircle size={12} /> : <Clock size={12} />}
             {holdState === 'hold' ? 'HOLD' : holdState === 'ready' ? 'READY TO ROLL' : 'ROLLING'}
           </span>
-          <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>
+          <span style={{ color: 'var(--muted-dim)', fontSize: 13 }}>
             {roleDescriptions[role]}
           </span>
         </div>
-        <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
+        <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 22, fontWeight: 700, color: 'var(--ink-warm)', marginBottom: 4 }}>
           My Set
         </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+        <p style={{ color: 'var(--muted)', fontSize: 14 }}>
           {production.title} · S{production.season}E{production.episode} "{production.episodeTitle}" · Shoot Day {production.shootDay}
         </p>
       </div>
@@ -122,26 +122,26 @@ export default function MySet() {
       {/* NOW card — a lamp leads the label, not a border stripe */}
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
         <div className="section-label" style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <span style={{ width: 7, height: 7, borderRadius: '50%', background: holdState === 'hold' ? '#c53030' : holdState === 'ready' ? '#1a5f7a' : '#7c3aed', flexShrink: 0 }} />
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: holdState === 'hold' ? 'var(--stop-red)' : holdState === 'ready' ? 'var(--teal)' : 'var(--gold)', flexShrink: 0 }} />
           NOW
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 20, fontWeight: 700 }}>Setup {setup.setupNumber}</span>
-          <span style={{ color: 'var(--text-secondary)', fontSize: 14 }}>·</span>
-          <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Scene {setup.scene}</span>
-          <span style={{ color: 'var(--text-secondary)', fontSize: 14 }}>·</span>
-          <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{setup.location}</span>
+          <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)' }}>Setup {setup.setupNumber}</span>
+          <span style={{ color: 'var(--muted)', fontSize: 14 }}>·</span>
+          <span style={{ fontSize: 14, color: 'var(--muted)' }}>Scene {setup.scene}</span>
+          <span style={{ color: 'var(--muted)', fontSize: 14 }}>·</span>
+          <span style={{ fontSize: 14, color: 'var(--muted)' }}>{setup.location}</span>
         </div>
-        <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>
+        <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 16 }}>
           {setup.description}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
-            <Clock size={14} style={{ color: 'var(--text-muted)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--ink)' }}>
+            <Clock size={14} style={{ color: 'var(--muted-dim)' }} />
             <span className="mono">Target roll: {setup.targetRoll}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
-            <MapPin size={14} style={{ color: 'var(--text-muted)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--ink)' }}>
+            <MapPin size={14} style={{ color: 'var(--muted-dim)' }} />
             <span>Riverside Collision Center, Long Island City</span>
           </div>
         </div>
@@ -150,13 +150,13 @@ export default function MySet() {
       {/* YOUR ACTION */}
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
         <div className="section-label">YOUR ACTION</div>
-        <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>{content.action}</h3>
-        <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 16 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--ink)', marginBottom: 8 }}>{content.action}</h3>
+        <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 16 }}>
           {content.detail}
         </p>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-          <Clock size={14} style={{ color: '#c9870a' }} />
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#c9870a' }} className="mono">
+          <Clock size={14} style={{ color: 'var(--bronze-text)' }} />
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--bronze-text)' }} className="mono">
             Target ready: {content.target}
           </span>
         </div>
@@ -177,21 +177,21 @@ export default function MySet() {
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
         <div className="section-label">WHAT CHANGED</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13 }}>
-            <XCircle size={14} style={{ color: '#c53030', marginTop: 2, flexShrink: 0 }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: 'var(--ink)' }}>
+            <XCircle size={14} style={{ color: 'var(--stop-red)', marginTop: 2, flexShrink: 0 }} />
             <span>Take 5 stopped at 00:42 — Elena line flub on "Freeze — DSI!"</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13 }}>
-            <AlertCircle size={14} style={{ color: '#c9870a', marginTop: 2, flexShrink: 0 }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: 'var(--ink)' }}>
+            <AlertCircle size={14} style={{ color: 'var(--bronze)', marginTop: 2, flexShrink: 0 }} />
             <span>Lighting adjustment requested by DP — DSI patch blown out on tactical vest</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13 }}>
-            <AlertCircle size={14} style={{ color: '#c9870a', marginTop: 2, flexShrink: 0 }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: 'var(--ink)' }}>
+            <AlertCircle size={14} style={{ color: 'var(--bronze)', marginTop: 2, flexShrink: 0 }} />
             <span>Props reset required — armorer verifying blanks after Take 3</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13 }}>
-            <Clock size={14} style={{ color: 'var(--text-muted)', marginTop: 2, flexShrink: 0 }} />
-            <span style={{ color: 'var(--text-secondary)' }}>Next status check in 3 minutes</span>
+            <Clock size={14} style={{ color: 'var(--muted-dim)', marginTop: 2, flexShrink: 0 }} />
+            <span style={{ color: 'var(--muted)' }}>Next status check in 3 minutes</span>
           </div>
         </div>
       </div>
@@ -201,10 +201,10 @@ export default function MySet() {
         <div className="section-label">UP NEXT</div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>Scene 24 — Suspect interrogation</div>
-            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 2 }}>Setup 24A · Two-shot interrogation room · Est. 3:15 PM</div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>Scene 24 — Suspect interrogation</div>
+            <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 2 }}>Setup 24A · Two-shot interrogation room · Est. 3:15 PM</div>
           </div>
-          <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
+          <ChevronRight size={18} style={{ color: 'var(--muted-dim)' }} />
         </div>
       </div>
     </div>

@@ -3,57 +3,50 @@
 @tailwind utilities;
 
 :root {
-  /* DSI Identity — fictional agency palette */
-  --dsi-teal: #1a5f7a;
-  --dsi-cyan: #2d8fb0;
-  --dsi-gold: #e6b800;
-  --dsi-gold-bright: #f0c800;
-  --dsi-dark: #0a0e17;
-  --dsi-navy: #0f1b2e;
+  /* Night Call — Navy / Gold / Ivory, the landing page's own world. The
+     landing page is the one dark title-card moment; the working pages are
+     the OTHER natural reading of that same palette: ivory paper, navy ink,
+     gold accent — not everything painted navy. See DESIGN.md. */
+  --paper: #f4efe3;
+  --paper-deep: #ece4d2;
 
-  /* Nav — pulled from the landing page's own gradient, not a generic
-     near-black, so the app and the landing page read as one identity */
-  --nav-bg: #0a2a3a;
-  --nav-border: #1c4256;
+  --surface: #ffffff;
+  --surface-elevated: #fbf7ee;
 
-  /* Workspace — cool gray, not warm */
-  --workspace-bg: #e8eaed;
-  --workspace-surface: #ffffff;
+  --border: #ded6c4;
+  --border-strong: #c9bea4;
 
-  /* Text */
-  --text-primary: #0a0e17;
-  --text-secondary: #4a5568;
-  --text-muted: #718096;
-
-  /* Status colors — calibrated for DSI */
-  --teal: #1a5f7a;
-  --teal-light: #e0f2f7;
-  --teal-glow: rgba(26, 95, 122, 0.2);
-
-  --amber: #c9870a;
-  --amber-light: #fef6e6;
-  --amber-glow: rgba(201, 135, 10, 0.15);
-
-  --red: #c53030;
-  --red-light: #fde8e8;
-  --red-glow: rgba(197, 48, 48, 0.15);
+  --ink: #14222b;
+  --ink-warm: #0d2836;
+  --muted: #4f7184;
+  --muted-dim: #7c94a0;
 
   --gold: #e6b800;
-  --gold-light: #faf5e0;
-  --gold-glow: rgba(230, 184, 0, 0.2);
+  --gold-bright: #cc9f00;
+  --gold-glow: rgba(230, 184, 0, 0.22);
 
-  --violet: #553c9a;
-  --violet-light: #ede9fe;
+  --bronze: #c9a227;
+  --bronze-text: #8a6d1a;
+  --bronze-glow: rgba(201, 162, 39, 0.18);
 
-  /* Borders */
-  --border: #d1d5db;
-  --border-strong: #9ca3af;
+  --teal: #8ab4c7;
+  --teal-text: #2d6478;
+  --slate: #6b9ab0;
+  --slate-deep: #5a8a9e;
+  --slate-deeper: #4a7a8e;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(10, 14, 23, 0.06);
-  --shadow: 0 2px 8px rgba(10, 14, 23, 0.08);
-  --shadow-md: 0 4px 16px rgba(10, 14, 23, 0.10);
-  --shadow-lg: 0 8px 32px rgba(10, 14, 23, 0.12);
+  --stop-red: #e2493c;
+  --stop-red-text: #a8392e;
+  --stop-red-hover: #c93c30;
+  --stop-red-dim: #8c2a22;
+  --stop-red-glow: rgba(226, 73, 60, 0.18);
+
+  /* Depth — ordinary soft shadows on a light surface; a paper workspace
+     reads lift the conventional way, unlike the landing page's own glow. */
+  --shadow-sm: 0 1px 2px rgba(20, 34, 43, 0.06);
+  --shadow: 0 2px 8px rgba(20, 34, 43, 0.08);
+  --shadow-md: 0 6px 18px rgba(20, 34, 43, 0.1);
+  --shadow-lg: 0 14px 36px rgba(20, 34, 43, 0.14);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -61,21 +54,21 @@
 html, body, #root {
   height: 100%;
   font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  background: var(--workspace-bg);
-  color: var(--text-primary);
+  background: var(--paper);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
 }
 
-.mono { 
-  font-family: 'JetBrains Mono', monospace; 
+.mono {
+  font-family: 'JetBrains Mono', monospace;
   font-variant-numeric: tabular-nums;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #a0aec0; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #718096; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
@@ -94,8 +87,8 @@ html, body, #root {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 var(--red-glow); }
-  50% { box-shadow: 0 0 0 6px var(--red-glow); }
+  0%, 100% { box-shadow: 0 0 0 0 var(--stop-red-glow); }
+  50% { box-shadow: 0 0 0 6px var(--stop-red-glow); }
 }
 
 @keyframes statusPop {
@@ -111,6 +104,9 @@ html, body, #root {
 .animate-status-pop { animation: statusPop 0.35s cubic-bezier(0.0, 0, 0.2, 1); }
 
 /* ===== STATUS PILLS ===== */
+/* A pale tint of the signal color with its darker text-safe twin for the
+   label — the lamp dot (rendered inline by each caller) still leads every
+   status, same as before; only the weights flipped for a light surface. */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -124,43 +120,43 @@ html, body, #root {
   transition: all 0.15s ease-out;
 }
 
-.pill-ready { 
-  background: var(--teal-light); 
-  color: var(--teal); 
-  border: 1px solid rgba(26, 95, 122, 0.2);
+.pill-ready {
+  background: rgba(138, 180, 199, 0.16);
+  color: var(--teal-text);
+  border: 1px solid rgba(138, 180, 199, 0.35);
 }
-.pill-hold { 
-  background: var(--red-light); 
-  color: var(--red); 
-  border: 1px solid rgba(197, 48, 48, 0.2);
+.pill-hold {
+  background: rgba(226, 73, 60, 0.12);
+  color: var(--stop-red-text);
+  border: 1px solid rgba(226, 73, 60, 0.3);
 }
-.pill-risk { 
-  background: var(--amber-light); 
-  color: var(--amber); 
-  border: 1px solid rgba(201, 135, 10, 0.2);
+.pill-risk {
+  background: rgba(201, 162, 39, 0.14);
+  color: var(--bronze-text);
+  border: 1px solid rgba(201, 162, 39, 0.32);
 }
-.pill-wait { 
-  background: #f3f4f6; 
-  color: #4b5563; 
-  border: 1px solid #e5e7eb;
+.pill-wait {
+  background: rgba(79, 113, 132, 0.1);
+  color: var(--muted);
+  border: 1px solid rgba(79, 113, 132, 0.2);
 }
-.pill-gold { 
-  background: var(--gold-light); 
-  color: #7c5c10; 
-  border: 1px solid rgba(230, 184, 0, 0.3);
+.pill-gold {
+  background: rgba(230, 184, 0, 0.16);
+  color: var(--bronze-text);
+  border: 1px solid rgba(230, 184, 0, 0.35);
 }
 
 /* ===== CARDS ===== */
 .card {
-  background: var(--workspace-surface);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card:hover { 
-  box-shadow: var(--shadow-md); 
+.card:hover {
+  box-shadow: var(--shadow-md);
   border-color: var(--border-strong);
   transform: translateY(-1px);
 }
@@ -173,115 +169,114 @@ html, body, #root {
   justify-content: center;
   gap: 8px;
   padding: 10px 18px;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 4px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   border: none;
   transition: all 0.15s ease-out;
   letter-spacing: 0.01em;
+  font-family: 'Playfair Display', Georgia, serif;
 }
 
 .btn:active { transform: scale(0.98); }
 
-.btn-primary { 
-  background: var(--teal); 
-  color: white; 
-}
-.btn-primary:hover { 
-  background: #144d63; 
-  box-shadow: 0 2px 8px var(--teal-glow);
-}
-
-.btn-gold { 
-  background: var(--gold); 
-  color: var(--dsi-dark); 
+.btn-primary,
+.btn-gold {
+  background: var(--gold);
+  color: #0a0e17;
   font-weight: 700;
 }
-.btn-gold:hover { 
-  background: #cc9f00; 
-  box-shadow: 0 2px 8px var(--gold-glow);
+.btn-primary:hover,
+.btn-gold:hover {
+  background: var(--gold-bright);
+  box-shadow: 0 2px 10px var(--gold-glow);
 }
 
-.btn-secondary { 
-  background: #f3f4f6; 
-  color: var(--text-primary); 
-  border: 1px solid var(--border); 
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
 }
-.btn-secondary:hover { 
-  background: #e5e7eb; 
-  border-color: var(--border-strong);
-}
-
-.btn-danger { 
-  background: var(--red); 
-  color: white; 
-}
-.btn-danger:hover { 
-  background: #9b2c2c; 
-  box-shadow: 0 2px 8px var(--red-glow);
+.btn-secondary:hover {
+  background: rgba(20, 34, 43, 0.04);
+  border-color: var(--muted);
 }
 
-.btn-ghost { 
-  background: transparent; 
-  color: var(--text-secondary); 
+.btn-danger {
+  background: var(--stop-red);
+  color: white;
 }
-.btn-ghost:hover { 
-  background: rgba(0,0,0,0.04); 
-  color: var(--text-primary); 
+.btn-danger:hover {
+  background: var(--stop-red-hover);
+  box-shadow: 0 2px 10px var(--stop-red-glow);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+}
+.btn-ghost:hover {
+  background: rgba(79, 113, 132, 0.08);
+  color: var(--ink);
 }
 
 .btn-lg { padding: 14px 32px; font-size: 15px; }
 
 /* ===== NAVIGATION ===== */
+/* Lives on the dark nav rail, not the paper workspace — kept light-on-dark
+   regardless of the page canvas change above. */
 .nav-link {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  border-radius: 6px;
-  color: #718096;
-  font-size: 13px;
+  border-radius: 4px;
+  color: var(--muted-dim);
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease-out;
   text-decoration: none;
   border: none;
   background: transparent;
+  font-family: 'Playfair Display', Georgia, serif;
 }
 
-.nav-link:hover { 
-  background: rgba(255,255,255,0.05); 
-  color: #e2e8f0; 
+.nav-link:hover {
+  background: rgba(230, 184, 0, 0.1);
+  color: #e8f0f5;
 }
 
-.nav-link.active { 
-  background: rgba(230, 184, 0, 0.12); 
-  color: var(--gold); 
+.nav-link.active {
+  background: rgba(230, 184, 0, 0.16);
+  color: var(--gold);
 }
 
 /* ===== SECTION LABELS ===== */
 .section-label {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-muted);
+  color: var(--muted);
   margin-bottom: 12px;
+  font-family: 'Playfair Display', Georgia, serif;
 }
 
 /* ===== BIG STATUS ===== */
 .big-status {
-  font-size: 42px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-family: "'Big Caslon', 'Big Caslon Medium', Didot, Georgia, serif";
+  font-size: 48px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   line-height: 1.1;
   transition: color 0.35s cubic-bezier(0.0, 0, 0.2, 1);
 }
 
-.big-status.hold { color: var(--red); }
-.big-status.ready { color: var(--teal); }
-.big-status.gold { color: var(--gold); }
+.big-status.hold { color: var(--stop-red-text); }
+.big-status.ready { color: var(--teal-text); }
+.big-status.gold { color: var(--bronze-text); }
 
 /* ===== TAKE CHIPS ===== */
 .take-chip {
@@ -289,14 +284,15 @@ html, body, #root {
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease-out;
   border: 1px solid var(--border);
-  background: var(--workspace-surface);
-  color: var(--text-secondary);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: 'Playfair Display', Georgia, serif;
 }
 
 .take-chip:hover {
@@ -304,9 +300,9 @@ html, body, #root {
 }
 
 .take-chip.active {
-  border-color: var(--teal);
-  background: var(--teal-light);
-  color: var(--teal);
+  border-color: var(--teal-text);
+  background: rgba(138, 180, 199, 0.16);
+  color: var(--teal-text);
 }
 
 /* ===== CHECKLIST ===== */
@@ -315,22 +311,22 @@ html, body, #root {
   align-items: center;
   gap: 10px;
   padding: 10px;
-  background: var(--workspace-bg);
-  border-radius: 6px;
+  background: var(--paper);
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   transition: all 0.15s ease-out;
   border: 1px solid transparent;
 }
 
 .checklist-item:hover {
-  background: #dfe1e4;
+  background: var(--paper-deep);
 }
 
 .checklist-item.checked {
-  background: var(--teal-light);
-  border-color: var(--teal);
-  color: #144d63;
+  background: rgba(138, 180, 199, 0.16);
+  border-color: var(--teal-text);
+  color: var(--ink);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -342,19 +338,19 @@ html, body, #root {
 
 @media (max-width: 768px) {
   .oc-root { flex-direction: column; }
-  .oc-nav { 
-    width: 100%; 
-    height: auto; 
-    flex-direction: row; 
+  .oc-nav {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
     padding: 8px 12px;
     overflow-x: auto;
   }
-  .oc-nav-items { 
-    flex-direction: row; 
-    gap: 4px; 
+  .oc-nav-items {
+    flex-direction: row;
+    gap: 4px;
     margin-top: 0;
     flex: 1;
   }
   .oc-main { padding: 16px; }
-  .big-status { font-size: 32px; }
+  .big-status { font-size: 36px; }
 }
