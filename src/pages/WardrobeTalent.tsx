@@ -22,7 +22,7 @@ function nowLabel() {
 }
 
 export default function WardrobeTalent() {
-  const { setActorReady, lightingReady, setHoldState } = useApp();
+  const { setActorReady } = useApp();
   const setup = production.currentSetup;
   const [castIndex, setCastIndex] = useState(0);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -343,7 +343,10 @@ export default function WardrobeTalent() {
         {/* Action buttons */}
         <div style={{ display: 'flex', gap: 10 }}>
           <button
-            onClick={() => { setActorReady(true); if (lightingReady) setHoldState('ready'); }}
+            // Only sets this department's own flag — the HOLD->READY
+            // transition is the 1st AD's alone, via AD Command's gated
+            // "Clear Hold" button, never an automatic side effect here.
+            onClick={() => setActorReady(true)}
             className="btn btn-primary"
           >
             <CheckCircle size={16} /> Actor Ready

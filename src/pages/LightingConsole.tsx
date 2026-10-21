@@ -17,7 +17,7 @@ const ETA_TRACK_RECORD: { setup: string; result: 'onTime' | 'late' }[] = [
 ];
 
 export default function LightingConsole() {
-  const { setLightingReady, actorReady, setHoldState } = useApp();
+  const { setLightingReady } = useApp();
   const setup = production.currentSetup;
 
   const [showCamera, setShowCamera] = useState(false);
@@ -70,8 +70,10 @@ export default function LightingConsole() {
     if (capturedShot) setReferencePhoto(capturedShot);
     setShowCamera(false);
     setCapturedShot(null);
+    // Only sets this department's own flag — the HOLD->READY transition
+    // is the 1st AD's alone, via AD Command's gated "Clear Hold" button,
+    // never an automatic side effect of another department going ready.
     setLightingReady(true);
-    if (actorReady) setHoldState('ready');
   };
 
   const cancelCamera = () => {
@@ -85,7 +87,6 @@ export default function LightingConsole() {
     if (file) {
       setReferencePhoto(URL.createObjectURL(file));
       setLightingReady(true);
-      if (actorReady) setHoldState('ready');
     }
     e.target.value = '';
   };

@@ -3,7 +3,7 @@ import { production, roleDescriptions } from '../data/seed';
 import { Clock, MapPin, AlertCircle, CheckCircle, XCircle, ChevronRight } from 'lucide-react';
 
 export default function MySet() {
-  const { role, holdState, lightingReady, actorReady, setLightingReady, setActorReady, setHoldState } = useApp();
+  const { role, holdState, setLightingReady, setActorReady } = useApp();
   const setup = production.currentSetup;
 
   const getRoleContent = () => {
@@ -14,7 +14,10 @@ export default function MySet() {
           detail: 'Current: "DSI" patch on vest blown out in Take 5. Key light (Arri SkyPanel S60) shifted when Ray hit mark 3. Drop intensity 20%, flag right edge.',
           target: '2:40 PM',
           buttons: [
-            { label: 'Lighting Ready', primary: true, onClick: () => { setLightingReady(true); if (actorReady) setHoldState('ready'); } },
+            // Only sets this department's own flag — the HOLD->READY
+            // transition is the 1st AD's alone, via AD Command's gated
+            // "Clear Hold" button, never an automatic side effect here.
+            { label: 'Lighting Ready', primary: true, onClick: () => setLightingReady(true) },
             { label: 'Need 5 Minutes', primary: false, onClick: () => {} },
             { label: 'Equipment Issue', primary: false, danger: true, onClick: () => {} }
           ]
@@ -25,7 +28,7 @@ export default function MySet() {
           detail: 'Vest has dust smudge on right shoulder from door breach in Scene 19. Left knee pad shifted during Take 5 — needs repositioning. DSI patch must face camera.',
           target: '2:38 PM',
           buttons: [
-            { label: 'Actor Ready', primary: true, onClick: () => { setActorReady(true); if (lightingReady) setHoldState('ready'); } },
+            { label: 'Actor Ready', primary: true, onClick: () => setActorReady(true) },
             { label: 'Continuity Issue', primary: false, danger: true, onClick: () => {} },
             { label: 'Reset Needed', primary: false, danger: true, onClick: () => {} }
           ]
@@ -68,7 +71,7 @@ export default function MySet() {
           detail: 'Return to Trailer B for line rehearsal — "Freeze — DSI!" delivery. Tactical vest dust continuity check. Hair/makeup touch-up.',
           target: 'Ready by 2:38 PM',
           buttons: [
-            { label: 'Talent in Holding', primary: true, onClick: () => { setActorReady(true); if (lightingReady) setHoldState('ready'); } },
+            { label: 'Talent in Holding', primary: true, onClick: () => setActorReady(true) },
             { label: 'Need More Time', primary: false, onClick: () => {} },
             { label: 'Talent Issue', primary: false, danger: true, onClick: () => {} }
           ]
