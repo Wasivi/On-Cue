@@ -262,7 +262,10 @@ create policy "only 1st ad can insert setups" on setups for insert
 -- actually does, not identically for both.
 create policy "crew can read takes" on takes for select using (auth.role() = 'authenticated');
 create policy "SS or AD can insert takes" on takes for insert
-  with check (auth_role() in ('Script Supervisor', '1st AD'));
+  with check (
+    recorded_by = auth.uid()
+    and auth_role() in ('Script Supervisor', '1st AD')
+  );
 
 -- Department status writes: only that department's own role, or the 1st AD.
 -- Every department_name value needs a mapping here or that department can
@@ -304,9 +307,12 @@ create policy "owning dept + AD + Director + SS can read continuity" on continui
   );
 create policy "owning dept can insert continuity" on continuity_items for insert
   with check (
-    (department = 'wardrobe' and auth_role() = 'Wardrobe')
-    or (department = 'art' and auth_role() = 'Art Department')
-    or (department = 'props' and auth_role() = 'Props')
+    captured_by = auth.uid()
+    and (
+      (department = 'wardrobe' and auth_role() = 'Wardrobe')
+      or (department = 'art' and auth_role() = 'Art Department')
+      or (department = 'props' and auth_role() = 'Props')
+    )
   );
 
 -- Budget: UPM and Producer only — matches the researched reality that AD and
