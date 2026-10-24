@@ -20,3 +20,4 @@ supabase/.temp/
 .agents/
 .gemini/
 .impeccable/
+.codex/
