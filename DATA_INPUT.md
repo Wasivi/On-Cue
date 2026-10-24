@@ -1,48 +1,70 @@
-# On Cue — Data Input & Entry Model
+# On-Cue — Data Input & Entry Model
 
-What's shown on each screen, where it actually comes from in a real production, and what's currently fictional vs. a real gap to design.
+What each screen shows, where that data really comes from on a production, who enters it, and what's real today versus demo data. Requirements and build status for each screen: `docs/PRD.md` Section 8.
 
-Three kinds of data move through this app:
+Updated 2026-10-23.
 
-1. **Imported** — loaded once per shoot day from an external source (call sheet, schedule), not typed by anyone in the app.
-2. **Structured** — a person picks from a fixed set of buttons/categories. No free text. Already how most of this prototype works.
-3. **Written** — a person types a sentence. Right now this exists **nowhere** in the app (see README check below) except as hardcoded fictional text.
+## Four kinds of data
 
-## The headline finding
+1. **Imported** — loaded once from something the production already makes: the call sheet, crew list, schedule, or costume breakdown. Nobody retypes it on the day.
+2. **Structured** — a person taps from a fixed set of choices (Ready / Need Time / Issue, cause chips). No typing.
+3. **Written** — a person types a short note, always attached to something they're already doing (a photo, a take).
+4. **Calculated** — the app works it out from the other three: minutes lost, usage counts, dollar estimates, readiness. Calculations update on their own; decisions never do.
 
-There is currently **zero real text-input anywhere in the app.** Every "note" you read (continuity notes, take notes, the activity feed) is hardcoded fictional copy in `src/data/seed.ts`, not something any role can actually type. The only `<input>` elements that exist are the landing page's fake sign-in form, a lighting checklist checkbox, and the hidden camera file-picker on Wardrobe & Talent.
+The rule behind all four: **data entry has to be zero-effort, or it won't happen.** Day-of data piggybacks on what people are already doing. Reference data is entered once, by one person, during prep.
+
+## What changed since the last version
+
+Written input is now real in two places: Wardrobe's contact sheet, where each photo can carry a note typed in the same motion, and Set & Props Continuity, where each photo carries an item name and note. Photo labels are open text, with Front and Back as one-tap picks. The Live Take note is still missing.
 
 ## Screen by screen
 
-### Onboarding — Imported
-"Upload Call Sheet," "Import Production Schedule," "Start With a Template" are where production/scene/setup/character/look names would really come from — parsed out of a real call sheet or schedule export. **The PRD explicitly puts real call-sheet ingestion out of scope for this release**, so the current fake progress-bar animation is intentional, not a gap. When it's built for real, this is also where each character's base wardrobe item list would load from (the costume breakdown is prepared during prep, before the shoot day — it's not typed live on set).
+### Sign-in — Imported (not built)
+The crew list comes from the production office, off the call sheet. People pick their own name; nobody types a name. Adding a day player has to take under a minute, or people will share logins.
 
-### My Set — Structured, read-only summary
-Each role's "next action" card is derived from that department's own status elsewhere (see below) — nothing is typed here directly. The outcome buttons (Print/Hold/No Good, Go Again/Move On, Approve Escalation) are one-tap logged actions, not text.
+### Onboarding — Imported (simulated)
+Upload Call Sheet and Import Production Schedule open a real file picker. Reading the file is out of scope this release; the two Harbor Unit sample files are recognized by name. When this becomes real, it's where the crew list, the scenes, and each character's costume breakdown come from.
 
-### AD Command — Computed + structured
-Entirely aggregated from other departments' statuses. "Send 5-Min Check-in" / "Reorder Next Setup" / "Escalate Blocker" are logged actions (the `AckButton` pattern), no text entry.
+### My Set — Structured + Calculated
+The next-action card is calculated from the department's status elsewhere. The outcome buttons (Print, Go Again, Approve Escalation, Escalate) are one-tap recorded actions. *Today they don't record anything, and What Changed is fixed text.*
 
-### Live Take — Structured, **with one real gap**
-Scene/setup/slate/take/outcome and reset causes are chip-based category selection — already built, matches the PRD exactly ("categorized reset causes"). **But the PRD's own wording for this role is "slate, take, outcome, categorized reset causes, _and notes_"** — free-text notes are explicitly spec'd here and don't exist in the UI yet. This is the cleanest, most clearly-justified place to add a real textarea: Script Supervisor records category chips *plus* a short free-text note per take.
+### AD Command — Calculated + Structured
+Built entirely from the other departments' statuses, blocked departments first. Clear Hold is a one-tap action for the 1st AD only. *It doesn't write to the Record yet.* Minutes, never dollars.
 
-### Lighting Console — Structured
-Gaffer's task card is derived from whichever cause was selected on Live Take. Status buttons (Ready / Need Time / Equipment Issue) are logged actions. The "Pattern Alert" recovery suggestion is system-computed (same engine as Take Intelligence), not written by a person.
+### Live Take — Structured + Written
+Scene, setup, take, outcome, and cause chips are taps. A short free-text note per take is written input: optional, unless the cause is Other. *The note field isn't built yet.*
 
-### Wardrobe & Talent — **this is the one that needs a real decision**
-Breaking down exactly what you asked about:
-- **Character / look / item list**: Imported, same as above — this is the costume breakdown from prep, not typed on the shoot day.
-- **Continuity photos**: Already real and working — tapping a photo slot opens the actual device camera.
-- **Continuity notes** ("vest has dust smudge on right shoulder"): this is the gap. In a real production, this is the Set Costumer's job — they maintain a continuity log, usually a photo plus a short note, right after a look is confirmed or after any take that might affect it. The PRD calls this role's data "character, look, **approved continuity notes**, reset task" — "approved" likely means "the official continuity record," not "someone else writes it and Wardrobe just reads it," but that's genuinely ambiguous in the PRD and worth you confirming. My recommendation: Wardrobe types the note themselves, attached to the photo they just took, timestamped automatically — mirroring how the camera capture already works.
-- **Fixed photo slots (Front/Back/Detail: Cuff)**: hardcoded today. Real version needs to be a small, flexible list — Front + Back always, plus an open "+ Add detail shot" for anything specific to that look.
-- **Reset required flag**: structured toggle, same pattern as other departments' issue buttons — no text needed.
+### Lighting Console — Structured + Calculated
+Lighting Ready takes a reference photo and then confirms, so the photo piggybacks on the action. Need 5 Minutes and Equipment Issue are taps (*placeholders today*). The ETA track record and pattern alert are calculated. The colors in frame (*not built*) are calculated from Wardrobe's costume plot: Lighting reads them and never enters them.
 
-### Take Intelligence — Fully computed, no input at all
-Everything here (time lost by cause, usable-take counts, the recovery suggestion) is an aggregate derived from Live Take records over time. Nobody writes anything on this screen, ever — it's pure analytics. Worth knowing this one is categorically different from the others.
+### Wardrobe & Talent — Imported + Written + Structured + Calculated
+- **Costume plot** (characters, change numbers, story days, items with color and fabric, multiples, hazards, and the story reason for each look) — Imported. It's built during prep from the script breakdown and fittings, not typed on the shoot day. *Demo data today: Harbor Unit "Undertow."*
+- **Continuity photos and notes** — Written, in the moment. The costumer photographs the actor and types a note in the same action. Front and Back are one-tap labels; anything else is typed. *Built; photos are lost on reload until storage is connected.*
+- **Current multiple, actor ready, fitting issue** — Structured taps.
+- **Usage count** ("used in N scenes across M episodes") — Calculated. *Built.*
+- **Actor reference photos** — Imported once, during prep. *Six fictional placeholder portraits are in `sample-data/headshots/`, not yet shown in the app.*
 
-## Open questions (yours to decide, not mine to assume)
+### Set & Props Continuity — Written + Structured
+Props and Art Department take a photo, name the item, and add a note in one action. Props also taps whether an item is food and adds a brand substitution note when one is needed. Only the owning role can add items. *Built.*
 
-1. Who exactly is authorized to write a Wardrobe continuity note — Wardrobe only, or also Script Supervisor (continuity is technically their department in a lot of real productions)? The PRD's "approved continuity notes" phrasing doesn't settle this.
-2. Should Live Take's new notes field be required, optional, or only shown for certain reset causes (e.g., required when "Other" is selected)?
-3. Is a free-text note ever editable/deletable after submission, or is it an append-only log (matches "preserve an auditable record" in the PRD's product goals)?
-4. Do detail photo slots get named by the person taking them (truly open-ended) or chosen from a short preset list (Cuff, Collar, Prop, Stain, Patch) to keep the continuity log consistent across different Wardrobe staff?
+### Take Intelligence — Calculated
+Nothing is entered here. Everything is calculated from Live Take records: takes, usable takes, turnaround, time lost by cause, and patterns.
+
+### Budget — Calculated
+Nothing is entered here either. Dollar estimates are calculated from minutes lost and the production's budget figures (*demo data today*). UPM and Producer only.
+
+### The Record — Calculated (not built)
+Nothing is entered here. It lists every recorded action from every other screen, with the person and the role. Corrections and redactions appear as new entries.
+
+### Find a Vendor — Structured + Imported (not built)
+Preset category buttons, with results from Google Places. Vendors the production uses are saved once to the vendors list.
+
+### Sound — Structured + Written (not built)
+Sound reports and mic issues per take.
+
+## Decided since the last version
+
+- **Who writes a wardrobe continuity note:** Wardrobe, at the moment of capture. Whether the Script Supervisor may also write one is still open (`docs/PRD.md` Section 17).
+- **Live Take note:** optional, and required when the cause is Other.
+- **Editing:** notes are never edited or deleted after submission; corrections are new entries. The one exception is privacy redaction (`docs/GOVERNANCE-MODEL.md` Section 3).
+- **Photo labels:** open text, with Front and Back as quick picks.

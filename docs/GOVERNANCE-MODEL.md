@@ -22,7 +22,11 @@ Agents may never:
 
 The production's authorized humans decide, approve, and act. Every consequential state change in the app requires an explicit action by a signed-in person acting under their role.
 
-**The READY gate (non-negotiable):** only a signed-in person whose role is 1st AD can move a setup from HOLD to READY and approve camera roll. No other role, and no agent, may perform this action. This mirrors real set practice — only the 1st AD calls "Picture's up" — which exists precisely to prevent chaos and wasted takes. The current implementation gap (a "Clear Hold — Roll When Ready" button not gated to the 1st AD role) must be fixed and treated as a priority-1 defect.
+**Calculations are not decisions.** Derived numbers may update on their own — minutes lost, budget snapshots, a setup's computed readiness. Decisions never do: approving, clearing, rolling, buying, scheduling, moving or locking money, signing off. If an automatic step would commit the production to something, it is a decision, and a signed-in person must take it.
+
+**The READY gate (non-negotiable):** only a signed-in person whose role is 1st AD can move a setup from HOLD to READY and approve camera roll. No other role, and no agent, may perform this action. This mirrors real set practice — only the 1st AD calls "Picture's up" — which exists precisely to prevent chaos and wasted takes. It is enforced twice: AD Command's "Clear Hold — Roll When Ready" button only appears for the 1st AD role, and the database itself refuses a READY change from any other role.
+
+**Covering for the 1st AD.** The 1st AD can't be on the floor every minute, and a second unit has its own 1st AD. Only the 1st AD can hand off roll authority, only to a named person, and only for a stated window: "1st AD [name] hands roll authority to [name] until [time]." The handoff is itself a recorded event. It ends at the stated time or when the 1st AD takes it back, whichever comes first, and every action taken under it records both the covering person and the handoff it relied on. A unit's 1st AD holds authority only for that unit.
 
 ## 2. Authority Stays Scoped. Awareness Does Not.
 
@@ -30,13 +34,17 @@ This is the Crew Resource Management (CRM) principle, adapted from aviation ([Wi
 
 - **Decisions stay scoped.** Each state change belongs to the role that owns it. The gaffer owns the lighting fix; the script supervisor owns the take log; the 1st AD owns the roll call. No role can perform another role's action.
 - **Awareness does not stay scoped.** Every status change from any department must surface on every role's own screen within seconds — a live "What Changed" feed, not a page someone has to remember to open. A junior crew member flagging a problem must be heard the same way a CRM-trained first officer's input is heard.
-- **Anyone can raise a blocker. Any signed-in person, at any level, can flag "this doesn't look right" on any department.** Only the owning role can resolve it. This is deliberate: it is how real high-reliability teams avoid the silo failures (one department not knowing what another is doing) that plague organizations where information stays trapped in one person's head.
+- **Anyone can raise a flag, and there are two kinds.** This is deliberate: it is how real high-reliability teams avoid the silo failures (one department not knowing what another is doing) that plague organizations where information stays trapped in one person's head.
+  - **Safety stop.** Any signed-in person, at any level, can call one. It puts the setup straight back on HOLD with no approval needed. Only the 1st AD can clear it, after the owning department confirms the problem is resolved. Easy to stop, deliberate to restart — the factory-line rule where any worker can stop the line. A safety stop is still called out loud on the radio first (Section 6); the app records it.
+  - **Concern.** Any signed-in person can flag "this doesn't look right" on any department. It goes to the owning role and appears in the What Changed feed, but it does not stop the set. Only the owning role can resolve it.
+- **Broadcast status, scope detail.** Awareness means *status* — what changed, what's blocked, who's waiting — and that reaches everyone. Detail does not: each department sees its own records in full depth and other departments' records only as narrow, purpose-built slices ("deep at home, narrow abroad" — see `docs/WARDROBE-SOP.md` §7). Everything shows in the feed; only changes that affect a person's own role interrupt them with an alert.
 
 ## 3. The State Machine Is the Accountability System
 
 Every consequential action writes one immutable, timestamped event that records **three things: who did it (the person), under what authority (the role), and what it authorized** (the existing `AgentEvent` model — kind: ready / hold / roll / take / info — surfaced on the Agent Activity page).
 
-- **Append-only.** No edits, no deletes, ever. Corrections are new events that reference the event they correct.
+- **Append-only.** No edits, no deletes. Corrections are new events that reference the event they correct.
+- **Privacy redaction is the one exception.** Continuity photos are pictures of real performers, and contracts or privacy law can require removing them, or other personal details, after a show wraps. An authorized person (the production office, or whoever it designates) may remove the personal content inside an event — the photo, a name in a note. The event itself stays, still showing what happened, when, and under whose authority, and a new redaction event records who removed what and why. Redaction never changes what was decided or by whom. Confirm the exact retention and removal rules with an entertainment lawyer before a real production uses On-Cue.
 - **Person-level attribution is mandatory.** Roles are not unique on a set — two people can be wardrobe, a 2nd AD and 2nd 2nd AD both exist, a PA fills in for anyone. An event that only says "Wardrobe marked this ready" has lost the one thing a state machine exists for: who specifically did it. Every event stores both `role` (the authority) and `person` (the individual). Authority lives at the role level; accountability lives at the person level.
 - **The record replaces blame-broadcast.** On a set with no system of record, people protect themselves by making sure everyone heard them say it out loud — looping in the whole production for every decision. That is expensive and dysfunctional. On-Cue's answer is not "tell everyone everything"; it is "the record itself is the protection." Nobody needs witnesses if the state machine logged the action with their name on it.
 - **Time lost, not fault.** Events record causes and minutes, not blame. The system's job is to answer "what happened, who did it, and what it authorized," never "whose fault is it."
@@ -53,6 +61,7 @@ The identity model:
 4. **Authority lives at the role level** — only an account whose active role is 1st AD can clear a hold. **Accountability lives at the person level** — every event and every continuity item records who did it.
 5. **No self-serve signup, and no social login as identity.** Google/Apple sign-in buttons, if kept, authenticate against provisioned accounts only — they never create new ones. Otherwise anyone with an email address could join a private set's record system.
 6. **Prototype scope:** sign-in can be as simple as picking your name from the crew list in the seed data — no passwords for v1, since it is a demo. The real product adds production-office provisioning (invite, role assignment, deactivation when someone wraps) on top of this same structure.
+7. **Adding a person must take under a minute.** Crews change daily — day players, a PA covering, a last-minute replacement. If adding someone is slow, people share logins, and person-level accountability (Section 3) quietly stops working. The production office must be able to add a day player from the call sheet, give them a role, and set an end date in under a minute; their access ends on that date or when they wrap.
 
 ## 5. Visibility Rules: Who Sees What
 
@@ -102,7 +111,7 @@ On-set live communication is two-channel simplex radio (commonly Motorola CP200-
 ### Identity and events
 
 - People come from the provisioned crew list (Section 4). No self-serve account creation. No free-text names.
-- **events (AgentEvent)** — append-only, immutable. Kind enum: `ready | hold | roll | take | info`. Every event stores both `role` (authority) and `person` (the named individual from the crew list).
+- **events (AgentEvent)** — append-only, immutable (the only exception is privacy redaction, Section 3). Kind enum: `ready | hold | roll | take | info`; handoffs, safety stops, and redactions (Sections 1–3) add kinds when they're built. Every event stores both `role` (authority) and `person` (the named individual from the crew list).
 - **continuity_items.captured_by** — the signed-in person, with the role they were acting under at capture time.
 
 ### continuity_items (shared table: wardrobe / art / props)
@@ -129,7 +138,7 @@ On-set live communication is two-channel simplex radio (commonly Motorola CP200-
 | Decision | Status |
 |---|---|
 | Product name is **On-Cue** | Decided |
-| Only 1st AD approves READY / camera roll | Decided — implementation gap is a priority-1 fix |
+| Only 1st AD approves READY / camera roll | Decided — enforced in AD Command and in the database |
 | Identity: provisioned crew-list sign-in, person-level attribution on every event | Decided |
 | No self-serve signup; social login never creates accounts | Decided |
 | Budget dollars: UPM + Producer only; 1st AD sees minutes | Decided |
@@ -138,6 +147,12 @@ On-set live communication is two-channel simplex radio (commonly Motorola CP200-
 | Walkie boundary: radios stay the live channel; On-Cue is the record | Decided — hard constraint |
 | Offline tolerance: necessary, phased — Phase 1 (local-first event queue, no lost events) in current release; Phase 2 (full offline mode) in v2 | Decided |
 | Prop fields on continuity_items, no separate prop_items table | Decided |
+| Calculations update on their own; decisions never do | Decided 2026-10-23 |
+| 1st AD can hand off roll authority — named person, stated window, recorded | Decided 2026-10-23 — not built yet |
+| Two kinds of flag: safety stop (anyone, immediate HOLD, only 1st AD clears) and concern (anyone, no stop) | Decided 2026-10-23 — not built yet |
+| Broadcast status, scope detail; only role-relevant changes interrupt | Decided 2026-10-23 |
+| Privacy redaction is the one exception to append-only | Decided 2026-10-23 — confirm with entertainment counsel; not built yet |
+| Adding a day player takes under a minute | Decided 2026-10-23 — applies when real provisioning is built |
 | Vendor photos/logos needed? | Open — default: not in v1 |
 | Internal code/branch names follow "On Cue" (repo: On-Cue) — cosmetic cleanup only | Open — low priority |
 

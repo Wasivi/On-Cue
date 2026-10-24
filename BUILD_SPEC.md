@@ -1,67 +1,88 @@
-# On Cue — Build Spec
+# On-Cue — Build Spec
 
-What this app is, what's actually done, what's decided but not built, what's still open, and what has to happen next — in order. This consolidates everything from PRD v0.2, DATA_INPUT.md, and this project's working decisions into one place.
+Where the build actually stands, what's decided, and what happens next, in order. What the product does and what this release includes lives in `docs/PRD.md`. The rules live in `docs/GOVERNANCE-MODEL.md`.
 
-## What On Cue is
+Last updated: 2026-10-23.
 
-A role-based, next-action coordination app for TV/film production. Each person on set (1st AD, Director, DP, Gaffer, Script Supervisor, Wardrobe, Talent Assistant, Producer) gets a private view answering: where to go, when, what's my next action, what's holding the next camera roll. It does not replace the call sheet, radios, or human judgment — see PRD §3 and §5.
+## What On-Cue is
 
-Visual identity: **"Night Call"** — the landing page is a dark navy/gold animated 3D constellation (the one title-card moment); every operational page is light ivory paper with navy ink text and gold/signal-color accents, not dark. Full detail in `DESIGN.md` and the two project memory files (`design_system_night_call.md`, `design_landing_animation_in_chrome.md`).
+A shoot-day coordination app for episodic television. Each person on set gets a private view: where to be, what's next, and what's holding the next camera roll. It's also the production's record — every decision is logged with the person who made it and the role they made it under. It does not replace the call sheet, the radios, or anyone's judgment. Full description: `docs/PRD.md`.
 
-## Current state (as of this doc)
+**Demo production:** Harbor Unit "Undertow" — Season 1, Episode 102, Shoot Day 6, Pier 14. Fictional.
 
-**Frontend-only prototype.** React + TypeScript + Vite. Zero backend — all state is local React state, resets on reload. No real auth (a fake role-switcher dropdown). No persistence.
+**Visual identity: "Night Call."** The landing page is the one dark, animated title card (a navy and gold 3D constellation). Every working screen is light cool-gray paper (`--paper: #f3f4f5`, changed from warm ivory on 2026-10-22) with navy text, gold for the primary action, and red for holds. Every color, with its hex number, is in `DESIGN.md`.
 
-**7 pages, all re-themed to Night Call this session:** My Set, AD Command, Live Take, Lighting Console, Wardrobe & Talent, Take Intelligence, Onboarding — plus the nav shell (`Layout.tsx`, book-tab bottom nav, atmospheric-fade header) and the landing page (unchanged, approved as-is).
+## Current state
 
-**Real features built this session (not fictional, actually work):**
-- Wardrobe contact sheet — per-character growing photo gallery, real camera capture (`getUserMedia`), optional note captured in the same motion as the photo, timestamped.
-- Lighting reference photo + ETA track record — "Lighting Ready" captures a reference photo; a visible on-time/late history (last 5 setups) is the actual trust-building mechanism, not the photo.
-- AD Command's department feed sorts blockers-first, not recency-first.
+**Front end:** React + TypeScript + Vite. Ten screens: Landing, Onboarding, My Set, AD Command, Live Take, Lighting Console, Wardrobe & Talent, Set & Props Continuity, Take Intelligence, Budget. Centered bottom tab navigation. A role switcher stands in for sign-in.
 
-**Still fictional / hardcoded:** everything else — production/scene/setup data, take history, continuity text seeded in `src/data/seed.ts`, the Onboarding call-sheet "import" (a fake progress bar, no real parsing — PRD explicitly puts real ingestion out of scope for this release).
+**Backend:** A Supabase project exists. `0001_initial_schema.sql` is applied to the live database (13 tables, with access rules enforced in the database). `0002_wardrobe_depth.sql` is written but not applied. **The app is not connected to Supabase yet** — everything runs in local memory and resets on reload.
+
+**Works today:**
+- **AD Command** — readiness board with blocked departments first; Clear Hold appears only for the 1st AD.
+- **Wardrobe & Talent** — a contact sheet per character with real camera capture (photo and note in one action; Front, Back, or any typed label). Harbor Unit costume changes with item colors and fabrics, story reasons, multiples, hazards, fitting status, actor names, and a "used in N scenes across M episodes" count.
+- **Lighting Console** — "Lighting Ready" takes a reference photo; the ETA track record shows fixed demo data.
+- **Set & Props Continuity** — Props and Art Department log items with photos; only the owning role can add; Props has food and brand-substitution fields.
+- **Budget** — dollars by department, visible to the UPM and Producer only.
+- **Take Intelligence** — takes, usable takes, turnaround, and time lost by cause (demo data).
+- **Onboarding** — a real file picker; the Harbor Unit sample call sheet and schedule are recognized by name; reading the file is simulated by design.
+
+**Placeholders or not built** (per-screen detail in `docs/PRD.md` Section 8): sign-in, the Supabase connection, real-time updates, offline saving, the Record screen, the Live Take note field, the six headshots in Wardrobe, and the My Set and Lighting buttons that don't record anything yet. The app still opens on the old "DSI / Lone Wolf" demo; Undertow appears only on Wardrobe, after uploading a sample file.
 
 ## Confirmed decisions (don't re-litigate these)
 
-1. **Backend: Supabase.** Postgres + built-in auth + realtime + storage. Decided over a custom Rust backend (wrong tool for a product whose requirements are still moving) and over free alternatives like Neon (DB-only, no auth/realtime/storage) or Appwrite (MariaDB, not Postgres).
-2. **No public APIs exist for production software.** Confirmed across SyncOnSet, Wardy, DepDep, RacRac, and Entertainment Partners/Movie Magic (the actual industry standard). Any real production data has to be entered natively in On Cue or reached through a real enterprise partnership — not casual integration. Same is true for theater venues (they publish spec-sheet PDFs, not APIs).
-3. **Vendor/resource search: Google Places API, not scraping.** "Find a costume shop near wherever the crew is" is a solved, legitimate, licensed problem — Google (and secondarily Yelp Fusion) already index this globally. Scraping and republishing other companies' documents/listings as "our own API" was explicitly considered and rejected — legal risk, not a technical problem.
-4. **Anchor Browser: not needed right now.** It's a real tool (cloud browser for AI agents, built for bulk/scheduled scraping at scale), but nothing currently in scope needs it — Google Places covers vendor search, built-in web research covers PRD/design fact-checking. Revisit only if a genuine bulk-scraping need appears that those two can't cover.
-5. **Data entry has to be zero-effort or it won't happen.** "People are lazy" was the correct observation, not cynicism. The fix: day-of data (photos, status) piggybacks on something the person is already doing; static reference data (venue specs, vendor lists) gets entered once, by one person, during prep — not re-entered daily by a busy crew.
-6. **PRD v0.2 exists, on its own branch, not merged.** `docs/prd-continuity-notes-v0.2`, pushed to origin. Adds §9.6 Continuity Notes (Wardrobe): who writes a note, when, append-only, timestamped. Amends §9.2 to make Script Supervisor's "notes" explicit free text. This is real, reviewable, and ready to merge whenever you decide to.
+1. **Backend: Supabase** — Postgres, sign-in, real-time, and file storage.
+2. **No public APIs exist for production software** (checked across SyncOnSet, Movie Magic, and others). Verified 2026-10-23: Entertainment Partners (EP) bought SyncOnSet in January 2020 and sells it alongside Movie Magic, so one company owns both. Production data is entered natively in On-Cue or reached through real partnerships.
+3. **Vendor search: Google Places API, not scraping.**
+4. **Anchor Browser: a future module, not this release.** If built, the agent finds and summarizes vendor leads on sites that allow it; a person approves and buys; nothing gets around website protections (CAPTCHAs, bot blocking, region blocks). See `docs/PRD.md` Section 16.
+5. **Data entry has to be zero-effort.** Day-of data piggybacks on what people are already doing; reference data is entered once, by one person, during prep.
+6. **PRD:** `docs/PRD.md` v1.0 (2026-10-23) replaces PRD v0.2 (`PRD.pdf`, kept as history).
+7. **Governance additions (2026-10-23):** calculations update on their own, decisions never do; the 1st AD can hand off roll authority; safety stop versus concern; privacy redaction is the one exception to append-only; adding a day player takes under a minute; broadcast status, scope detail. Full text in `docs/GOVERNANCE-MODEL.md`.
+8. **Demo production:** Harbor Unit "Undertow" on every screen. The DSI / Lone Wolf demo is retired.
+9. **The Record** (formerly "Agent Activity") is its own screen.
+10. **On-Cue is not an accounting system.** No payroll, receipts, union rule calculation, or tax incentives. The UPM view translates minutes into an estimated dollar impact, and that's all.
 
-## Confirmed scope additions (decided — build these)
+## Confirmed scope for this release
 
-- **UPM role** — scoped to *aggregate time-cost translation* (Take Intelligence's existing "time lost by cause" data, turned into dollars), explicitly not line-item receipts or payroll. Matches the real "hot cost report" a Production Accountant produces daily, fed by the same Daily Production Report data the AD already generates.
-- **Art Department role** — covers Production Designer/Art Director/Set Decorator as one app role, same pattern as how "Wardrobe" already covers multiple real job titles.
-- **Props role** — kept separate from Art Department (real productions treat it as a distinct job). This is where prop food and fake-branded goods ("greeking," e.g. a fake Coke label for clearance) live.
-- **Sound Mixer — full interactive role, not status-only.** Added to `app_role`. Needs its own screen eventually (sound reports, mic issues — not live audio monitoring, which Com-Tek already covers). Not yet built; Art Department is the status-only comparison now, not Sound.
-- **Vendor tracking** — a real `vendors` table, not just a search feature. Answers "who are their vendors" directly from the data model, not just a live lookup.
-- **"Find a Vendor" screen** (Wardrobe first, Art/Props to follow) — preset category buttons, not a blank search box, powered by Google Places, location-aware to the current shoot location.
-- **Identity: provisioned crew-list sign-in, not self-serve.** No open registration. The production office imports the crew list (the Onboarding screen's existing call-sheet import does this); each person signs in as themselves, picked from that list, not a free-text name. Social login (Google/Apple), if kept, authenticates a provisioned account only — it never creates one. Every event already stores both the person (`auth.users` id) and their role (via `profiles`) — authority lives at the role level, accountability at the person level. Prototype v1: no passwords, just picking a name from the seed crew list.
-- **Offline tolerance — Phase 1, scoped.** Every action writes to local storage first (optimistic UI), queues on-device if the connection is down, and syncs in the background on reconnect — nothing is ever discarded. This is a write-through queue in front of the Supabase realtime sync already planned, not a replacement for it; the append-only event model is exactly what makes it tractable (no edit conflicts, just ordering by timestamp). **Explicitly out of scope for now (Phase 2, v2):** reading the whole board while disconnected, reconciling multiple devices that were offline simultaneously. The walkie radio remains the actual live-voice fallback if connectivity drops entirely — On Cue is the record, never the live channel.
+| Item | Status |
+|---|---|
+| UPM role — Budget screen | Built (demo data) |
+| Art Department — status-only, logs on Set & Props Continuity | Built |
+| Props — its own role, status-only, logs on Set & Props Continuity | Built |
+| Sound Mixer — full role with its own screen | Not built |
+| Vendor tracking (`vendors` table) | Table exists |
+| Find a Vendor (Google Places) | Not built |
+| Crew-list sign-in | Not built |
+| Offline Phase 1 (save on device first, sync later) | Not built |
+| Wardrobe depth (story days, costume changes, usage count, colors for Lighting) | Built in the app with demo data; database tables in `0002`, not applied |
+| The Record screen | Not built |
 
 ## Schema status
 
-`supabase/migrations/0001_initial_schema.sql` is written — 14 tables, enums, and a full RLS policy set (read + write) enforcing the PRD's privacy rules in Postgres itself (not just the UI), reviewed by a security sweep before merge. Not yet run against the live database; that's a manual step in the Supabase SQL Editor, done once you confirm it.
+- **`supabase/migrations/0001_initial_schema.sql`** — applied. 13 tables: `productions`, `scenes`, `setups`, `takes`, `department_statuses`, `vendors`, `continuity_items`, `eta_track_record`, `time_loss_records`, `budget_snapshots`, `production_budget`, `audit_log`, `profiles`. Access rules are enforced in the database, including the 1st AD READY gate and dollars for the UPM and Producer only.
+- **`supabase/migrations/0002_wardrobe_depth.sql`** — written, not applied. Adds `story_days`, `costume_changes` (with `actor_name`), `costume_change_scenes`, a `costume_change_id` link on `continuity_items`, and two views: `costume_change_usage` and `scene_color_palette` (neither readable by signed-out users).
+- **`supabase/migrations/0003_lock_profile_roles.sql`** — written, not applied. Closes a hole in `0001`: a signed-in person could give themselves any role, such as 1st AD or UPM. After it, only the production office assigns roles, and a person can change only their own display name.
+- **Later:** new event kinds for handoffs, safety stops, and redactions (governance Section 7).
 
-Props fields (`is_food`, `brand_substitution_note`) are nullable columns on `continuity_items`, not a separate `prop_items` table — matches the decided rule that Props-only fields sit as null clutter on other departments' rows rather than forcing a join.
+## Still open
 
-**Both open questions from the last round are now resolved:**
-
-- **Art Department: status-only for v1, full role deferred.** Same test every other full screen already passed: a dedicated screen is for people making a live go/no-go decision during the shoot day (Wardrobe negotiates "does this read right under this light" with the Director; Lighting/Live Take gate the actual roll; Sound Mixer owns sound reports and mic issues, now also a full role). Art Department's day-of work — dressing the set, resetting between setups — is real but routine execution, not a live decision loop. It flows into `continuity_items` with `department = 'art'` and shows on AD Command as a status line. Reversible later if a real art director needs their own view — the schema already supports it.
-- **Budget: 1st AD gets minutes, never dollars.** This split is now a real schema decision, not just a UI restriction: `time_loss_records` (new table) is broadly readable by every role including 1st AD — it backs Take Intelligence's existing "time lost by cause" view, which wasn't actually attached to a real table before this pass. `budget_snapshots` (dollars) stays UPM + Producer only, a genuinely separate table, not a column permission trick on the same one. Matches how it actually works on a real set: the AD tracks schedule, the UPM tracks money, and collapsing that boundary turns every hold into a money argument.
-
-## Still open — not yet decided, don't build
-
-- **Broadway / live theater / "enterprise" expansion.** A real, exciting direction, but theater has a genuinely different structure (Stage Manager not 1st AD, no "takes," cue-stack lighting) — not a relabel of the film version. Recommended to live as a separate "Future Vision" section, not a rewrite of the current scope, until the TV version has been used by a real production.
+- The PRD's open questions (`docs/PRD.md` Section 17) — best answered by talking to working crew.
+- Constellation labels: decided "no background box, stronger outline" (2026-10-22); not built yet.
+- The Prezi-style camera zoom on each constellation node as it's revealed (decided 2026-10-22); not built yet.
+- `docs/PRODUCTION-WORKFLOW.md` is referenced by `CLAUDE.md` and `AGENTS.md` but doesn't exist yet. The workflow sections of the October 2026 research could become it.
+- Theater and the other future modules (`docs/PRD.md` Section 16).
+- **Role switching:** `profiles` holds one role per person. Letting someone hold several assigned roles and switch between them (governance Section 4) needs an assigned-roles table; until then, the production office sets each person's role.
+- **Access by production:** the database's access rules don't yet separate one production's data from another's. That's fine with one demo production, but it's needed before a second real one.
+- **Old demo data:** the DSI / Lone Wolf data in `src/data/seed.ts` uses real venue names and addresses, which breaks the fictional-data rule. It goes away when DSI is retired (next step 2).
 
 ## What has to happen next, in order
 
-1. **You create the Supabase project.** Sign up free at supabase.com, create a project, get the Project URL and anon public key from Project Settings → API. Send those to me (or put them in a `.env` file yourself).
-2. **I write the schema** — before any code, as a reviewed plan, not a blind migration: `productions`, `scenes`, `setups`, `takes`, `department_statuses`, `continuity_items` (generalized Wardrobe/Art/Props photo+note+vendor tracking, replacing the earlier wardrobe-only `continuity_photos`, with Props-only fields as nullable columns rather than a separate table), `vendors`, `eta_track_record`, `budget_snapshots`, `production_budget`, `audit_log`, `profiles` (roles now include UPM, Art Department, Props). You review it before it's applied — schema changes are expensive to walk back once real data exists.
-3. **I wire up real auth** (sign in by picking your name from the provisioned crew list, not self-serve) replacing the fake role-switcher, plus real-time subscriptions so a status change on one device shows up on another, plus the Phase 1 offline write-queue (local-first write, sync on reconnect) layered on top of that sync.
-4. **Google Places integration** for the Wardrobe "Find a Vendor" screen — needs its own API key and billing setup on your end (separate from Supabase).
-5. **Once the scope decision above is made:** one deliberate PRD rewrite covering whatever's actually in scope (UPM at minimum; Art Department/Props/theater only if you decide to go there) — not another piecemeal update.
+1. **You:** in the Supabase SQL Editor, run `0002_wardrobe_depth.sql`, then `0003_lock_profile_roles.sql` — a new tab for each, paste, Run. Then, in Supabase's Authentication settings, turn off public sign-ups ("Allow new users to sign up"), because crew accounts come only from the production office.
+2. Make Undertow the default demo on every screen, retire DSI / Lone Wolf, and show the six headshots in Wardrobe.
+3. Connect the app to Supabase: crew-list sign-in, a real-time What Changed feed, photos saved to storage, and the Phase 1 offline queue.
+4. Make every action button record an event (My Set, Lighting, the Live Take note), and build the Record screen.
+5. The 1st AD handoff, the safety stop, and the concern flag.
+6. Find a Vendor (Google Places — needs your API key and billing setup).
+7. The Sound screen.
 
-Anchor Browser does not appear in this list. Add it back only if a real need shows up that steps 1–5 don't cover.
+**In parallel (not code):** talk to 10–15 working crew — ADs, costume supervisors, UPMs. Their answers settle the PRD's open questions and give you real quotes.

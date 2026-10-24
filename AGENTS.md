@@ -5,14 +5,15 @@ On-Cue is a TV/film shoot-day coordination app. React + TypeScript + Vite front-
 ## Read these docs first
 
 - `docs/GOVERNANCE-MODEL.md` — the rules. Who can decide what, who sees what, how events are recorded, the identity model, and the walkie/offline boundary. Consult before changing any state, role, or visibility behavior.
+- `docs/PRD.md` — what On-Cue does and what this release includes, screen by screen, with build status. Consult before adding or changing features.
 - `docs/PRODUCTION-WORKFLOW.md` — the real-world film production pipeline (scouting → permits → block/light/rehearse/shoot → roll call) and the role/screen mapping. Consult before adding or changing screens.
 
 ## Non-negotiable rules
 
-1. **Agents recommend, summarize, classify, and draft. Humans decide, approve, and act.** No agent may execute a state change.
-2. **Only the 1st AD can move a setup to READY / approve camera roll.** Any UI that clears a hold must be gated to the 1st AD role. (There is a known priority-1 defect: the "Clear Hold" button on AD Command is not yet gated.)
+1. **Agents recommend, summarize, classify, and draft. Humans decide, approve, and act.** No agent may execute a state change. Calculated values (minutes lost, budget snapshots) may update automatically; decisions never do.
+2. **Only the 1st AD can move a setup to READY / approve camera roll.** Any UI that clears a hold must be gated to the 1st AD role (enforced in AD Command and in the database). The 1st AD may hand off roll authority to a named person for a stated window; the handoff is a recorded event. Anyone can call a safety stop, which puts the setup back on HOLD; only the 1st AD clears it.
 3. **Every consequential action writes an append-only, timestamped event** storing both the `role` (authority) and the `person` (named individual). No edits, no deletes.
-4. **Events are append-only.** Corrections are new events that reference the one they correct.
+4. **Events are append-only.** Corrections are new events that reference the one they correct. The one exception is privacy redaction: an authorized person may remove personal content (such as a performer's photo) inside an event; the event stays, and the removal is itself recorded.
 
 ## Identity model (provisioned crew list)
 
@@ -21,12 +22,13 @@ On-Cue is a TV/film shoot-day coordination app. React + TypeScript + Vite front-
 - **Authority lives at the role level; accountability lives at the person level.** Roles are not unique (two wardrobe people, 2nd AD and 2nd 2nd AD) — an event that only names the role is useless for accountability.
 - Social login (Google/Apple) may authenticate provisioned accounts only — it must never create accounts.
 - Prototype v1: sign-in can be name-picking from the seed crew list, no passwords.
+- Adding a day player must take under a minute; slow provisioning leads to shared logins, which breaks person-level accountability.
 
 ## Visibility constraints
 
 - Budget **dollars**: UPM and Producer only. The 1st AD sees **minutes lost**, never dollars.
 - Art Department and Location are status-only departments (feed AD Command and `continuity_items`); Sound Mixer is a full role.
-- Every department status change must surface on every role's screen within seconds (live "What Changed" feed).
+- Every department status change must surface on every role's screen within seconds (live "What Changed" feed). Broadcast status, scope detail: each department sees its own records in full depth and others only as narrow slices; only changes that affect a person's own role interrupt them.
 
 ## Hard constraints
 
