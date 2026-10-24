@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { castLooks, production } from '../data/seed';
+import { harborUnitCostumeChanges, harborUnitProduction, harborUnitUsage } from '../data/seedHarborUnit';
 import { useApp } from '../App';
 import { CheckCircle, AlertCircle, Camera, Clock, ArrowRight, ChevronDown, X, Plus } from 'lucide-react';
 
@@ -9,6 +10,27 @@ interface ContinuityPhoto {
   label: string;
   note: string;
   timestamp: string;
+}
+
+// Both datasets (the original demo and whichever Harbor Unit sample file
+// Onboarding recognized) get normalized into this one shape so the rest
+// of the screen — the camera flow, the contact sheet, the picker — reads
+// one consistent thing regardless of which production is active.
+interface LookView {
+  key: string;
+  character: string;
+  actorName?: string;
+  sceneLabel: string;
+  lookLabel: string;
+  itemLabels: string[];
+  itemColors?: Record<string, string>;
+  continuityNotes: string[];
+  fittingStatus: 'fitted' | 'pending' | 'issue';
+  resetRequired: boolean;
+  resetNote?: string;
+  hazards?: string[];
+  storyReasoning?: string;
+  usage?: { sceneCount: number; episodeCount: number };
 }
 
 // Front and Back are always offered — everything else is typed in by
@@ -22,10 +44,40 @@ function nowLabel() {
 }
 
 export default function WardrobeTalent() {
-  const { setActorReady } = useApp();
-  const setup = production.currentSetup;
+  const { setActorReady, wardrobeDataset } = useApp();
+  const isHarborUnit = wardrobeDataset === 'harborUnit';
+  const activeProduction = isHarborUnit ? harborUnitProduction : production;
+  const setup = activeProduction.currentSetup;
   const [castIndex, setCastIndex] = useState(0);
   const [pickerOpen, setPickerOpen] = useState(false);
+
+  const looks: LookView[] = isHarborUnit
+    ? harborUnitCostumeChanges.map(cc => ({
+        key: cc.id,
+        character: cc.characterName,
+        actorName: cc.actorName,
+        sceneLabel: cc.storyDayId ?? '',
+        lookLabel: `Change ${cc.changeNumber}`,
+        itemLabels: cc.items.map(i => i.name),
+        itemColors: Object.fromEntries(cc.items.map(i => [i.name, i.color])),
+        continuityNotes: cc.continuityNotes,
+        fittingStatus: cc.fittingStatus,
+        resetRequired: cc.hazards.length > 0,
+        resetNote: cc.hazards[0],
+        hazards: cc.hazards,
+        storyReasoning: cc.storyReasoning,
+        usage: harborUnitUsage.find(u => u.costumeChangeId === cc.id)
+      }))
+    : castLooks.map(c => ({
+        key: c.character,
+        character: c.character,
+        sceneLabel: `Scene ${c.scene}`,
+        lookLabel: `Look ${c.lookNumber}`,
+        itemLabels: c.items,
+        continuityNotes: c.continuityNotes,
+        fittingStatus: c.fittingStatus,
+        resetRequired: c.resetRequired
+      }));
 
   // One growing contact sheet per character — not three overwritable
   // slots. Every photo taken over the whole shoot day stays, the way a
@@ -46,8 +98,14 @@ export default function WardrobeTalent() {
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const capturingLabel = useRef<string | null>(null);
-  const look = castLooks[castIndex];
+  const look = looks[Math.min(castIndex, looks.length - 1)];
   const sheet = photosByCharacter[look.character] ?? [];
+
+  // Switching datasets (a fresh Onboarding upload) can leave castIndex
+  // pointing past the end of the new, possibly shorter, cast list.
+  useEffect(() => {
+    setCastIndex(0);
+  }, [isHarborUnit]);
 
   const stopStream = () => {
     streamRef.current?.getTracks().forEach(t => t.stop());
@@ -141,7 +199,7 @@ export default function WardrobeTalent() {
           Wardrobe · Talent
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: 14 }}>
-          {production.title} · Character Continuity · Scene {setup.scene} · Setup {setup.setupNumber}
+          {activeProduction.title} · Character Continuity · Scene {setup.scene} · Setup {setup.setupNumber}
         </p>
       </div>
 
@@ -177,9 +235,9 @@ export default function WardrobeTalent() {
                   width: 260, background: 'var(--surface)', border: '1px solid var(--border)',
                   borderRadius: 10, padding: 6, boxShadow: 'var(--shadow-lg)'
                 }}>
-                  {castLooks.map((c, i) => (
+                  {looks.map((c, i) => (
                     <button
-                      key={c.character}
+                      key={c.key}
                       onClick={() => { setCastIndex(i); setPickerOpen(false); }}
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
@@ -189,25 +247,53 @@ export default function WardrobeTalent() {
                         fontSize: 13, fontWeight: i === castIndex ? 600 : 500, cursor: 'pointer'
                       }}
                     >
-                      {c.character}
+                      <span>
+                        {c.character}
+                        {c.actorName && <span style={{ color: 'var(--muted-dim)', fontWeight: 400 }}> — {c.actorName}</span>}
+                      </span>
                       {c.resetRequired && <AlertCircle size={13} style={{ color: 'var(--stop-red-text)', flexShrink: 0 }} />}
                     </button>
                   ))}
                 </div>
               )}
             </div>
+            {look.actorName && (
+              <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 2 }}>Played by {look.actorName}</div>
+            )}
             <div style={{ fontSize: 13, color: 'var(--muted)' }}>
-              Scene {look.scene} · Look {look.lookNumber}
+              {look.sceneLabel} · {look.lookLabel}
+              {look.usage && (
+                <span style={{ marginLeft: 8, color: 'var(--bronze-text)', fontWeight: 600 }}>
+                  · Used in {look.usage.sceneCount} scenes across {look.usage.episodeCount} episodes
+                </span>
+              )}
             </div>
             <div style={{ marginTop: 8, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {look.items.map(item => (
+              {look.itemLabels.map(item => (
                 <span key={item} style={{ padding: '4px 10px', background: 'var(--paper)', borderRadius: 6, fontSize: 12, fontWeight: 500, color: 'var(--ink)' }}>
                   {item}
+                  {look.itemColors?.[item] && (
+                    <span style={{ color: 'var(--muted-dim)', fontWeight: 400 }}> · {look.itemColors[item]}</span>
+                  )}
                 </span>
               ))}
             </div>
           </div>
         </div>
+
+        {/* The reasoning behind the look — only Harbor Unit data has this
+            field so far (docs/WARDROBE-SOP.md §2's "Why" row); the
+            director's "why is this character in this costume" question
+            answered without anyone having to go find the costume
+            designer. */}
+        {look.storyReasoning && (
+          <div style={{ background: 'rgba(230,184,0,0.08)', borderRadius: 10, padding: 16, marginBottom: 16, border: '1px solid rgba(230,184,0,0.25)' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--bronze-text)', marginBottom: 8 }}>
+              Why This Look
+            </div>
+            <p style={{ fontSize: 13, color: 'var(--ink)', fontStyle: 'italic' }}>{look.storyReasoning}</p>
+          </div>
+        )}
 
         {/* Continuity notes — fictional seed notes from before this look
             had a real contact sheet; new notes now live on the photos
@@ -335,7 +421,7 @@ export default function WardrobeTalent() {
           }}>
             <AlertCircle size={16} style={{ color: 'var(--stop-red-text)', flexShrink: 0 }} />
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--stop-red-text)' }}>
-              Reset required before next take — dampness from rain tower
+              {look.resetNote ? `Reset required before next take — ${look.resetNote}` : 'Reset required before next take — dampness from rain tower'}
             </span>
           </div>
         )}
@@ -360,7 +446,11 @@ export default function WardrobeTalent() {
         </div>
       </div>
 
-      {/* Scene timeline */}
+      {/* Scene timeline — fixed demo filler, not derived from the active
+          look, so it only shows for the original dataset; it would
+          otherwise contradict the real sceneIds Harbor Unit's usage rollup
+          above is built from. */}
+      {!isHarborUnit && (
       <div className="card" style={{ padding: 24 }}>
         <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-dim)', marginBottom: 16 }}>
           Scene-to-Scene Look Timeline
@@ -392,6 +482,7 @@ export default function WardrobeTalent() {
           ))}
         </div>
       </div>
+      )}
 
       {/* Live camera + note — one continuous flow: shoot, then write the
           note right there, same moment, same screen. */}

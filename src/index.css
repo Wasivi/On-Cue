@@ -3,18 +3,20 @@
 @tailwind utilities;
 
 :root {
-  /* Night Call — Navy / Gold / Ivory, the landing page's own world. The
-     landing page is the one dark title-card moment; the working pages are
-     the OTHER natural reading of that same palette: ivory paper, navy ink,
-     gold accent — not everything painted navy. See DESIGN.md. */
-  --paper: #f4efe3;
-  --paper-deep: #ece4d2;
+  /* Night Call — Navy / Gold / light gray. The landing page is the one
+     dark title-card moment; the working pages are the OTHER natural
+     reading of that same palette: a near-white, cool-gray-tinted paper,
+     navy ink, gold accent — not everything painted navy, and not the
+     warm ivory/tan this ran as before (read as "brown" on an actual
+     screen). See DESIGN.md. */
+  --paper: #f3f4f5;
+  --paper-deep: #e7e9eb;
 
   --surface: #ffffff;
-  --surface-elevated: #fbf7ee;
+  --surface-elevated: #fafbfc;
 
-  --border: #ded6c4;
-  --border-strong: #c9bea4;
+  --border: #dde0e3;
+  --border-strong: #c4c9ce;
 
   --ink: #14222b;
   --ink-warm: #0d2836;

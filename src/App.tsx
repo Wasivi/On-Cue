@@ -25,6 +25,12 @@ interface AppContextType {
   setActorReady: (v: boolean) => void;
   holdState: 'hold' | 'ready' | 'rolling';
   setHoldState: (v: 'hold' | 'ready' | 'rolling') => void;
+  // Which demo dataset the app is showing. Onboarding sets this when it
+  // recognizes an uploaded file (see sample-data/) — this is the one thing
+  // that actually connects "upload a call sheet" to what other screens
+  // show, since nothing here parses real file content.
+  wardrobeDataset: 'default' | 'harborUnit';
+  setWardrobeDataset: (v: 'default' | 'harborUnit') => void;
   resetDemo: () => void;
 }
 
@@ -42,6 +48,7 @@ function App() {
   const [lightingReady, setLightingReady] = useState(false);
   const [actorReady, setActorReady] = useState(false);
   const [holdState, setHoldState] = useState<'hold' | 'ready' | 'rolling'>('hold');
+  const [wardrobeDataset, setWardrobeDataset] = useState<'default' | 'harborUnit'>('default');
 
   const resetDemo = () => {
     setLightingReady(false);
@@ -59,6 +66,7 @@ function App() {
     lightingReady, setLightingReady,
     actorReady, setActorReady,
     holdState, setHoldState,
+    wardrobeDataset, setWardrobeDataset,
     resetDemo
   };
 

@@ -231,7 +231,7 @@ export default function LandingPage({ onEnter }: { onEnter: () => void }) {
           fontWeight: 600,
           fontStyle: 'italic',
           letterSpacing: '0.02em',
-          color: '#3a3530',
+          color: '#9a958c',
           textShadow: '0 1px 3px rgba(0,0,0,0.2)',
           textAlign: 'center'
         }}>

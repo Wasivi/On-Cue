@@ -140,10 +140,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         transform: barsVisible ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)'
       }}>
-        {/* justifyContent: center — flex:1 with no justify left these 8
-            tabs clumped at the left edge of the whole bar instead of
-            spread across it. */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 5, flex: 1, overflowX: 'auto' }}>
+        {/* justifyContent: center only actually centers when the row
+            doesn't overflow — with flexShrink:0 and 12px of horizontal
+            padding per tab, 8 tabs don't fit most screens, overflow-x:auto
+            kicks in, and a centered-but-overflowing flex row renders flush
+            left in Chrome/Safari (no "safe centering" for overflow there).
+            Letting each tab shrink (minWidth:0, flexShrink:1, tighter
+            padding) keeps the whole row inside the available width on
+            everything but the narrowest phones, so there's nothing left to
+            overflow and centering just works. */}
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: 3, flex: 1, minWidth: 0, overflowX: 'auto' }}>
           {navItems.map(item => {
             const active = page === item.page;
             return (
@@ -152,11 +158,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 onClick={() => goTo(item.page)}
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  gap: 2, padding: active ? '9px 12px 8px' : '7px 12px 7px',
+                  gap: 2, padding: active ? '9px 8px 8px' : '7px 8px 7px',
                   borderRadius: '12px 12px 0 0',
                   border: '1px solid var(--border-strong)',
                   borderBottom: 'none',
-                  cursor: 'pointer', flexShrink: 0,
+                  cursor: 'pointer', flexShrink: 1, minWidth: 0,
                   position: 'relative',
                   background: active ? 'var(--surface)' : 'var(--paper)',
                   color: active ? 'var(--bronze-text)' : 'var(--muted)',
