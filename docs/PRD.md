@@ -286,7 +286,8 @@ When a take stops, each cause sends tasks to the departments responsible and a s
   - `supabase/migrations/0001_initial_schema.sql` — applied: 13 tables and their access rules.
   - `supabase/migrations/0002_wardrobe_depth.sql` — applied: story days, costume changes, the scenes each change appears in, actor names, the `costume_change_usage` view, and the `scene_color_palette` view.
   - `supabase/migrations/0003_lock_profile_roles.sql` — applied: only the production office can assign a person's role; a person can change only their own display name.
-  - All three are live in the database as of 2026-10-24 (verified). The app isn't connected to it yet.
+  - `supabase/migrations/0004_security_advisor_cleanups.sql` — applied: two small security cleanups, with no change to what anyone can see or do.
+  - All four are live in the database as of 2026-10-30 (verified). The app isn't connected to it yet.
 - Every event stores the person and the role. Continuity photos store who captured them.
 - Privacy redaction (governance Section 3) removes personal content from an event and records the removal. Retention rules are to be confirmed with an entertainment lawyer.
 - The demo contains no real people or productions. The headshots are AI-generated portraits of fictional people, used only inside the app as placeholders.
