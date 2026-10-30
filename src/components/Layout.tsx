@@ -32,7 +32,8 @@ const AUTO_HIDE_MS = 3000;
 const HEADER_H = 72;
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { page, setPage, holdState, resetDemo } = useApp();
+  const { page, setPage, holdState, resetDemo, production } = useApp();
+  const show = production?.callSheet.show;
   const [barsVisible, setBarsVisible] = useState(true);
   const [headerWidth, setHeaderWidth] = useState(0);
   const mainRef = useRef<HTMLElement>(null);
@@ -121,6 +122,42 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               On Cue
             </span>
           </button>
+
+          {/* Whose show this is, from the uploaded call sheet: its logo as
+              printed at the top of the sheet, on a light chip so any logo
+              reads against the navy, whatever its own colors. */}
+          {production && show && (
+            <div style={{
+              position: 'absolute', top: 0, right: 16, height: '100%',
+              display: 'flex', alignItems: 'center', gap: 10
+            }}>
+              <span className="show-badge-text" style={{
+                textAlign: 'right', color: '#ffffff', lineHeight: 1.25,
+                textShadow: '0 1px 4px rgba(0,0,0,0.35)'
+              }}>
+                {!show.logoUrl && (
+                  <span style={{ display: 'block', fontSize: 14, fontWeight: 700 }}>{show.title}</span>
+                )}
+                <span style={{ display: 'block', fontSize: 12, fontWeight: 600 }}>
+                  {show.episodeNumber ? `Ep ${show.episodeNumber}` : ''}
+                  {show.episodeTitle ? ` "${show.episodeTitle}"` : ''}
+                </span>
+                <span style={{ display: 'block', fontSize: 11, opacity: 0.85 }}>
+                  Shoot Day {production.callSheet.shootDay}
+                  {production.callSheet.totalShootDays ? ` of ${production.callSheet.totalShootDays}` : ''}
+                </span>
+              </span>
+              {show.logoUrl && (
+                <span style={{
+                  display: 'flex', alignItems: 'center', height: 40, padding: '4px 10px',
+                  borderRadius: 10, background: 'rgba(255,255,255,0.95)',
+                  boxShadow: '0 1px 6px rgba(0,0,0,0.25)'
+                }}>
+                  <img src={show.logoUrl} alt={`${show.title} logo`} style={{ display: 'block', height: 30, width: 'auto', maxWidth: 140 }} />
+                </span>
+              )}
+            </div>
+          )}
         </div>
         {children}
       </main>

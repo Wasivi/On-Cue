@@ -26,18 +26,20 @@ export default function RoleSwitcher() {
           gap: 6,
           padding: '6px 10px',
           borderRadius: 16,
-          background: 'rgba(230,184,0,0.08)',
-          border: '1px solid rgba(138,180,199,0.25)',
-          color: '#e1ded2',
+          // Dark ink on the light bar — the old pale text was made for
+          // the dark bar the app used to have, and nearly vanished here.
+          background: 'rgba(230,184,0,0.12)',
+          border: '1px solid var(--border-strong)',
+          color: 'var(--ink)',
           fontSize: 12,
           fontWeight: 600,
           cursor: 'pointer',
           maxWidth: 120
         }}
       >
-        <User size={14} style={{ color: 'rgba(230,184,0,0.55)', flexShrink: 0 }} />
+        <User size={14} style={{ color: 'var(--bronze-text)', flexShrink: 0 }} />
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{role}</span>
-        <ChevronDown size={12} style={{ color: 'rgba(230,184,0,0.55)', flexShrink: 0, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+        <ChevronDown size={12} style={{ color: 'var(--bronze-text)', flexShrink: 0, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
       </button>
 
       {open && (

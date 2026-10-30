@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { castLooks, production } from '../data/seed';
-import { harborUnitCostumeChanges, harborUnitProduction, harborUnitUsage } from '../data/seedHarborUnit';
 import { useApp } from '../App';
-import { CheckCircle, AlertCircle, Camera, Clock, ArrowRight, ChevronDown, X, Plus } from 'lucide-react';
+import type { CastMember, ProductionData, ProductionPrep } from '../types';
+import { clock, costumeUsage, notesAbout, scenesInOrder } from '../data/derive';
+import { NoCallSheet, NothingYet } from '../components/EmptyState';
+import { CheckCircle, AlertCircle, Camera, Clock, ArrowRight, ChevronDown, X, Plus, FileText } from 'lucide-react';
 
 interface ContinuityPhoto {
   id: string;
@@ -12,25 +13,28 @@ interface ContinuityPhoto {
   timestamp: string;
 }
 
-// Both datasets (the original demo and whichever Harbor Unit sample file
-// Onboarding recognized) get normalized into this one shape so the rest
-// of the screen — the camera flow, the contact sheet, the picker — reads
-// one consistent thing regardless of which production is active.
+// One costume change, joined with what the call sheet says about the actor
+// wearing it, so the rest of the screen — the camera flow, the contact
+// sheet, the picker — reads one consistent thing.
 interface LookView {
   key: string;
   character: string;
   actorName?: string;
+  castMember?: CastMember;
+  headshot?: string;
   sceneLabel: string;
   lookLabel: string;
   itemLabels: string[];
   itemColors?: Record<string, string>;
   continuityNotes: string[];
+  callSheetNotes: string[];
   fittingStatus: 'fitted' | 'pending' | 'issue';
   resetRequired: boolean;
   resetNote?: string;
   hazards?: string[];
   storyReasoning?: string;
   usage?: { sceneCount: number; episodeCount: number };
+  sceneIds: string[];
 }
 
 // Front and Back are always offered — everything else is typed in by
@@ -39,45 +43,67 @@ interface LookView {
 // actually is, not what a hardcoded array guessed it might be.
 const QUICK_LABELS = ['Front', 'Back'];
 
+const WARDROBE_DEPT = /wardrobe|costume/i;
+
 function nowLabel() {
   return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
 
 export default function WardrobeTalent() {
-  const { setActorReady, wardrobeDataset } = useApp();
-  const isHarborUnit = wardrobeDataset === 'harborUnit';
-  const activeProduction = isHarborUnit ? harborUnitProduction : production;
-  const setup = activeProduction.currentSetup;
+  const { production } = useApp();
+  if (!production) return <NoCallSheet />;
+  const prep = production.prep;
+  if (!prep || prep.costumePlot.length === 0) {
+    return (
+      <NothingYet
+        title="No costume plot yet"
+        body="Wardrobe enters each character's changes once, during prep. They appear here, matched to the cast on today's call sheet, as soon as they're in."
+      />
+    );
+  }
+  // Keyed by production, so loading a different show starts this screen
+  // fresh instead of carrying over the last show's picks and photos.
+  return <WardrobeBoard key={production.id} production={production} prep={prep} />;
+}
+
+function WardrobeBoard({ production, prep }: { production: ProductionData; prep: ProductionPrep }) {
+  const { setActorReady } = useApp();
+  const { callSheet: cs, day } = production;
+  const setup = day?.currentSetup;
   const [castIndex, setCastIndex] = useState(0);
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  const looks: LookView[] = isHarborUnit
-    ? harborUnitCostumeChanges.map(cc => ({
+  const usage = costumeUsage(prep);
+  // In cast-list order, the way the call sheet numbers them.
+  const looks: LookView[] = prep.costumePlot
+    .map(cc => {
+      const castMember = cs.cast.find(c => c.character === cc.characterName);
+      // The hazard for the scene being shot now, when one names it ("Mud
+      // fall (Ep2 Sc.14)" while Scene 14 shoots), not whichever hazard the
+      // plot happens to list first.
+      const hazardNow = setup && cc.hazards.find(h => new RegExp(`\\bSc\\.?\\s*${setup.scene}\\b`, 'i').test(h));
+      return {
         key: cc.id,
         character: cc.characterName,
-        actorName: cc.actorName,
+        actorName: castMember?.actor ?? cc.actorName,
+        castMember,
+        headshot: castMember ? prep.headshots[castMember.id] : undefined,
         sceneLabel: cc.storyDayId ?? '',
         lookLabel: `Change ${cc.changeNumber}`,
         itemLabels: cc.items.map(i => i.name),
         itemColors: Object.fromEntries(cc.items.map(i => [i.name, i.color])),
         continuityNotes: cc.continuityNotes,
+        callSheetNotes: notesAbout(cs, cc.characterName, WARDROBE_DEPT),
         fittingStatus: cc.fittingStatus,
         resetRequired: cc.hazards.length > 0,
-        resetNote: cc.hazards[0],
+        resetNote: hazardNow ?? cc.hazards[0],
         hazards: cc.hazards,
         storyReasoning: cc.storyReasoning,
-        usage: harborUnitUsage.find(u => u.costumeChangeId === cc.id)
-      }))
-    : castLooks.map(c => ({
-        key: c.character,
-        character: c.character,
-        sceneLabel: `Scene ${c.scene}`,
-        lookLabel: `Look ${c.lookNumber}`,
-        itemLabels: c.items,
-        continuityNotes: c.continuityNotes,
-        fittingStatus: c.fittingStatus,
-        resetRequired: c.resetRequired
-      }));
+        usage: usage.find(u => u.costumeChangeId === cc.id),
+        sceneIds: cc.sceneIds
+      };
+    })
+    .sort((a, b) => (a.castMember?.id ?? Infinity) - (b.castMember?.id ?? Infinity));
 
   // One growing contact sheet per character — not three overwritable
   // slots. Every photo taken over the whole shoot day stays, the way a
@@ -101,11 +127,13 @@ export default function WardrobeTalent() {
   const look = looks[Math.min(castIndex, looks.length - 1)];
   const sheet = photosByCharacter[look.character] ?? [];
 
-  // Switching datasets (a fresh Onboarding upload) can leave castIndex
-  // pointing past the end of the new, possibly shorter, cast list.
-  useEffect(() => {
-    setCastIndex(0);
-  }, [isHarborUnit]);
+  // Today's scenes in this look, in the call sheet's shooting order, marked
+  // against the scene being shot now.
+  const order = scenesInOrder(cs);
+  const currentIndex = setup ? order.findIndex(s => s.scene === setup.scene) : -1;
+  const todaysScenes = order
+    .map((s, i) => ({ scene: s, status: currentIndex < 0 ? 'upcoming' : i < currentIndex ? 'done' : i === currentIndex ? 'current' : 'upcoming' }))
+    .filter(({ scene }) => look.sceneIds.includes(scene.scene));
 
   const stopStream = () => {
     streamRef.current?.getTracks().forEach(t => t.stop());
@@ -199,21 +227,31 @@ export default function WardrobeTalent() {
           Wardrobe · Talent
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: 14 }}>
-          {activeProduction.title} · Character Continuity · Scene {setup.scene} · Setup {setup.setupNumber}
+          {cs.show.title} · Character Continuity{setup ? ` · Scene ${setup.scene} · Setup ${setup.setupNumber}` : ''}
         </p>
       </div>
 
       {/* Character card */}
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 20 }}>
-          <div style={{
-            width: 64, height: 64, borderRadius: 12,
-            background: 'linear-gradient(135deg, #4a6741 0%, #8b7355 50%, #2d3748 100%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontSize: 24, fontWeight: 700, flexShrink: 0
-          }}>
-            {look.character.split(' ').map(w => w[0]).slice(-2).join('')}
-          </div>
+          {/* The actor's headshot when the talent department has one on
+              file; initials otherwise. */}
+          {look.headshot ? (
+            <img
+              src={look.headshot}
+              alt={look.actorName ? `${look.actorName} as ${look.character}` : look.character}
+              style={{ width: 64, height: 64, borderRadius: 12, objectFit: 'cover', objectPosition: 'center top', flexShrink: 0, background: 'var(--paper-deep)' }}
+            />
+          ) : (
+            <div style={{
+              width: 64, height: 64, borderRadius: 12,
+              background: 'linear-gradient(135deg, #4a6741 0%, #8b7355 50%, #2d3748 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontSize: 24, fontWeight: 700, flexShrink: 0
+            }}>
+              {look.character.split(' ').map(w => w[0]).slice(-2).join('')}
+            </div>
+          )}
           <div style={{ flex: 1, minWidth: 0 }}>
             {/* Cast picker — any character in the scene, not one fixed
                 name. Whoever's up next changes shoot to shoot. */}
@@ -232,7 +270,7 @@ export default function WardrobeTalent() {
               {pickerOpen && (
                 <div style={{
                   position: 'absolute', top: '100%', left: 0, zIndex: 20,
-                  width: 260, background: 'var(--surface)', border: '1px solid var(--border)',
+                  width: 280, background: 'var(--surface)', border: '1px solid var(--border)',
                   borderRadius: 10, padding: 6, boxShadow: 'var(--shadow-lg)'
                 }}>
                   {looks.map((c, i) => (
@@ -248,6 +286,7 @@ export default function WardrobeTalent() {
                       }}
                     >
                       <span>
+                        {c.castMember && <span className="mono" style={{ color: 'var(--muted-dim)', fontWeight: 400 }}>{c.castMember.id}. </span>}
                         {c.character}
                         {c.actorName && <span style={{ color: 'var(--muted-dim)', fontWeight: 400 }}> — {c.actorName}</span>}
                       </span>
@@ -258,13 +297,25 @@ export default function WardrobeTalent() {
               )}
             </div>
             {look.actorName && (
-              <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 2 }}>Played by {look.actorName}</div>
+              <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 2 }}>
+                Played by {look.actorName}{look.castMember ? ` · Cast #${look.castMember.id}` : ''}
+              </div>
+            )}
+            {/* Today's calls for this actor, from the call sheet's cast list */}
+            {look.castMember && (look.castMember.pickup || look.castMember.hmu || look.castMember.onSet) && (
+              <div className="mono" style={{ fontSize: 12, color: 'var(--ink)', marginBottom: 2 }}>
+                {[
+                  look.castMember.pickup && `Pickup ${clock(look.castMember.pickup)}`,
+                  look.castMember.hmu && `HMU ${clock(look.castMember.hmu)}`,
+                  look.castMember.onSet && `On set ${clock(look.castMember.onSet)}`
+                ].filter(Boolean).join(' · ')}
+              </div>
             )}
             <div style={{ fontSize: 13, color: 'var(--muted)' }}>
               {look.sceneLabel} · {look.lookLabel}
               {look.usage && (
                 <span style={{ marginLeft: 8, color: 'var(--bronze-text)', fontWeight: 600 }}>
-                  · Used in {look.usage.sceneCount} scenes across {look.usage.episodeCount} episodes
+                  · Used in {look.usage.sceneCount} scene{look.usage.sceneCount === 1 ? '' : 's'} across {look.usage.episodeCount} episode{look.usage.episodeCount === 1 ? '' : 's'}
                 </span>
               )}
             </div>
@@ -281,11 +332,26 @@ export default function WardrobeTalent() {
           </div>
         </div>
 
-        {/* The reasoning behind the look — only Harbor Unit data has this
-            field so far (docs/WARDROBE-SOP.md §2's "Why" row); the
-            director's "why is this character in this costume" question
-            answered without anyone having to go find the costume
-            designer. */}
+        {/* What today's call sheet says about this character, filed under
+            them by name ("Det. Vale: ..." lands on Vale's card). */}
+        {look.callSheetNotes.length > 0 && (
+          <div style={{ background: 'rgba(138,180,199,0.12)', borderRadius: 10, padding: 16, marginBottom: 16, border: '1px solid rgba(138,180,199,0.35)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--teal-text)', marginBottom: 8 }}>
+              <FileText size={12} />
+              From Today's Call Sheet
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {look.callSheetNotes.map((note, i) => (
+                <p key={i} style={{ fontSize: 13, color: 'var(--ink)', lineHeight: 1.5 }}>{note}</p>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* The reasoning behind the look (docs/WARDROBE-SOP.md §2's "Why"
+            row) — the director's "why is this character in this costume"
+            question answered without anyone having to go find the
+            costume designer. */}
         {look.storyReasoning && (
           <div style={{ background: 'rgba(230,184,0,0.08)', borderRadius: 10, padding: 16, marginBottom: 16, border: '1px solid rgba(230,184,0,0.25)' }}>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--bronze-text)', marginBottom: 8 }}>
@@ -295,9 +361,8 @@ export default function WardrobeTalent() {
           </div>
         )}
 
-        {/* Continuity notes — fictional seed notes from before this look
-            had a real contact sheet; new notes now live on the photos
-            themselves below, same as a real continuity log. */}
+        {/* Continuity notes from the costume plot; new notes live on the
+            photos themselves below, same as a real continuity log. */}
         <div style={{ background: 'var(--paper)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-dim)', marginBottom: 12 }}>
             Continuity State
@@ -421,7 +486,7 @@ export default function WardrobeTalent() {
           }}>
             <AlertCircle size={16} style={{ color: 'var(--stop-red-text)', flexShrink: 0 }} />
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--stop-red-text)' }}>
-              {look.resetNote ? `Reset required before next take — ${look.resetNote}` : 'Reset required before next take — dampness from rain tower'}
+              Reset required before next take{look.resetNote ? ` — ${look.resetNote}` : ''}
             </span>
           </div>
         )}
@@ -446,36 +511,28 @@ export default function WardrobeTalent() {
         </div>
       </div>
 
-      {/* Scene timeline — fixed demo filler, not derived from the active
-          look, so it only shows for the original dataset; it would
-          otherwise contradict the real sceneIds Harbor Unit's usage rollup
-          above is built from. */}
-      {!isHarborUnit && (
+      {/* Today's scenes in this look — worked out from the call sheet's
+          shooting order and the costume plot, not a fixed demo strip. */}
+      {todaysScenes.length > 0 && (
       <div className="card" style={{ padding: 24 }}>
         <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-dim)', marginBottom: 16 }}>
-          Scene-to-Scene Look Timeline
+          Today's Scenes in {look.lookLabel}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflowX: 'auto' }}>
-          {[
-            { scene: '39', look: 'Look 1', desc: 'Dry, clean', status: 'done' },
-            { scene: '40', look: 'Look 2', desc: 'Jacket off', status: 'done' },
-            { scene: '41', look: 'Look 2A', desc: 'Sleeve tear added', status: 'done' },
-            { scene: '42', look: 'Look 3', desc: 'Rain dampness', status: 'current' },
-            { scene: '43', look: 'Look 3', desc: 'Dampness drying', status: 'upcoming' },
-          ].map((item, i, arr) => (
-            <div key={item.scene} style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-              <div style={{ textAlign: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, overflowX: 'auto' }}>
+          {todaysScenes.map(({ scene, status }, i, arr) => (
+            <div key={scene.scene} style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+              <div style={{ textAlign: 'center', maxWidth: 110 }}>
                 <div style={{
                   width: 36, height: 36, borderRadius: '50%',
-                  background: item.status === 'current' ? 'var(--teal-text)' : item.status === 'upcoming' ? 'var(--border)' : 'rgba(138,180,199,0.16)',
+                  background: status === 'current' ? 'var(--teal-text)' : status === 'upcoming' ? 'var(--border)' : 'rgba(138,180,199,0.16)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: item.status === 'current' ? '#fff' : item.status === 'upcoming' ? 'var(--muted-dim)' : 'var(--teal-text)',
+                  color: status === 'current' ? '#fff' : status === 'upcoming' ? 'var(--muted-dim)' : 'var(--teal-text)',
                   fontSize: 11, fontWeight: 700, margin: '0 auto 6px'
                 }}>
-                  {item.scene}
+                  {scene.scene}
                 </div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)' }}>{item.look}</div>
-                <div style={{ fontSize: 10, color: 'var(--muted-dim)' }}>{item.desc}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)' }}>{scene.intExt} · {scene.dayNight}</div>
+                <div style={{ fontSize: 10, color: 'var(--muted-dim)' }}>{scene.set}</div>
               </div>
               {i < arr.length - 1 && <ArrowRight size={14} style={{ color: 'var(--border-strong)', flexShrink: 0 }} />}
             </div>

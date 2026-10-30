@@ -1,0 +1,110 @@
+{
+  "show": {
+    "title": "Harbor Unit",
+    "episodeNumber": "2",
+    "episodeTitle": "Undertow",
+    "season": 1,
+    "productionCompany": "Fictional Demo Productions",
+    "logoUrl": "harbor-unit-logo.svg"
+  },
+  "date": "2026-10-23",
+  "shootDay": 6,
+  "totalShootDays": 15,
+  "status": "Active Production",
+  "calls": [
+    { "label": "General Call", "time": "06:00" },
+    { "label": "Crew Call", "time": "06:30" },
+    { "label": "Shooting Call", "time": "07:30" }
+  ],
+  "meals": [
+    { "label": "First Meal Call (Lunch)", "time": "12:30", "note": "Mandatory 6-Hour Union Window — Hard Lock to Avoid Penalties" },
+    { "label": "Second Meal Call", "time": "19:00", "note": "Box Lunch/Catering on Set for Night Shift" }
+  ],
+  "weather": "Overcast, 54°F, 20% chance of rain",
+  "sunset": "18:04",
+  "twilightEnds": "18:32",
+  "lightNote": "Night operations may not commence before 18:15",
+  "hospital": {
+    "name": "Harbor General Hospital (Emergency Room Unit)",
+    "address": "4100 Hospital Plaza, Harbor City",
+    "distance": "4.2 miles from set"
+  },
+  "safety": [
+    {
+      "time": "18:15",
+      "title": "On-Set Safety Briefing",
+      "detail": "Required for all cast and crew prior to moving to the exterior dock layout. Life vests mandatory for all personnel within 15 feet of the water's edge on Pier 14."
+    }
+  ],
+  "locations": [
+    {
+      "name": "Pier 14 Warehouse",
+      "detail": "Interior & Exterior Dock Blocks",
+      "address": "1180 Dockside Ave",
+      "parking": ["LOT B — All Crew Vehicles", "LOT A — Cast Holding & Talent Trailers"]
+    }
+  ],
+  "schedule": [
+    { "kind": "scene", "scene": "19", "intExt": "INT", "set": "Harbor Unit - Interrogation", "dayNight": "DAY", "castIds": [1, 5], "pages": "2 3/8", "notes": "Shoot First. A/B Camera coverage. Pre-verify Price clothing." },
+    { "kind": "scene", "scene": "13", "intExt": "INT", "set": "Harbor Unit - Evidence Room", "dayNight": "NIGHT", "castIds": [1], "pages": "3/8", "notes": "Day-for-Night Cover. Blackout tents required on windows." },
+    { "kind": "scene", "scene": "11", "intExt": "INT", "set": "Harbor Unit - Captain's Office", "dayNight": "NIGHT", "castIds": [1, 4], "pages": "1 1/8", "notes": "Transition to Captain's Office set framework." },
+    { "kind": "scene", "scene": "12", "intExt": "INT", "set": "Harbor Unit - Evidence Room", "dayNight": "NIGHT", "castIds": [1, 2], "pages": "1 2/8", "notes": "Final indoor cover scene before moving to the exterior dock layout." },
+    { "kind": "event", "time": "18:15", "title": "Mandatory Dock Safety Brief", "dayNight": "NIGHT", "who": "ALL", "notes": "Review wet surface hazards, open water, and boat staging." },
+    { "kind": "scene", "scene": "14", "intExt": "EXT", "set": "Pier 14 - Dock", "dayNight": "NIGHT", "castIds": [1, 2, 3], "pages": "2 1/8", "notes": "Heavy technical lighting required. Stunt double prepped on standby." },
+    { "kind": "scene", "scene": "15", "intExt": "EXT", "set": "Pier 14 - Dock", "dayNight": "NIGHT", "castIds": [1, 3, 6], "pages": "5/8", "notes": "Marine coordinator active. Coordinates with tracking picture boat." }
+  ],
+  "cast": [
+    { "id": 1, "actor": "T. Marchetti", "character": "Det. Mara Vale", "status": "WORK", "pickup": "06:30", "hmu": "06:45", "onSet": "07:30" },
+    { "id": 2, "actor": "K. Oduya", "character": "Ana Reyes", "status": "WORK", "pickup": "07:00", "hmu": "07:15", "onSet": "08:00" },
+    { "id": 3, "actor": "D. Brennan", "character": "Sgt. Theo Kade", "status": "WORK", "pickup": "07:00", "hmu": "07:15", "onSet": "08:00" },
+    { "id": 4, "actor": "M. Alvarez", "character": "Capt. Elena Dray", "status": "WORK", "pickup": "06:00", "hmu": "06:15", "onSet": "06:30" },
+    { "id": 5, "actor": "J. Halvorsen", "character": "Oswin Price", "status": "WORK", "pickup": "13:00", "hmu": "13:15", "onSet": "13:30" },
+    { "id": 6, "actor": "R. Bianchi", "character": "Warden Silva", "status": "WORK", "pickup": "19:00", "hmu": "19:15", "onSet": "19:30" }
+  ],
+  "crew": [
+    { "role": "Producer", "name": "Walt Severin" },
+    { "role": "Unit Production Manager", "name": "Ingrid Faust" },
+    { "role": "Director", "name": "Marcus Idowu" },
+    { "role": "1st Assistant Director", "name": "Joan Kessler" },
+    { "role": "Director of Photography", "name": "Renata Soto" },
+    { "role": "Gaffer", "name": "Oren Blatt" },
+    { "role": "Script Supervisor", "name": "Priya Nandan" },
+    { "role": "Sound Mixer", "name": "Devon Ashcroft" },
+    { "role": "Wardrobe Supervisor", "name": "Celeste Ibarra" },
+    { "role": "Property Master", "name": "Marcus Dietrich" }
+  ],
+  "departmentNotes": [
+    {
+      "department": "Wardrobe",
+      "owners": ["Celeste Ibarra"],
+      "notes": [
+        { "subject": "Det. Vale", "text": "Change 4 (olive trenchcoat). Carry-over from Ep 1 Sc 38-42. PREP DAMP & MUDDY per the costume bible setup parameters. Do not supply clean." },
+        { "subject": "Ana Reyes", "text": "Hazard look in progress. Verify visual blood metrics against approved lookbook photos prior to launching Scene 14." },
+        { "subject": "Sgt. Kade / Capt. Dray", "text": "Standard Change 1 profiles. Verify uniform pins and bars are level prior to rolling every take." },
+        { "subject": "Oswin Price", "text": "Change 1 fitting unconfirmed. Flag directly to 1st AD Joan Kessler immediately upon talent arrival at 13:00 to prevent Scene 19 delays." }
+      ]
+    },
+    {
+      "department": "Camera & Lighting",
+      "owners": ["Renata Soto", "Oren Blatt"],
+      "notes": [
+        { "text": "A & B Cameras active all day. Initial card allocation manifests: A_ROLL_06, B_ROLL_04." },
+        { "text": "Prepare heavy exterior night lighting arrays (HMIs/Condors) at Pier 14 Dock during the second meal window (19:00) to ensure immediate readiness for Scene 14." }
+      ]
+    },
+    {
+      "department": "Props & Art",
+      "owners": ["Marcus Dietrich", "Lena Voss"],
+      "notes": [
+        { "text": "Verify evidence room layout file cases are populated with matching props for Scene 12 and 13." },
+        { "text": "Coordinate with Marine Safety Warden to ensure tracking picture boat is fueled and positioned prior to 19:30." }
+      ]
+    }
+  ],
+  "advance": {
+    "callTime": "13:00",
+    "note": "Enforcing mandatory 10-hour IATSE rest turnaround limits following tonight's late night wrap",
+    "locations": ["INT. Harbor Unit - Main Bullpen", "EXT. City Streets Alleyway"],
+    "scenes": ["21", "22", "24A", "25"]
+  }
+}

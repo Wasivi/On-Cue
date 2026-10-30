@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { production } from '../data/seed';
 import { useApp } from '../App';
 import { Camera, Plus, X, AlertCircle } from 'lucide-react';
 
@@ -32,8 +31,10 @@ function nowLabel() {
 }
 
 export default function DepartmentContinuity() {
-  const { role } = useApp();
-  const setup = production.currentSetup;
+  const { role, production } = useApp();
+  // Logging works with or without a call sheet; the call sheet only names
+  // the show and the scene being shot in the header.
+  const setup = production?.day?.currentSetup;
   const [activeTab, setActiveTab] = useState<Dept>('props');
   const [entries, setEntries] = useState<ContinuityEntry[]>([]);
   const [openEntry, setOpenEntry] = useState<ContinuityEntry | null>(null);
@@ -147,7 +148,8 @@ export default function DepartmentContinuity() {
           Set &amp; Props Continuity
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: 14 }}>
-          {production.title} · Scene {setup.scene} · Setup {setup.setupNumber}
+          {production ? production.callSheet.show.title : 'No call sheet loaded'}
+          {setup && ` · Scene ${setup.scene} · Setup ${setup.setupNumber}`}
           {!canCapture && ' · read-only for your role'}
         </p>
       </div>

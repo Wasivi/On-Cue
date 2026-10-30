@@ -1,12 +1,11 @@
 import { useApp } from '../App';
-import { production, timeLossData, departmentBudgets, COST_PER_MINUTE_LOST } from '../data/seed';
+import { NoCallSheet, NothingYet } from '../components/EmptyState';
 import { DollarSign, AlertTriangle, ShieldAlert } from 'lucide-react';
 
 const fmt = (n: number) => `$${n.toLocaleString('en-US')}`;
 
 export default function BudgetImpact() {
-  const { role } = useApp();
-  const setup = production.currentSetup;
+  const { role, production } = useApp();
 
   // The one rule every governance doc repeats about this page: dollars are
   // UPM and Producer only, the 1st AD never sees them. Gating it here, not
@@ -30,9 +29,27 @@ export default function BudgetImpact() {
     );
   }
 
-  const totalMinutesLost = timeLossData.reduce((a, b) => a + b.minutes, 0);
-  const totalCostImpact = totalMinutesLost * COST_PER_MINUTE_LOST;
-  const biggestCause = [...timeLossData].sort((a, b) => b.minutes - a.minutes)[0];
+  if (!production) return <NoCallSheet />;
+  const budget = production.prep?.budget;
+  if (!budget) {
+    return (
+      <NothingYet
+        title="No budget entered yet"
+        body="The UPM enters each department's allocation once, during prep. Cost impact appears here as soon as it's in."
+      />
+    );
+  }
+  const { callSheet: cs, day } = production;
+  const setup = day?.currentSetup;
+  // The same time-lost breakdown Take Intelligence shows, priced at the
+  // budget's blended cost of a minute lost.
+  const timeLoss = day?.timeLoss ?? [];
+  const costPerMinute = budget.costPerMinuteLost;
+  const departmentBudgets = budget.departments;
+
+  const totalMinutesLost = timeLoss.reduce((a, b) => a + b.minutes, 0);
+  const totalCostImpact = totalMinutesLost * costPerMinute;
+  const biggestCause = [...timeLoss].sort((a, b) => b.minutes - a.minutes)[0];
   const totalAllocated = departmentBudgets.reduce((a, b) => a + b.allocated, 0);
   const totalSpent = departmentBudgets.reduce((a, b) => a + b.spent, 0);
 
@@ -43,7 +60,7 @@ export default function BudgetImpact() {
           Budget Impact
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: 14 }}>
-          UPM view · Setup {setup.setupNumber} · Scene {setup.scene} · visible to UPM and Producer only
+          UPM view{setup ? ` · Setup ${setup.setupNumber} · Scene ${setup.scene}` : ''} · visible to UPM and Producer only
         </p>
       </div>
 
@@ -56,7 +73,7 @@ export default function BudgetImpact() {
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted-dim)', letterSpacing: '0.06em' }}>Cost Impact Today</div>
         </div>
         <div className="card" style={{ padding: 20, textAlign: 'center' }}>
-          <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--bronze-text)', letterSpacing: '-0.01em' }}>{biggestCause.cause}</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--bronze-text)', letterSpacing: '-0.01em' }}>{biggestCause ? biggestCause.cause : '—'}</div>
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted-dim)', letterSpacing: '0.06em' }}>Biggest Cost Driver</div>
         </div>
         <div className="card" style={{ padding: 20, textAlign: 'center' }}>
@@ -74,8 +91,8 @@ export default function BudgetImpact() {
           Cost Impact by Cause
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {[...timeLossData].sort((a, b) => b.minutes - a.minutes).map(item => {
-            const cost = item.minutes * COST_PER_MINUTE_LOST;
+          {[...timeLoss].sort((a, b) => b.minutes - a.minutes).map(item => {
+            const cost = item.minutes * costPerMinute;
             return (
               <div key={item.cause}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
@@ -86,7 +103,7 @@ export default function BudgetImpact() {
                 </div>
                 <div style={{ height: 8, borderRadius: 4, background: 'var(--paper)', overflow: 'hidden' }}>
                   <div style={{
-                    height: '100%', width: `${(cost / totalCostImpact) * 100}%`,
+                    height: '100%', width: `${totalCostImpact > 0 ? (cost / totalCostImpact) * 100 : 0}%`,
                     background: item.cause.includes('Lighting') ? 'var(--bronze)' : item.cause.includes('Actor') ? 'var(--stop-red)' : 'var(--muted)',
                     borderRadius: 4
                   }} />
@@ -100,7 +117,7 @@ export default function BudgetImpact() {
       {/* Department allocation — allocated vs. spent, overspend flagged. */}
       <div className="card" style={{ padding: 24 }}>
         <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-dim)', marginBottom: 16 }}>
-          Department Spend — Shoot Day {production.shootDay}
+          Department Spend — Shoot Day {cs.shootDay}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {departmentBudgets.map(d => {

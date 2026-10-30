@@ -1,7 +1,14 @@
 import { useState } from 'react';
-import { production, retakeCauses } from '../data/seed';
+import { useApp } from '../App';
+import { retakeCauses } from '../data/reference';
+import { crewName } from '../data/derive';
+import { NoCallSheet, NothingYet } from '../components/EmptyState';
 import { Clapperboard, Camera, AlertCircle, User, Zap, Mic, Box, Wrench, Film, Timer } from 'lucide-react';
-import type { RetakeCause } from '../types';
+import type { RetakeCause, TakeResult } from '../types';
+
+const RESULT_LABEL: Record<TakeResult, string> = {
+  print: 'PRINT', hold: 'HOLD', noGood: 'NO GOOD', incomplete: 'INCOMPLETE'
+};
 
 function ArrowRightIcon({ size, style }: { size: number; style?: React.CSSProperties }) {
   return (
@@ -12,9 +19,22 @@ function ArrowRightIcon({ size, style }: { size: number; style?: React.CSSProper
 }
 
 export default function LiveTake() {
-  const setup = production.currentSetup;
+  const { production } = useApp();
   const [selectedCauses, setSelectedCauses] = useState<RetakeCause[]>([]);
-  const [createdTasks, setCreatedTasks] = useState<{role: string; task: string}[]>([]);
+  const [createdTasks, setCreatedTasks] = useState<{role: string; who?: string; task: string}[]>([]);
+
+  if (!production) return <NoCallSheet />;
+  const { callSheet: cs, day } = production;
+  if (!day) {
+    return (
+      <NothingYet
+        title="No takes recorded yet"
+        body="Takes appear here as the script supervisor logs them, starting with the first setup of the day."
+      />
+    );
+  }
+  const setup = day.currentSetup;
+  const lastTake = setup.takes[setup.takes.length - 1];
 
   const toggleCause = (cause: RetakeCause) => {
     if (selectedCauses.includes(cause)) {
@@ -24,22 +44,24 @@ export default function LiveTake() {
     }
   };
 
+  // Who acts on each cause — named from the call sheet's crew list where
+  // the sheet lists that department's lead.
   const generateTasks = () => {
-    const tasks: {role: string; task: string}[] = [];
+    const tasks: {role: string; who?: string; task: string}[] = [];
     if (selectedCauses.includes('Actor performance / line') || selectedCauses.includes('Continuity')) {
-      tasks.push({ role: 'Talent Assistant / Wardrobe', task: 'Actor reset — line rehearsal and continuity check' });
+      tasks.push({ role: 'Wardrobe / Talent', who: crewName(cs, /wardrobe|costume/i), task: `Actor reset for Setup ${setup.setupNumber} — line run and continuity check against the photos` });
     }
     if (selectedCauses.includes('Lighting adjustment')) {
-      tasks.push({ role: 'Gaffer', task: 'Adjust key light for actor mark 2 — target 10:40 AM' });
+      tasks.push({ role: 'Gaffer', who: crewName(cs, /gaffer/i), task: `Lighting adjustment for Setup ${setup.setupNumber}` });
     }
     if (selectedCauses.includes('Camera / focus')) {
-      tasks.push({ role: '1st AC', task: 'Check focus marks and lens calibration' });
+      tasks.push({ role: 'Camera', who: crewName(cs, /photography|\bdp\b|camera/i), task: 'Check focus marks and lens calibration' });
     }
     if (selectedCauses.includes('Sound')) {
-      tasks.push({ role: 'Sound Mixer', task: 'Reposition boom — check for train noise window' });
+      tasks.push({ role: 'Sound Mixer', who: crewName(cs, /sound/i), task: 'Reposition the boom and agree a quiet window before the next take' });
     }
     if (selectedCauses.includes('Props / set reset')) {
-      tasks.push({ role: 'Set Decorator', task: 'Reset props to top marks' });
+      tasks.push({ role: 'Props', who: crewName(cs, /prop/i), task: 'Reset props to their first-position marks' });
     }
     setCreatedTasks(tasks);
   };
@@ -67,15 +89,16 @@ export default function LiveTake() {
         </p>
       </div>
 
-      {/* Take timeline */}
+      {/* Take timeline — the last take on record, as logged */}
+      {lastTake ? (
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'rgba(226,73,60,0.14)', borderRadius: 8, color: 'var(--stop-red-text)', fontWeight: 700, fontSize: 13 }}>
             <Clapperboard size={16} />
-            CUT — Take {setup.takes.length} NO GOOD
+            CUT — Take {lastTake.number} {RESULT_LABEL[lastTake.result]}
           </div>
           <div style={{ fontSize: 13, color: 'var(--muted-dim)' }} className="mono">
-            00:38 elapsed
+            {Math.floor(lastTake.duration / 60)}:{String(lastTake.duration % 60).padStart(2, '0')} elapsed
           </div>
         </div>
 
@@ -95,9 +118,17 @@ export default function LiveTake() {
         </div>
 
         <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6 }}>
-          Take {setup.takes.length} stopped. Primary: Actor missed final line. Secondary: Key light shifted during movement to new mark.
+          Take {lastTake.number} stopped.
+          {lastTake.causes[0] && <> Primary: {lastTake.causes[0]}.</>}
+          {lastTake.causes[1] && <> Secondary: {lastTake.causes[1]}.</>}
+          {' '}{lastTake.notes}
         </div>
       </div>
+      ) : (
+        <div className="card" style={{ padding: 24, marginBottom: 16, fontSize: 13, color: 'var(--muted)' }}>
+          No takes yet on Setup {setup.setupNumber}.
+        </div>
+      )}
 
       {/* Retake causes */}
       <div className="card" style={{ padding: 24, marginBottom: 16 }}>
@@ -149,7 +180,10 @@ export default function LiveTake() {
                   <User size={16} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{task.role}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>
+                    {task.role}
+                    {task.who && <span style={{ fontWeight: 400, color: 'var(--muted)' }}> · {task.who}</span>}
+                  </div>
                   <div style={{ fontSize: 12, color: 'var(--muted)' }}>{task.task}</div>
                 </div>
               </div>

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useApp } from '../App';
 import type { Page } from '../App';
-import { production } from '../data/seed';
+import { minutesOf, shootDate } from '../data/derive';
+import { NoCallSheet, NothingYet } from '../components/EmptyState';
 import { Clock, AlertCircle, Radio, ArrowRight } from 'lucide-react';
 
 // Only departments with a real page to land on are clickable — Props and
@@ -12,32 +13,14 @@ const DEPARTMENT_LINK: Record<string, Page> = {
   'Set/Props': 'continuity',
 };
 
-// "2:14 PM" → minutes since midnight, so the feed can sort on the actual
-// time rather than the order departments happen to be authored in.
-function parseClock(t: string): number {
-  const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if (!m) return 0;
-  let h = parseInt(m[1], 10);
-  const min = parseInt(m[2], 10);
-  const ap = m[3].toUpperCase();
-  if (ap === 'PM' && h !== 12) h += 12;
-  if (ap === 'AM' && h === 12) h = 0;
-  return h * 60 + min;
-}
-
-// The one date this whole demo happens on — there's no real calendar in
-// the seed data, just times-of-day, so the "too long ago" fallback below
-// needs somewhere to anchor a full date.
-const SHOOT_DATE = 'Sep 2, 2026';
-
 // "2 min ago" while it's recent — that's what you actually scan for; once
 // it's far enough back that "ago" stops being useful at a glance, fall
-// back to the full date and time instead.
-function relativeTime(timestamp: string, nowStr: string): string {
-  const diff = parseClock(nowStr) - parseClock(timestamp);
+// back to the full date (the call sheet's shoot date) and time instead.
+function relativeTime(timestamp: string, nowStr: string, date: string): string {
+  const diff = minutesOf(nowStr) - minutesOf(timestamp);
   if (diff <= 0) return 'just now';
   if (diff < 60) return `${diff} min ago`;
-  return `${SHOOT_DATE}, ${timestamp}`;
+  return `${date}, ${timestamp}`;
 }
 
 // The brick layout: each chip gets an explicit column range but no
@@ -55,17 +38,38 @@ const BRICK_COLS: [number, number][] = [
 ];
 
 export default function ADCommand() {
-  const { role, holdState, setHoldState, lightingReady, actorReady, setPage } = useApp();
-  const setup = production.currentSetup;
+  const { role, holdState, setHoldState, lightingReady, actorReady, setPage, production } = useApp();
   const [openDetails, setOpenDetails] = useState<Set<string>>(new Set());
+
+  if (!production) return <NoCallSheet />;
+  const { callSheet: cs, day } = production;
+  if (!day) {
+    return (
+      <NothingYet
+        title="No setups recorded yet"
+        body="The readiness board fills in once the 1st AD calls the first setup and departments start reporting."
+      />
+    );
+  }
+  const setup = day.currentSetup;
+  const date = shootDate(cs);
 
   const allReady = lightingReady && actorReady;
   // Blocked departments lead regardless of age — that's the thing the AD
   // actually needs to spot first; recency only breaks ties within a status.
   const statusRank = { notReady: 0, inProgress: 1, ready: 2 } as const;
   const feed = [...setup.departmentStatuses].sort((a, b) =>
-    statusRank[a.status] - statusRank[b.status] || parseClock(b.timestamp) - parseClock(a.timestamp)
+    statusRank[a.status] - statusRank[b.status] || minutesOf(b.timestamp) - minutesOf(a.timestamp)
   );
+
+  // The board's numbers, from the day's record. Background Hold only shows
+  // when the day has background to hold.
+  const boardStats = [
+    { label: 'Predicted Roll', value: day.board.predictedRoll, tone: 'var(--ink)' },
+    { label: 'Current Hold', value: day.board.currentHold, tone: 'var(--bronze-text)' },
+    ...(day.board.nextSceneRisk ? [{ label: 'Next Scene Risk', value: day.board.nextSceneRisk, tone: 'var(--bronze-text)' }] : []),
+    ...(day.board.backgroundHold ? [{ label: 'Background Hold', value: day.board.backgroundHold, tone: 'var(--bronze-text)' }] : []),
+  ];
 
   const toggleDetails = (key: string) => {
     const next = new Set(openDetails);
@@ -80,7 +84,7 @@ export default function ADCommand() {
           AD Command
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: 14 }}>
-          Full crew readiness · Setup {setup.setupNumber} · Scene {setup.scene} · {production.episodeTitle}
+          Full crew readiness · Setup {setup.setupNumber} · Scene {setup.scene} · {cs.show.episodeTitle ?? cs.show.title}
         </p>
       </div>
 
@@ -99,22 +103,12 @@ export default function ADCommand() {
           {holdState === 'hold' ? 'HOLD' : 'READY TO ROLL'}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 8, flexWrap: 'wrap' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div className="section-label" style={{ marginBottom: 1, fontSize: 9 }}>Predicted Roll</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }} className="mono">2:45 PM</div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div className="section-label" style={{ marginBottom: 1, fontSize: 9 }}>Current Hold</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bronze-text)' }} className="mono">12 min</div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div className="section-label" style={{ marginBottom: 1, fontSize: 9 }}>Next Scene Risk</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bronze-text)' }} className="mono">+15 min late</div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div className="section-label" style={{ marginBottom: 1, fontSize: 9 }}>Background Hold</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bronze-text)' }} className="mono">45 min</div>
-          </div>
+          {boardStats.map(stat => (
+            <div key={stat.label} style={{ textAlign: 'center' }}>
+              <div className="section-label" style={{ marginBottom: 1, fontSize: 9 }}>{stat.label}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: stat.tone }} className="mono">{stat.value}</div>
+            </div>
+          ))}
         </div>
         {/* Mock-state gate, not real auth — matches the one rule every
             governance doc repeats: only the 1st AD clears a hold. The real
@@ -186,7 +180,7 @@ export default function ADCommand() {
                   dept.status === 'inProgress' ? 'pill-risk' : 'pill-hold'
                 }`} style={{ padding: '2px 7px', fontSize: 10, whiteSpace: 'nowrap' }}>
                   {dept.status === 'ready' ? 'Ready' : dept.status === 'inProgress' ? 'In Progress' : 'Not Ready'}
-                  <span className="mono" style={{ opacity: 0.8, textTransform: 'none' }}>· {relativeTime(dept.timestamp, production.currentTime)}</span>
+                  <span className="mono" style={{ opacity: 0.8, textTransform: 'none' }}>· {relativeTime(dept.timestamp, day.currentTime, date)}</span>
                 </span>
               </div>
 

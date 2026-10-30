@@ -1,24 +1,34 @@
 import { useApp } from '../App';
-import { Upload, FileSpreadsheet, Sparkles, CheckCircle, ArrowRight } from 'lucide-react';
+import { Upload, FileSpreadsheet, Sparkles, CheckCircle, ArrowRight, FileQuestion } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { callSheetData, production } from '../data/seed';
+import type { ProductionData } from '../types';
+import { sampleForFile, templateSample } from '../data/samples';
+import { scenesInOrder, showLine } from '../data/derive';
+
+const CALL_SHEET_TYPES = '.pdf,.xls,.xlsx,.csv';
+const SCHEDULE_TYPES = '.pdf,.xls,.xlsx,.csv,.mmms';
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 export default function Onboarding() {
-  const { setPage, setWardrobeDataset } = useApp();
-  const [step, setStep] = useState<'choose' | 'importing' | 'done'>('choose');
+  const { setPage, production, loadProduction } = useApp();
+  const [step, setStep] = useState<'choose' | 'importing' | 'done' | 'unreadable'>('choose');
   const [progress, setProgress] = useState(0);
   const [fileName, setFileName] = useState<string | null>(null);
+  // What the import read, shown line by line while the progress bar runs.
+  const [incoming, setIncoming] = useState<ProductionData | null>(null);
 
-  // Real parsing of an uploaded call sheet is explicitly out of scope for
-  // this release (BUILD_SPEC.md) — the extraction numbers below stay
-  // fictional either way. But picking the actual file is not optional: a
-  // person must be able to choose their own file instead of every card
-  // silently running the same canned demo regardless of what they click.
+  // Reading any uploaded call sheet isn't built yet (BUILD_SPEC.md). Until
+  // it is, a sample's own files are recognized by name and load what
+  // reading them produces, and any other file gets an honest "can't read
+  // this yet" instead of a pretend import. Picking the file is real either
+  // way: a person chooses their own file, not a canned demo.
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const pendingAccept = useRef<string>('');
 
-  const startImport = (name: string | null = null) => {
+  const startImport = (data: ProductionData, name: string | null) => {
     setFileName(name);
+    setIncoming(data);
+    setProgress(0);
     setStep('importing');
     let p = 0;
     const interval = setInterval(() => {
@@ -26,14 +36,16 @@ export default function Onboarding() {
       if (p >= 100) {
         p = 100;
         clearInterval(interval);
-        setTimeout(() => setStep('done'), 400);
+        setTimeout(() => {
+          loadProduction(data);
+          setStep('done');
+        }, 400);
       }
       setProgress(Math.min(p, 100));
     }, 300);
   };
 
   const pickFile = (accept: string) => {
-    pendingAccept.current = accept;
     if (fileInputRef.current) fileInputRef.current.accept = accept;
     fileInputRef.current?.click();
   };
@@ -42,44 +54,64 @@ export default function Onboarding() {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    // No real parsing (BUILD_SPEC.md — out of scope for this release), but
-    // the two fictional Harbor Unit sample files are recognized by name so
-    // the demo actually reflects what you picked instead of always
-    // showing the same hardcoded production no matter what you upload.
-    setWardrobeDataset(/harbor-unit/i.test(file.name) ? 'harborUnit' : 'default');
-    startImport(file.name);
+    const data = sampleForFile(file.name);
+    if (!data) {
+      setFileName(file.name);
+      setStep('unreadable');
+      return;
+    }
+    startImport(data, file.name);
   };
+
+  // Each line names something the import actually found on the sheet,
+  // and lights up as the progress bar passes it.
+  const cs = incoming?.callSheet;
+  const readLines = cs ? [
+    { at: 10, text: `${cs.show.title}: ${cs.show.logoUrl ? 'logo and show details found' : 'show details found'}` },
+    { at: 25, text: `${plural(cs.crew.length, 'crew lead')} recognized` },
+    { at: 40, text: `${plural(cs.cast.length, 'cast member')} recognized` },
+    { at: 55, text: `${plural(cs.locations.length, 'location')} found` },
+    { at: 70, text: `${plural(scenesInOrder(cs).length, 'scene')} in shooting order` },
+    { at: 85, text: `${plural(cs.departmentNotes.length, 'department note')} sent to their departments` },
+    ...(cs.safety.length > 0 ? [{ at: 92, text: `${plural(cs.safety.length, 'safety briefing')} flagged for everyone` }] : []),
+  ] : [];
+
+  // The show only takes over the header once it has actually loaded.
+  const loaded = step === 'done' ? production : null;
+  const loadedShow = loaded?.callSheet.show;
 
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', padding: '60px 24px' }}>
+      {/* One hidden file input, shared by every upload button. pickFile()
+          sets its accept list right before opening it. */}
+      <input ref={fileInputRef} type="file" onChange={onFileChosen} style={{ display: 'none' }} />
+
       <div style={{ textAlign: 'center', marginBottom: 48 }}>
-        {/* No separate mark here — Layout already puts one next to "On
-            Cue" at the top of every page, this one was a redundant second
-            copy. One mark, made to carry the weight, instead of two. */}
-        {/* Bigger — already Playfair by inheritance, just needed more
-            presence. */}
-        <div style={{ color: 'var(--bronze-text)', fontSize: 21, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
-          {production.title}
-        </div>
+        {loadedShow?.logoUrl ? (
+          <img
+            src={loadedShow.logoUrl}
+            alt={`${loadedShow.title} logo`}
+            style={{ display: 'block', height: 56, width: 'auto', maxWidth: 260, margin: '0 auto 12px' }}
+          />
+        ) : (
+          <div style={{ color: 'var(--bronze-text)', fontSize: 21, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
+            {loadedShow ? loadedShow.title : 'Start the Day'}
+          </div>
+        )}
         <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 28, fontWeight: 700, marginBottom: 8, letterSpacing: '-0.01em', color: 'var(--ink-warm)' }}>
           Create Today's Set
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: 15, fontWeight: 700 }}>
-          {production.title} · S{production.season}E{production.episode} "{production.episodeTitle}" · Shoot Day {production.shootDay} · NYC
+          {loaded ? showLine(loaded.callSheet) : "Upload today's call sheet. Every screen builds from it."}
         </p>
       </div>
 
       {step === 'choose' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {/* Hidden file input shared by both upload cards — pickFile()
-              sets its accept list right before opening it, so one input
-              serves both without a second hidden element. */}
-          <input ref={fileInputRef} type="file" onChange={onFileChosen} style={{ display: 'none' }} />
-
           {/* Zigzag: this one sits flush left, the next starts further
               right (roughly under where "Call" falls in this label), the
               third moves back — a staggered column, not a flush stack. */}
-          <button onClick={() => pickFile('.pdf,.xls,.xlsx,.csv')} className="card" style={{
+          <button onClick={() => pickFile(CALL_SHEET_TYPES)} className="card" style={{
             padding: '8px 20px', textAlign: 'left', cursor: 'pointer', border: '1px solid var(--border)',
             display: 'flex', alignItems: 'flex-start', gap: 16, background: 'var(--surface)',
             borderRadius: 28, width: '88%', marginLeft: 0
@@ -89,12 +121,12 @@ export default function Onboarding() {
             </div>
             <div>
               <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 4, color: 'var(--ink)' }}>Upload Call Sheet</h3>
-              <p style={{ fontSize: 13, color: 'var(--muted)' }}>PDF, Excel, or CSV. Extracts crew, cast, locations, scenes, parking, and tactical equipment.</p>
+              <p style={{ fontSize: 13, color: 'var(--muted)' }}>PDF, Excel, or CSV. Reads the show and its logo, call times, scenes, cast, crew, and department notes.</p>
             </div>
             <ArrowRight size={18} style={{ marginLeft: 'auto', color: 'var(--muted-dim)', marginTop: 4 }} />
           </button>
 
-          <button onClick={() => pickFile('.pdf,.xls,.xlsx,.csv,.mmms')} className="card" style={{
+          <button onClick={() => pickFile(SCHEDULE_TYPES)} className="card" style={{
             padding: '8px 20px', textAlign: 'left', cursor: 'pointer', border: '1px solid var(--border)',
             display: 'flex', alignItems: 'flex-start', gap: 16, background: 'var(--surface)',
             borderRadius: 28, width: 'calc(68% + 55px)', marginLeft: '30%'
@@ -109,7 +141,7 @@ export default function Onboarding() {
             <ArrowRight size={18} style={{ marginLeft: 'auto', color: 'var(--muted-dim)', marginTop: 4 }} />
           </button>
 
-          <button onClick={() => { setWardrobeDataset('default'); startImport(); }} className="card" style={{
+          <button onClick={() => startImport(templateSample, null)} className="card" style={{
             padding: '8px 20px', textAlign: 'left', cursor: 'pointer', border: '1px solid var(--border)',
             display: 'flex', alignItems: 'flex-start', gap: 16, background: 'var(--surface)',
             borderRadius: 28, width: '76%', alignSelf: 'center'
@@ -129,7 +161,7 @@ export default function Onboarding() {
       {step === 'importing' && (
         <div className="card" style={{ padding: 40, textAlign: 'center' }}>
           <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 4, color: 'var(--ink)' }}>
-            {fileName ? 'Processing your file...' : 'Building sample shoot day...'}
+            {fileName ? 'Reading your call sheet...' : 'Building sample shoot day...'}
           </h3>
           {fileName && (
             <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 20 }}>{fileName}</p>
@@ -148,43 +180,47 @@ export default function Onboarding() {
               transition: 'transform 0.3s ease'
             }} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, textAlign: 'left', maxWidth: 340, margin: '0 auto' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: progress > 20 ? 'var(--ink)' : 'var(--muted-dim)' }}>
-              <CheckCircle size={14} style={{ color: progress > 20 ? 'var(--teal-text)' : 'var(--muted-dim)' }} />
-              {callSheetData.crewCount} crew members recognized
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: progress > 40 ? 'var(--ink)' : 'var(--muted-dim)' }}>
-              <CheckCircle size={14} style={{ color: progress > 40 ? 'var(--teal-text)' : 'var(--muted-dim)' }} />
-              {callSheetData.castCount} cast members recognized
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: progress > 55 ? 'var(--ink)' : 'var(--muted-dim)' }}>
-              <CheckCircle size={14} style={{ color: progress > 55 ? 'var(--teal-text)' : 'var(--muted-dim)' }} />
-              {callSheetData.locations} locations found
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: progress > 70 ? 'var(--ink)' : 'var(--muted-dim)' }}>
-              <CheckCircle size={14} style={{ color: progress > 70 ? 'var(--teal-text)' : 'var(--muted-dim)' }} />
-              {callSheetData.scenesScheduled} scenes scheduled
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: progress > 85 ? 'var(--ink)' : 'var(--muted-dim)' }}>
-              <CheckCircle size={14} style={{ color: progress > 85 ? 'var(--teal-text)' : 'var(--muted-dim)' }} />
-              {callSheetData.departmentAssignments} department assignments created
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: progress > 92 ? 'var(--ink)' : 'var(--muted-dim)' }}>
-              <CheckCircle size={14} style={{ color: progress > 92 ? 'var(--teal-text)' : 'var(--muted-dim)' }} />
-              {callSheetData.pictureVehicles} picture vehicles assigned
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, textAlign: 'left', maxWidth: 360, margin: '0 auto' }}>
+            {readLines.map(line => (
+              <div key={line.text} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: progress > line.at ? 'var(--ink)' : 'var(--muted-dim)' }}>
+                <CheckCircle size={14} style={{ color: progress > line.at ? 'var(--teal-text)' : 'var(--muted-dim)', flexShrink: 0 }} />
+                {line.text}
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {step === 'done' && (
+      {step === 'unreadable' && (
+        <div className="card" style={{ padding: 40, textAlign: 'center' }}>
+          <FileQuestion size={40} style={{ color: 'var(--bronze-text)', marginBottom: 16 }} />
+          <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 8, color: 'var(--ink)', overflowWrap: 'anywhere' }}>
+            On-Cue can't read {fileName} yet
+          </h3>
+          <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 24, maxWidth: 460, marginLeft: 'auto', marginRight: 'auto' }}>
+            Right now it reads its sample call sheet ({templateSample.callSheet.show.title}). Reading any
+            show's call sheet is the next step: an assistant drafts the day from the file, and the
+            production office checks it before anyone sees it.
+          </p>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button onClick={() => pickFile(CALL_SHEET_TYPES)} className="btn btn-secondary">
+              Choose Another File
+            </button>
+            <button onClick={() => startImport(templateSample, null)} className="btn btn-primary">
+              Load the Sample Instead
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 'done' && loaded && (
         <div className="card" style={{ padding: 40, textAlign: 'center' }}>
           <CheckCircle size={48} style={{ color: 'var(--teal-text)', marginBottom: 16 }} />
-          <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: 'var(--ink)' }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: 'var(--ink)', overflowWrap: 'anywhere' }}>
             {fileName ? `${fileName} imported` : 'Sample shoot day built'}
           </h3>
           <p style={{ fontSize: 14, color: 'var(--muted)', marginBottom: 24 }}>
-            {production.title} · S{production.season}E{production.episode} "{production.episodeTitle}" · Shoot Day {production.shootDay} is ready.
+            {showLine(loaded.callSheet)} is ready.
           </p>
           <button onClick={() => setPage('myset')} className="btn btn-primary" style={{ padding: '12px 28px', fontSize: 14 }}>
             Review Shoot Day

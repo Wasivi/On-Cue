@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 244 80" role="img" aria-label="Harbor Unit">
+  <title>Harbor Unit</title>
+  <!-- Fictional show logo for the demo. A life ring: four orange bands on
+       white, outlined in navy. Deliberately not On-Cue's gold, since a
+       show's logo is its own brand, not the app's. -->
+  <g transform="translate(40 40)">
+    <circle r="23.5" fill="none" stroke="#ffffff" stroke-width="13"/>
+    <circle r="23.5" fill="none" stroke="#e8692c" stroke-width="13" stroke-dasharray="18.46 18.46" transform="rotate(-11.25)"/>
+    <circle r="30" fill="none" stroke="#14304a" stroke-width="2.5"/>
+    <circle r="17" fill="none" stroke="#14304a" stroke-width="2.5"/>
+  </g>
+  <text x="84" y="45" textLength="152" lengthAdjust="spacingAndGlyphs" font-family="'Arial Narrow', 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="800" fill="#14304a">HARBOR</text>
+  <text x="85" y="69" textLength="150" lengthAdjust="spacing" font-family="'Arial Narrow', 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" fill="#e8692c">UNIT</text>
+</svg>

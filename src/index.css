@@ -338,6 +338,12 @@ html, body, #root {
   .oc-main { padding: 20px; }
 }
 
+/* The loaded show's badge in the header: the episode text drops away on
+   narrow phones so the logo and the On Cue wordmark keep their room. */
+@media (max-width: 520px) {
+  .show-badge-text { display: none; }
+}
+
 @media (max-width: 768px) {
   .oc-root { flex-direction: column; }
   .oc-nav {

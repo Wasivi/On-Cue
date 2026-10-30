@@ -1,5 +1,5 @@
 import { useState, createContext, useContext } from 'react';
-import type { Role } from './types';
+import type { ProductionData, Role } from './types';
 import Layout from './components/Layout';
 import LandingPage from './pages/LandingPage';
 import MySet from './pages/MySet';
@@ -25,12 +25,12 @@ interface AppContextType {
   setActorReady: (v: boolean) => void;
   holdState: 'hold' | 'ready' | 'rolling';
   setHoldState: (v: 'hold' | 'ready' | 'rolling') => void;
-  // Which demo dataset the app is showing. Onboarding sets this when it
-  // recognizes an uploaded file (see sample-data/) — this is the one thing
-  // that actually connects "upload a call sheet" to what other screens
-  // show, since nothing here parses real file content.
-  wardrobeDataset: 'default' | 'harborUnit';
-  setWardrobeDataset: (v: 'default' | 'harborUnit') => void;
+  // The show whose call sheet was uploaded. Onboarding loads it, and every
+  // screen reads the day from it: title, logo, times, scenes, cast,
+  // notes. Null until a call sheet is loaded; there is no built-in show
+  // to fall back on.
+  production: ProductionData | null;
+  loadProduction: (p: ProductionData | null) => void;
   resetDemo: () => void;
 }
 
@@ -48,7 +48,7 @@ function App() {
   const [lightingReady, setLightingReady] = useState(false);
   const [actorReady, setActorReady] = useState(false);
   const [holdState, setHoldState] = useState<'hold' | 'ready' | 'rolling'>('hold');
-  const [wardrobeDataset, setWardrobeDataset] = useState<'default' | 'harborUnit'>('default');
+  const [production, loadProduction] = useState<ProductionData | null>(null);
 
   const resetDemo = () => {
     setLightingReady(false);
@@ -66,7 +66,7 @@ function App() {
     lightingReady, setLightingReady,
     actorReady, setActorReady,
     holdState, setHoldState,
-    wardrobeDataset, setWardrobeDataset,
+    production, loadProduction,
     resetDemo
   };
 
