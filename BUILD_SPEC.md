@@ -2,7 +2,7 @@
 
 Where the build actually stands, what's decided, and what happens next, in order. What the product does and what this release includes lives in `docs/PRD.md`. The rules live in `docs/GOVERNANCE-MODEL.md`.
 
-Last updated: 2026-10-23.
+Last updated: 2026-10-25.
 
 ## What On-Cue is
 
@@ -16,18 +16,19 @@ A shoot-day coordination app for episodic television. Each person on set gets a 
 
 **Front end:** React + TypeScript + Vite. Ten screens: Landing, Onboarding, My Set, AD Command, Live Take, Lighting Console, Wardrobe & Talent, Set & Props Continuity, Take Intelligence, Budget. Centered bottom tab navigation. A role switcher stands in for sign-in.
 
-**Backend:** A Supabase project exists. `0001_initial_schema.sql` is applied to the live database (13 tables, with access rules enforced in the database). `0002_wardrobe_depth.sql` is written but not applied. **The app is not connected to Supabase yet** — everything runs in local memory and resets on reload.
+**Backend:** A Supabase project exists, and all three setup files (`0001`, `0002`, `0003`) are applied to the live database: 16 tables and 2 views, with access rules enforced in the database (verified 2026-10-24). **The app is not connected to Supabase yet** — everything runs in local memory and resets on reload.
 
 **Works today:**
+- **The call sheet drives every screen** — upload the call sheet and the show's logo and name, calls, meals, sunset, safety brief, location, hospital, scenes in shooting order, cast, crew, each department's notes (each role sees its own), and tomorrow's advance fill in across the app. No show is written into any screen: screens read the call sheet, the day's record, and prep data (`src/data/samples/`). With no call sheet loaded, every screen says so.
 - **AD Command** — readiness board with blocked departments first; Clear Hold appears only for the 1st AD.
-- **Wardrobe & Talent** — a contact sheet per character with real camera capture (photo and note in one action; Front, Back, or any typed label). Harbor Unit costume changes with item colors and fabrics, story reasons, multiples, hazards, fitting status, actor names, and a "used in N scenes across M episodes" count.
-- **Lighting Console** — "Lighting Ready" takes a reference photo; the ETA track record shows fixed demo data.
+- **Wardrobe & Talent** — a contact sheet per character with real camera capture (photo and note in one action; Front, Back, or any typed label). Harbor Unit costume changes with item colors and fabrics, story reasons, multiples, hazards, fitting status, actor names, and a "used in N scenes across M episodes" count. Each actor's headshot, cast number, and call times; the call sheet's wardrobe notes on the right character; today's scenes in each look, in shooting order.
+- **Lighting Console** — "Lighting Ready" takes a reference photo; the task, ETA track record, equipment, and checklist come from the day's record (demo data).
 - **Set & Props Continuity** — Props and Art Department log items with photos; only the owning role can add; Props has food and brand-substitution fields.
 - **Budget** — dollars by department, visible to the UPM and Producer only.
 - **Take Intelligence** — takes, usable takes, turnaround, and time lost by cause (demo data).
-- **Onboarding** — a real file picker; the Harbor Unit sample call sheet and schedule are recognized by name; reading the file is simulated by design.
+- **Onboarding** — a real file picker. The Harbor Unit call sheet (`sample-data/harbor-unit-ep2-call-sheet.pdf`) loads the show, its logo, and the whole day, listing what it found as it reads. Any other file gets an honest "On-Cue can't read this yet," with the option to load the sample instead.
 
-**Placeholders or not built** (per-screen detail in `docs/PRD.md` Section 8): sign-in, the Supabase connection, real-time updates, offline saving, the Record screen, the Live Take note field, the six headshots in Wardrobe, and the My Set and Lighting buttons that don't record anything yet. The app still opens on the old "DSI / Lone Wolf" demo; Undertow appears only on Wardrobe, after uploading a sample file.
+**Placeholders or not built** (per-screen detail in `docs/PRD.md` Section 8): reading any show's call sheet (only the sample is recognized, by file name), sign-in, the Supabase connection, real-time updates, offline saving, the Record screen, the Live Take note field, and the My Set and Lighting buttons that don't record anything yet.
 
 ## Confirmed decisions (don't re-litigate these)
 
@@ -38,9 +39,10 @@ A shoot-day coordination app for episodic television. Each person on set gets a 
 5. **Data entry has to be zero-effort.** Day-of data piggybacks on what people are already doing; reference data is entered once, by one person, during prep.
 6. **PRD:** `docs/PRD.md` v1.0 (2026-10-23) replaces PRD v0.2 (`PRD.pdf`, kept as history).
 7. **Governance additions (2026-10-23):** calculations update on their own, decisions never do; the 1st AD can hand off roll authority; safety stop versus concern; privacy redaction is the one exception to append-only; adding a day player takes under a minute; broadcast status, scope detail. Full text in `docs/GOVERNANCE-MODEL.md`.
-8. **Demo production:** Harbor Unit "Undertow" on every screen. The DSI / Lone Wolf demo is retired.
+8. **Demo production:** Harbor Unit "Undertow", loaded from its call sheet (`sample-data/harbor-unit-ep2-call-sheet.pdf`). The DSI / Lone Wolf demo is retired and its data deleted (2026-10-25).
 9. **The Record** (formerly "Agent Activity") is its own screen.
 10. **On-Cue is not an accounting system.** No payroll, receipts, union rule calculation, or tax incentives. The UPM view translates minutes into an estimated dollar impact, and that's all.
+11. **Nothing about a show is written into the screens (2026-10-25).** Any show's call sheet must be able to drive the app, its logo included. Screens read three things only: the call sheet (what the upload reads), the day's record (what On-Cue captures during the day), and prep data (costume plot, headshots, budget). Adding a show means adding data, never editing a screen.
 
 ## Confirmed scope for this release
 
@@ -54,14 +56,17 @@ A shoot-day coordination app for episodic television. Each person on set gets a 
 | Find a Vendor (Google Places) | Not built |
 | Crew-list sign-in | Not built |
 | Offline Phase 1 (save on device first, sync later) | Not built |
-| Wardrobe depth (story days, costume changes, usage count, colors for Lighting) | Built in the app with demo data; database tables in `0002`, not applied |
+| Wardrobe depth (story days, costume changes, usage count, colors for Lighting) | Built in the app with demo data; database tables live (`0002`), app not connected to them yet |
 | The Record screen | Not built |
+| Call sheet drives every screen (show, logo, times, scenes, cast, crew, notes) | Built for the Harbor Unit sample; reading other shows' call sheets not built |
 
 ## Schema status
 
 - **`supabase/migrations/0001_initial_schema.sql`** — applied. 13 tables: `productions`, `scenes`, `setups`, `takes`, `department_statuses`, `vendors`, `continuity_items`, `eta_track_record`, `time_loss_records`, `budget_snapshots`, `production_budget`, `audit_log`, `profiles`. Access rules are enforced in the database, including the 1st AD READY gate and dollars for the UPM and Producer only.
-- **`supabase/migrations/0002_wardrobe_depth.sql`** — written, not applied. Adds `story_days`, `costume_changes` (with `actor_name`), `costume_change_scenes`, a `costume_change_id` link on `continuity_items`, and two views: `costume_change_usage` and `scene_color_palette` (neither readable by signed-out users).
-- **`supabase/migrations/0003_lock_profile_roles.sql`** — written, not applied. Closes a hole in `0001`: a signed-in person could give themselves any role, such as 1st AD or UPM. After it, only the production office assigns roles, and a person can change only their own display name.
+- **`supabase/migrations/0002_wardrobe_depth.sql`** — applied. Adds `story_days`, `costume_changes` (with `actor_name`), `costume_change_scenes`, a `costume_change_id` link on `continuity_items`, and two views: `costume_change_usage` and `scene_color_palette` (neither readable by signed-out users). `scene_color_palette` deliberately runs with its owner's rights, so Lighting sees colors without getting the full costume record. Supabase's Security Advisor may flag it as a "Security Definer View". That's expected. Don't switch it to `security_invoker`, or Lighting loses its colors.
+- **`supabase/migrations/0003_lock_profile_roles.sql`** — applied. Closes a hole in `0001`: a signed-in person could give themselves any role, such as 1st AD or UPM. After it, only the production office assigns roles, and a person can change only their own display name.
+- **How they were applied (2026-10-24):** an earlier repair had dropped `0001`'s custom types, which took every column that used them, `auth_role()`, and most access rules with it. The tables were empty, so a one-time script removed the partial setup and ran `0001`–`0003` fresh, in order, as one unit in the SQL Editor. Checked afterward from the app's public key: every table and column is present, `auth_role()` exists, and signed-out users are refused both views and can't edit profiles. All 16 tables have access rules switched on.
+- **Migration history:** these were run by hand, so Supabase's migration history is empty (checked 2026-10-30). Before ever using `supabase db push`, mark them applied with `supabase migration repair --status applied <version>`; otherwise the CLI will try to run them again.
 - **Later:** new event kinds for handoffs, safety stops, and redactions (governance Section 7).
 
 ## Still open
@@ -73,16 +78,17 @@ A shoot-day coordination app for episodic television. Each person on set gets a 
 - Theater and the other future modules (`docs/PRD.md` Section 16).
 - **Role switching:** `profiles` holds one role per person. Letting someone hold several assigned roles and switch between them (governance Section 4) needs an assigned-roles table; until then, the production office sets each person's role.
 - **Access by production:** the database's access rules don't yet separate one production's data from another's. That's fine with one demo production, but it's needed before a second real one.
-- **Old demo data:** the DSI / Lone Wolf data in `src/data/seed.ts` uses real venue names and addresses, which breaks the fictional-data rule. It goes away when DSI is retired (next step 2).
+- **Security Advisor cleanups for the next setup file (checked 2026-10-30):** pin `auth_role()`'s search path (low risk, since it runs with the caller's rights), and remove signed-out and signed-in execute on `rls_auto_enable()`. That function isn't from On-Cue's setup files. It matches Supabase's documented recipe for turning on access rules for every new table, so its `ensure_rls` trigger should stay; a signed-out attempt to call it directly was refused. The `scene_color_palette` error is expected (see `0002` above) and stays.
 
 ## What has to happen next, in order
 
-1. **You:** in the Supabase SQL Editor, run `0002_wardrobe_depth.sql`, then `0003_lock_profile_roles.sql` — a new tab for each, paste, Run. Then, in Supabase's Authentication settings, turn off public sign-ups ("Allow new users to sign up"), because crew accounts come only from the production office.
-2. Make Undertow the default demo on every screen, retire DSI / Lone Wolf, and show the six headshots in Wardrobe.
+1. ~~Set up the database and turn off public sign-ups~~ — done: `0001`–`0003` applied and verified (2026-10-24); public sign-ups turned off and verified, with email confirmation left on (2026-10-25). Crew accounts now come only from the production office (Authentication → Users → Add user).
+2. ~~Make Undertow the default demo on every screen~~ — done 2026-10-25: every screen reads the uploaded call sheet, the DSI demo is deleted, and Wardrobe shows the six headshots.
 3. Connect the app to Supabase: crew-list sign-in, a real-time What Changed feed, photos saved to storage, and the Phase 1 offline queue.
-4. Make every action button record an event (My Set, Lighting, the Live Take note), and build the Record screen.
-5. The 1st AD handoff, the safety stop, and the concern flag.
-6. Find a Vendor (Google Places — needs your API key and billing setup).
-7. The Sound screen.
+4. **Read any show's call sheet.** An agent drafts the call sheet data from the uploaded file (PDF, Excel, or CSV), logo included; the production office checks the draft and confirms it before anyone sees it (agents draft, humans decide). Runs on step 3's server side, so the AI key never ships inside the app. Needs a privacy review first: call sheets carry crew phone numbers and addresses. The Harbor Unit JSON in `src/data/samples/` is the answer key to test it against.
+5. Make every action button record an event (My Set, Lighting, the Live Take note), and build the Record screen.
+6. The 1st AD handoff, the safety stop, and the concern flag.
+7. Find a Vendor (Google Places — needs your API key and billing setup).
+8. The Sound screen.
 
 **In parallel (not code):** talk to 10–15 working crew — ADs, costume supervisors, UPMs. Their answers settle the PRD's open questions and give you real quotes.

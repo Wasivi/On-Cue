@@ -128,18 +128,18 @@ All demo content uses one fictional production, **Harbor Unit "Undertow."**
 
 **The wardrobe story the demo tells:**
 - Vale's Change 4 (olive trench) carries Story Night 4's damage from Episode 1 (Scenes 38–42) into Episode 2 (Scenes 11–15), the carry-over example in `docs/WARDROBE-SOP.md`. It's used in 10 scenes across 2 episodes.
-- Reyes's blood level escalates across the dock scenes.
+- Reyes's blood level escalates take to take in Scene 14 on the dock.
 - Price's fitting is still pending, and that has to reach the 1st AD before Scene 19 is scheduled.
 
-**Source files:** `src/data/seedHarborUnit.ts`, `sample-data/harbor-unit-ep2-call-sheet.csv`, `sample-data/harbor-unit-production-schedule.csv`, `sample-data/headshots/`.
+**Source files:** `src/data/samples/` (the call sheet as data, the day's record, and prep data), `sample-data/harbor-unit-ep2-call-sheet.pdf` (built from that same data by `scripts/make-sample-call-sheet.mjs`), `sample-data/harbor-unit-production-schedule.csv`, `sample-data/headshots/`.
 
-**Requirement:** Undertow is the default demo on every screen, and the earlier "DSI / Lone Wolf" demo data is retired. *Not built: today only the Wardrobe screen shows Undertow, and only after a sample file is uploaded on Onboarding.*
+**Requirement:** every screen reads the uploaded call sheet. Nothing about a show is written into a screen, so any show's call sheet can drive the app, its logo included. The earlier "DSI / Lone Wolf" demo is retired. *Built for the Harbor Unit sample (2026-10-25). Reading other shows' call sheets is not built.*
 
 ---
 
 ## 7. The core loop
 
-1. The production office loads the day: call sheet and crew list. (Simulated this release.)
+1. The production office loads the day: call sheet and crew list. (This release reads the Harbor Unit sample call sheet; reading any show's call sheet is next.)
 2. Each person signs in as themselves and lands on My Set with their role's next action.
 3. A take stops. The Script Supervisor (or 1st AD) records the outcome and the causes.
 4. The harness sends a task card to each responsible department and a short status to everyone else.
@@ -208,7 +208,8 @@ Full depth for Wardrobe, following `docs/WARDROBE-SOP.md`:
 - **Contact sheet** — *Built.* A photo log per character. Taking the photo and writing its note are one action. Front and Back are quick labels, and any other label can be typed. Each entry is timestamped. *Photos are lost on reload until storage is connected.*
 - **Costume changes** — *Built, with demo data.* Character and actor, change number, story day, items with color and fabric, multiples and their current state, hazards, continuity notes, fitting status, and the story reason for the look.
 - **Usage count** — *Built, calculated in the app.* "Used in N scenes across M episodes" for each change. Moves to the database view `costume_change_usage` when connected.
-- **Actor reference photos** — *Not built.* The six portraits in `sample-data/headshots/` replace the initials circle. They are fictional placeholders; real continuity photos still come only from the camera on set.
+- **Actor reference photos** — *Built.* The six portraits in `sample-data/headshots/` replace the initials circle, matched to the call sheet's cast list, with each actor's cast number and call times. They are fictional placeholders; real continuity photos still come only from the camera on set.
+- **Call sheet notes** — *Built.* The call sheet's wardrobe notes appear on the character they name ("Det. Vale: ..." on Vale's card).
 - **Carry-over** — a change links to the earlier change whose damage it carries, and is prepped from that change's final-state photos. *In the data model only.*
 - **Actor Ready** — sets Wardrobe's readiness. It never clears a hold. *Built.*
 - **Fitting issues** — a change with an "issue" fitting reaches the 1st AD's board before its scene is scheduled. *Not built.*
@@ -241,7 +242,8 @@ Full depth for Wardrobe, following `docs/WARDROBE-SOP.md`:
 ### 8.12 Onboarding — Partly built
 
 - "Upload Call Sheet" and "Import Production Schedule" open a real file picker. "Start With a Template" loads the demo. *Built.*
-- Reading the file's contents is out of scope this release, so the import is simulated. The Harbor Unit sample files are recognized by name so the demo matches what was uploaded. *Built.*
+- The Harbor Unit sample files are recognized by name and load the call sheet's real contents (show, logo, times, scenes, cast, crew, notes), listed line by line as the import runs. Any other file gets an honest "can't read this yet," with the option to load the sample. *Built.*
+- Reading any show's call sheet: an agent drafts the data from the file, and the production office confirms it before it loads. *Not built.*
 - When this becomes real, it's where the crew list (8.1) and each character's costume breakdown come from.
 
 ### 8.13 Find a Vendor — Not built
@@ -281,9 +283,10 @@ When a take stops, each cause sends tasks to the departments responsible and a s
 
 - Who can see and change what is enforced in the database itself (Supabase row-level security), not only on screen.
 - **Schema:**
-  - `supabase/migrations/0001_initial_schema.sql` — applied to the live database: 13 tables and their access rules.
-  - `supabase/migrations/0002_wardrobe_depth.sql` — written, not yet applied: story days, costume changes, the scenes each change appears in, actor names, the `costume_change_usage` view, and the `scene_color_palette` view.
-  - `supabase/migrations/0003_lock_profile_roles.sql` — written, not yet applied: only the production office can assign a person's role; a person can change only their own display name.
+  - `supabase/migrations/0001_initial_schema.sql` — applied: 13 tables and their access rules.
+  - `supabase/migrations/0002_wardrobe_depth.sql` — applied: story days, costume changes, the scenes each change appears in, actor names, the `costume_change_usage` view, and the `scene_color_palette` view.
+  - `supabase/migrations/0003_lock_profile_roles.sql` — applied: only the production office can assign a person's role; a person can change only their own display name.
+  - All three are live in the database as of 2026-10-24 (verified). The app isn't connected to it yet.
 - Every event stores the person and the role. Continuity photos store who captured them.
 - Privacy redaction (governance Section 3) removes personal content from an event and records the removal. Retention rules are to be confirmed with an entertainment lawyer.
 - The demo contains no real people or productions. The headshots are AI-generated portraits of fictional people, used only inside the app as placeholders.
